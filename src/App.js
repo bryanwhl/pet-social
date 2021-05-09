@@ -1,4 +1,4 @@
-import TopBar from './components/TopBar'
+import TopBar from './components/TopBar.js'
 import { red } from '@material-ui/core/colors'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
