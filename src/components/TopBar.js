@@ -1,4 +1,4 @@
-import {IconButton, AppBar, CssBaseline, Toolbar, Grid, TextField} from '@material-ui/core';
+import {IconButton, AppBar, Toolbar, Grid, TextField} from '@material-ui/core';
 import React from 'react'
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -10,7 +10,6 @@ const TopBar = () => {
 
     return (
         <div>
-            <CssBaseline />
             <AppBar position="relative">
                 <Toolbar>
                     <Grid container spacing={1} alignItems="flex-end" justify="flex-start">

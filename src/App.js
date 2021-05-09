@@ -1,5 +1,7 @@
 import TopBar from './components/TopBar.js'
+import Post from './components/Post.js'
 import { red } from '@material-ui/core/colors'
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 const customTheme = createMuiTheme({
@@ -32,7 +34,9 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme = {customTheme}>
+        <CssBaseline />
         <TopBar />
+        <Post />
       </ThemeProvider>
     </div>
   );
