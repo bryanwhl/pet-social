@@ -1,20 +1,12 @@
-import {IconButton, AppBar, Box, CssBaseline, Toolbar, Grid, TextField} from '@material-ui/core';
+import {IconButton, AppBar, CssBaseline, Toolbar, Grid, TextField} from '@material-ui/core';
 import React from 'react'
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-    margin: {
-      margin: theme.spacing(1),
-    },
-  }));
 
 const TopBar = () => {
-    const classes = useStyles();
 
     return (
         <div>
