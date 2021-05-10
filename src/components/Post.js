@@ -60,7 +60,7 @@ const Post = () => {
                             />
                             
                             <CardContent>
-                                <Typography variant="body2" color="textSecondary" component="p">
+                                <Typography variant="body2" component="p">
                                 Took my dogs out to East Coast Park for a walk today.
                                 They seem to enjoy the sea breeze a lot!
                                 </Typography>
