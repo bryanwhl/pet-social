@@ -9,14 +9,14 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import { red } from '@material-ui/core/colors';
-import dogImage from './static/images/eastcoast.jpg'
+import dogImage from './static/images/eastcoast.jpg';
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
         padding: "20px",
     },
     root: {
-        maxWidth: 600,
+        maxWidth: 700,
     },
     media: {
         height: 0,
@@ -41,7 +41,7 @@ const Post = () => {
                         <Card className={classes.root}>
                             <CardHeader
                                 avatar={
-                                <Avatar aria-label="recipe" className={classes.avatar}>
+                                <Avatar aria-label="bryan" className={classes.avatar}>
                                     B
                                 </Avatar>
                                 }
@@ -80,6 +80,7 @@ const Post = () => {
                                 </IconButton>
                             </CardActions>
                         </Card>
+                        
                     </Grid>
                 </Grid>
             </Container>
