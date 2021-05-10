@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
   },
+  root: {
+      display: 'flex',
+  }
 }));
 
 const handleHomeClick = () => {
@@ -45,7 +48,7 @@ const SideBar = ({ drawerState, closeDrawer }) => {
     const classes = useStyles();
 
     return (
-        <div>
+        <div className={classes.root}>
             <Drawer
                 className={classes.drawer}
                 variant='persistent'
