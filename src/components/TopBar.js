@@ -21,9 +21,9 @@ const TopBar = () => {
 
     const [drawerState, setDrawerState] = useState(false);
 
-    const openDrawer = () => {
-        console.log('Side menu opened');
-        setDrawerState(true);
+    const toggleDrawer = () => {
+        console.log('Side menu ', drawerState ? 'closed' : 'opened');
+        setDrawerState(!drawerState);
     }
 
     const closeDrawer = () => {
@@ -37,7 +37,7 @@ const TopBar = () => {
                 <Toolbar>
                     
                     <Grid container spacing={1} alignItems="flex-end" justify="flex-start">
-                        <IconButton onClick={openDrawer}>
+                        <IconButton onClick={toggleDrawer}>
                             <MenuIcon />
                         </IconButton>
                         <Grid item alignItems="flex-end">
