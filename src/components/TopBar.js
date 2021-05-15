@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
       },
 }));
 
-const TopBar = () => {
+const TopBar = ({ logout }) => {
 
     const classes = useStyles();
 
@@ -57,7 +57,7 @@ const TopBar = () => {
                         <IconButton>
                             <NotificationsIcon />
                         </IconButton>
-                        <IconButton>
+                        <IconButton onClick={logout}>
                             <AccountCircleIcon />
                         </IconButton>
                     </Grid>
