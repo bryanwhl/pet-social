@@ -15,7 +15,7 @@ function Copyright() {
       <Typography variant="body2" color="textSecondary" align="center">
         {'Pet Social @ '}
         <Link color="inherit" href="https://orbital.comp.nus.edu.sg/">
-          {"Orbital 2021."}
+          {"Orbital 2021"}
         </Link>
       </Typography>
     );
@@ -43,15 +43,15 @@ function Copyright() {
     },
   }));
 
-const Signup = ({ signup, error }) => {
+const Signup = ({ signup, switchToSignin, success, error }) => {
     const classes = useStyles();
 
     const [details, setDetails] = useState({username:"", password:"", confirmPassword:""});
-
+    const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
 
     const handleSubmit = event => {
         event.preventDefault();
-        login(details);
+        signup(details);
     }
 
     const handleChange = (prop) => (event) => {
@@ -63,10 +63,11 @@ const Signup = ({ signup, error }) => {
           <CssBaseline />
           <div className={classes.paper}>
             <img src={logo} alt="Pet Social" className={classes.logo} />
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <form className={classes.form} noValidate onSubmit={success ? switchToSignin : handleSubmit}>
               <TextField
-                error={(error === "Username")}
-                helperText={(error === "Username") ? "Username already exists" : ""}
+                error={(error === "Username" || error === "Username empty")}
+                helperText={(error === "Username") ? "Username already exists"
+                  : (error === "Username empty") ? "Username cannot be empty" : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -77,10 +78,12 @@ const Signup = ({ signup, error }) => {
                 autoComplete="username"
                 autoFocus
                 onChange={handleChange('username')}
+                disabled={success}
               />
               <TextField
-                error={(error === "Password")}
-                helperText={(error === "Password") ? "Passwords do not match" : ""}
+                error={(error === "Password" || error === "Password empty")}
+                helperText={(error === "Password") ? "Passwords do not match"
+                  : (error === "Password empty") ? "Password cannot be empty" : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -90,10 +93,12 @@ const Signup = ({ signup, error }) => {
                 type="password"
                 id="password"
                 onChange={handleChange('password')}
+                disabled={success}
               />
               <TextField
-                error={(error === "Password")}
-                helperText={(error === "Password") ? "Passwords do not match" : ""}
+                error={(error === "Password" || error === "Confirm Password empty")}
+                helperText={(error === "Password") ? "Passwords do not match"
+                  : (error === "Confirm Password empty") ? "Password cannot be empty" : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -103,6 +108,7 @@ const Signup = ({ signup, error }) => {
                 type="password"
                 id="confirmPassword"
                 onChange={handleChange('confirmPassword')}
+                disabled={success}
               />
               <Button
                 type="submit"
@@ -111,11 +117,11 @@ const Signup = ({ signup, error }) => {
                 color="primary"
                 className={classes.submit}
               >
-                Sign Up
+                {buttonText}
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="#" onClick={switchToSignin} variant="body2">
                     {"Already have an account? Sign In"}
                   </Link>
                 </Grid>

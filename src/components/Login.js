@@ -17,7 +17,7 @@ function Copyright() {
       <Typography variant="body2" color="textSecondary" align="center">
         {'Pet Social @ '}
         <Link color="inherit" href="https://orbital.comp.nus.edu.sg/">
-          {"Orbital 2021."}
+          {"Orbital 2021"}
         </Link>
       </Typography>
     );
@@ -45,11 +45,10 @@ function Copyright() {
     },
   }));
 
-const Login = ({ login, error }) => {
+const Login = ({ login, switchToSignup, error }) => {
     const classes = useStyles();
 
     const [details, setDetails] = useState({username:"", password:"", remember:false});
-
 
     const handleSubmit = event => {
         event.preventDefault();
@@ -67,8 +66,9 @@ const Login = ({ login, error }) => {
             <img src={logo} alt="Pet Social" className={classes.logo} />
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
-                error={(error === "Username")}
-                helperText={(error === "Username") ? "Username does not exist" : ""}
+                error={(error === "Username" || error === "Username empty")}
+                helperText={(error === "Username") ? "Username does not exist"
+                  : (error === "Username empty") ? "Username cannot be empty" : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -81,8 +81,9 @@ const Login = ({ login, error }) => {
                 onChange={handleChange('username')}
               />
               <TextField
-                error={(error === "Password")}
-                helperText={(error === "Password") ? "Password is incorrect" : ""}
+                error={(error === "Password" || error === "Password empty")}
+                helperText={(error === "Password") ? "Password is incorrect"
+                  : (error === "Password empty") ? "Password cannot be empty" : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -116,7 +117,7 @@ const Login = ({ login, error }) => {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="#" onClick={switchToSignup} variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
