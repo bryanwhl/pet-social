@@ -66,7 +66,7 @@ const Signup = ({ signup, error }) => {
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
                 error={(error === "Username")}
-                helperText={(error === "Username") ? "Username does not exist" : ""}
+                helperText={(error === "Username") ? "Username already exists" : ""}
                 variant="outlined"
                 margin="normal"
                 required

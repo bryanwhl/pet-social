@@ -38,6 +38,7 @@ function App() {
     password: "admin123"
   }
 
+  const [users, setUsers] = useState([{adminUser},])
   const [username, setUser] = useState(null);
   const [error, setError] = useState(null);
 
