@@ -2,7 +2,7 @@ import React from 'react';
 import {Grid, Container, Card, IconButton, 
     CardMedia, CardContent, Typography, 
     Avatar, CardHeader, makeStyles, 
-    CardActions, Grow, Paper, ClickAwayListener, MenuItem, MenuList, Popper} from '@material-ui/core';
+    CardActions, Grow, Paper, ClickAwayListener, MenuList, Popper, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -10,6 +10,10 @@ import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import { red } from '@material-ui/core/colors';
 import dogImage from './static/images/eastcoast.jpg';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import CancelIcon from '@material-ui/icons/Cancel';
+import ReportIcon from '@material-ui/icons/Report';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -34,6 +38,25 @@ const Post = () => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
+    const history = useHistory();
+
+    const menuItems = [
+        {
+            text: "Receive notifications from this post",
+            icon: <NotificationsActiveIcon />,
+            path: "/"
+        },
+        {
+            text: "Hide posts from this user",
+            icon: <CancelIcon />,
+            path: "/"
+        },
+        {
+            text: "Report Post",
+            icon: <ReportIcon />,
+            path: "/"
+        }
+    ]
   
     const handleToggle = () => {
       setOpen((prevOpen) => !prevOpen);
@@ -95,9 +118,19 @@ const Post = () => {
                                             <Paper>
                                                 <ClickAwayListener onClickAway={handleClose}>
                                                 <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                                    <MenuItem onClick={handleClose}>Receive notifications from this post</MenuItem>
+                                                    {menuItems.map(item => (
+                                                        <ListItem
+                                                            button
+                                                            key={item.text}
+                                                            onClick={handleClose}
+                                                        >
+                                                            <ListItemIcon>{item.icon}</ListItemIcon>
+                                                            <ListItemText primary={item.text}></ListItemText>
+                                                        </ListItem>
+                                                    ))}
+                                                    {/* <MenuItem onClick={handleClose}>Receive notifications from this post</MenuItem>
                                                     <MenuItem onClick={handleClose}>Hide posts from this user</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Report Post</MenuItem>
+                                                    <MenuItem onClick={handleClose}>Report Post</MenuItem> */}
                                                 </MenuList>
                                                 </ClickAwayListener>
                                             </Paper>
