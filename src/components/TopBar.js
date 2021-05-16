@@ -48,8 +48,10 @@ const TopBar = ({ logout }) => {
                             <TextField id="input-with-icon-grid" placeholder="Search" />
                         </Grid>
                     </Grid>
-                    <Grid container spacing={1} alignItems="center" justify="center">
-                        <img src={logo} alt="Pet Social" width="190" height="60" />
+                    <Grid container alignItems="center" justify="center">
+                        <Grid item>
+                            <img src={logo} alt="Pet Social" width="190" height="60" />
+                        </Grid>
                     </Grid>
                     <Grid container spacing={1} alignItems="center" justify="flex-end">
                         <IconButton>
