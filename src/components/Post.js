@@ -13,7 +13,6 @@ import dogImage from './static/images/eastcoast.jpg';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -38,7 +37,6 @@ const Post = () => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
-    const history = useHistory();
 
     const menuItems = [
         {
@@ -128,9 +126,6 @@ const Post = () => {
                                                             <ListItemText primary={item.text}></ListItemText>
                                                         </ListItem>
                                                     ))}
-                                                    {/* <MenuItem onClick={handleClose}>Receive notifications from this post</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Hide posts from this user</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Report Post</MenuItem> */}
                                                 </MenuList>
                                                 </ClickAwayListener>
                                             </Paper>
