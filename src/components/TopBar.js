@@ -35,22 +35,23 @@ const TopBar = ({ logout }) => {
         <div>
             <AppBar position="relative" className={classes.appBar}>
                 <Toolbar>
-                    
-                    <Grid container spacing={1} alignItems="flex-end" justify="flex-start">
+                    <Grid container spacing={1} alignItems="center" justify="flex-start">
                         <IconButton onClick={toggleDrawer}>
                             <MenuIcon />
                         </IconButton>
-                        <Grid item alignItems="flex-end">
-                            <SearchIcon />
+                        <Grid item alignItems="center">
+                            <IconButton>
+                                <SearchIcon />
+                            </IconButton>
                         </Grid>
-                        <Grid item>
+                        <Grid item alignItems="center">
                             <TextField id="input-with-icon-grid" placeholder="Search" />
                         </Grid>
                     </Grid>
-                    <Grid container spacing={1} alignItems="flex-end" justify="center">
+                    <Grid container spacing={1} alignItems="center" justify="center">
                         <img src={logo} alt="Pet Social" width="190" height="60" />
                     </Grid>
-                    <Grid container spacing={1} alignItems="flex-end" justify="flex-end">
+                    <Grid container spacing={1} alignItems="center" justify="flex-end">
                         <IconButton>
                             <ChatIcon />
                         </IconButton>
