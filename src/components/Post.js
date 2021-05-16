@@ -2,7 +2,7 @@ import React from 'react';
 import {Grid, Container, Card, IconButton, 
     CardMedia, CardContent, Typography, 
     Avatar, CardHeader, makeStyles, 
-    CardActions} from '@material-ui/core';
+    CardActions, Grow, Paper, ClickAwayListener, MenuList, Popper, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -10,6 +10,9 @@ import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import { red } from '@material-ui/core/colors';
 import dogImage from './static/images/eastcoast.jpg';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import CancelIcon from '@material-ui/icons/Cancel';
+import ReportIcon from '@material-ui/icons/Report';
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -32,6 +35,55 @@ const useStyles = makeStyles((theme) => ({
 
 const Post = () => {
     const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
+
+    const menuItems = [
+        {
+            text: "Receive notifications from this post",
+            icon: <NotificationsActiveIcon />,
+            path: "/"
+        },
+        {
+            text: "Hide posts from this user",
+            icon: <CancelIcon />,
+            path: "/"
+        },
+        {
+            text: "Report Post",
+            icon: <ReportIcon />,
+            path: "/"
+        }
+    ]
+  
+    const handleToggle = () => {
+      setOpen((prevOpen) => !prevOpen);
+    };
+  
+    const handleClose = (event) => {
+      if (anchorRef.current && anchorRef.current.contains(event.target)) {
+        return;
+      }
+  
+      setOpen(false);
+    };
+  
+    function handleListKeyDown(event) {
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        setOpen(false);
+      }
+    }
+  
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = React.useRef(open);
+    React.useEffect(() => {
+      if (prevOpen.current === true && open === false) {
+        anchorRef.current.focus();
+      }
+  
+      prevOpen.current = open;
+    }, [open]);
 
     return (
         <div>
@@ -46,9 +98,41 @@ const Post = () => {
                                 </Avatar>
                                 }
                                 action={
-                                <IconButton aria-label="settings">
-                                    <MoreVertIcon />
-                                </IconButton>
+                                    <div>
+                                        <IconButton
+                                        ref={anchorRef}
+                                        aria-controls={open ? 'menu-list-grow' : undefined}
+                                        aria-haspopup="true"
+                                        onClick={handleToggle}
+                                        >
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                                        {({ TransitionProps, placement }) => (
+                                            <Grow
+                                            {...TransitionProps}
+                                            style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                                            >
+                                            <Paper>
+                                                <ClickAwayListener onClickAway={handleClose}>
+                                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                                    {menuItems.map(item => (
+                                                        <ListItem
+                                                            button
+                                                            key={item.text}
+                                                            onClick={handleClose}
+                                                        >
+                                                            <ListItemIcon>{item.icon}</ListItemIcon>
+                                                            <ListItemText primary={item.text}></ListItemText>
+                                                        </ListItem>
+                                                    ))}
+                                                </MenuList>
+                                                </ClickAwayListener>
+                                            </Paper>
+                                            </Grow>
+                                        )}
+                                        </Popper>
+                                    </div>
                                 }
                                 title="Bryan Wong"
                                 subheader="May 8, 2021"
