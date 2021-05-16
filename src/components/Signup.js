@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -23,7 +24,7 @@ function Copyright() {
 
   const useStyles = makeStyles((theme) => ({
     paper: {
-      marginTop: theme.spacing(20),
+      marginTop: theme.spacing(10),
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -46,7 +47,7 @@ function Copyright() {
 const Signup = ({ signup, switchToSignin, success, error }) => {
     const classes = useStyles();
 
-    const [details, setDetails] = useState({username:"", password:"", confirmPassword:""});
+    const [details, setDetails] = useState({username:"", password:"", confirmPassword:"", accountType:""});
     const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
 
     const handleSubmit = event => {
@@ -57,6 +58,8 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
     const handleChange = (prop) => (event) => {
         setDetails({ ...details, [prop]: event.target.value });
     };
+
+    const accountTypes = ["Personal", "Business"]
 
     return (
         <Container component="main" maxWidth="xs">
@@ -110,6 +113,27 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 onChange={handleChange('confirmPassword')}
                 disabled={success}
               />
+              <TextField
+                error={["Account Type empty"].includes(error)}
+                helperText={(error === "Account Type empty") ? "Account type cannot be empty" : ""}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="accountType"
+                label="Account Type"
+                select
+                value={details.accountType}
+                id="accountType"
+                onChange={handleChange('accountType')}
+                disabled={success}
+              >
+                {accountTypes.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
               <Button
                 type="submit"
                 fullWidth
