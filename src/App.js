@@ -3,6 +3,7 @@ import TopBar from './components/TopBar.js'
 import Post from './components/Post.js'
 import Login from './components/Login.js'
 import Signup from './components/Signup.js'
+import ResetPassword from './components/ResetPassword.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
@@ -44,9 +45,10 @@ function App() {
   const [error, setError] = useState(null);
   const [signedOutState, setSignedOutState] = useState("Signin");
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   const login = details => {
-    console.log(details);
+    console.log("Login ", details);
     if (details.username === "") {
       setError("Username empty")
       return;
@@ -77,7 +79,7 @@ function App() {
   }
 
   const signup = details => {
-    console.log(details)
+    console.log("Signup ", details)
     if (details.username === "") {
       setError("Username empty")
       return;
@@ -107,6 +109,37 @@ function App() {
     setError(null)
   }
 
+  const resetPassword = details => {
+    console.log("Reset ", details);
+    if (details.username === "") {
+      setError("Username empty")
+      return;
+    } else if (details.password === "") {
+      setError("Password empty")
+      return;
+    } else if (details.confirmPassword === "") {
+      setError("Confirm Password empty")
+      return;
+    }
+    if (details.password !== details.confirmPassword) {
+      setError("Password")
+      return;
+    } 
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].username === details.username){
+        if (users[i].password === details.password) {
+          setError("Password same")
+          return;
+        }
+        console.log("Password reset successfully")
+        users[i].password = details.password
+        setResetSuccess(true)
+        return;
+      }
+    }
+    setError("Username")
+  }
+
   const switchToSignup = () => {
     setSignedOutState("Signup")
     setError(null)
@@ -115,6 +148,12 @@ function App() {
     setSignedOutState("Signin")
     setError(null)
     setSignupSuccess(false)
+    setResetSuccess(false)
+  }
+  const switchToResetPassword = () => {
+    setSignedOutState("Reset")
+    setError(null)
+    setResetSuccess(false)
   }
 
   return (
@@ -128,9 +167,12 @@ function App() {
             </div>
           ) : (
             <div className="loggedOut">
-              {signedOutState === "Signin" && <Login login={login} switchToSignup={switchToSignup} error={error}/>}
+              {signedOutState === "Signin"
+                && <Login login={login} switchToSignup={switchToSignup} switchToResetPassword={switchToResetPassword} error={error}/>}
               {signedOutState === "Signup"
                 && <Signup signup={signup} switchToSignin={switchToSignin} success={signupSuccess} error={error}/>}
+              {signedOutState === "Reset"
+                && <ResetPassword resetPassword={resetPassword} switchToSignin={switchToSignin} success={resetSuccess} error={error}/>}
             </div>
           )}
 
