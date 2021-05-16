@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {IconButton, AppBar, Toolbar, Grid, TextField} from '@material-ui/core';
+import {IconButton, AppBar, Toolbar, Grid, TextField, Badge} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -55,10 +55,14 @@ const TopBar = ({ logout }) => {
                     </Grid>
                     <Grid container spacing={1} alignItems="center" justify="flex-end">
                         <IconButton>
-                            <ChatIcon />
+                            <Badge badgeContent={1} color="secondary">
+                                <ChatIcon />
+                            </Badge>
                         </IconButton>
                         <IconButton>
-                            <NotificationsIcon />
+                            <Badge badgeContent={1} color="secondary">
+                                <NotificationsIcon />
+                            </Badge>
                         </IconButton>
                         <IconButton onClick={logout}>
                             <AccountCircleIcon />
