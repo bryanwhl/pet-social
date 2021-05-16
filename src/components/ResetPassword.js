@@ -43,15 +43,15 @@ function Copyright() {
     },
   }));
 
-const Signup = ({ signup, switchToSignin, success, error }) => {
+const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
     const classes = useStyles();
 
     const [details, setDetails] = useState({username:"", password:"", confirmPassword:""});
-    const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
+    const buttonText = (success) ? "Password reset | Back to Sign In" : "Reset Password"
 
     const handleSubmit = event => {
         event.preventDefault();
-        signup(details);
+        resetPassword(details);
     }
 
     const handleChange = (prop) => (event) => {
@@ -66,7 +66,7 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
             <form className={classes.form} noValidate onSubmit={success ? switchToSignin : handleSubmit}>
               <TextField
                 error={["Username", "Username empty"].includes(error)}
-                helperText={(error === "Username") ? "Username already exists"
+                helperText={(error === "Username") ? "Username does not exist"
                   : (error === "Username empty") ? "Username cannot be empty" : ""}
                 variant="outlined"
                 margin="normal"
@@ -81,24 +81,26 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 disabled={success}
               />
               <TextField
-                error={["Password", "Password empty"].includes(error)}
+                error={["Password", "Password empty", "Password same"].includes(error)}
                 helperText={(error === "Password") ? "Passwords do not match"
-                  : (error === "Password empty") ? "Password cannot be empty" : ""}
+                  : (error === "Password empty") ? "Password cannot be empty"
+                  : (error === "Password same") ? "New password cannot be the same as previous" : ""}
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="New Password"
                 type="password"
                 id="password"
                 onChange={handleChange('password')}
                 disabled={success}
               />
               <TextField
-                error={["Password", "Confirm Password empty"].includes(error)}
+                error={["Password", "Confirm Password empty", "Password same"].includes(error)}
                 helperText={(error === "Password") ? "Passwords do not match"
-                  : (error === "Confirm Password empty") ? "Password cannot be empty" : ""}
+                  : (error === "Confirm Password empty") ? "Password cannot be empty"
+                  : (error === "Password same") ? "New password cannot be the same as previous" : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -122,7 +124,7 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
               <Grid container>
                 <Grid item>
                   <Link href="#" onClick={switchToSignin} variant="body2">
-                    {"Already have an account? Sign In"}
+                    {"Back to sign in page"}
                   </Link>
                 </Grid>
               </Grid>
@@ -135,4 +137,4 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
       );
 }
 
-export default Signup
+export default ResetPassword

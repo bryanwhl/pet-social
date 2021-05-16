@@ -45,7 +45,7 @@ function Copyright() {
     },
   }));
 
-const Login = ({ login, switchToSignup, error }) => {
+const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
     const classes = useStyles();
 
     const [details, setDetails] = useState({username:"", password:"", remember:false});
@@ -66,7 +66,7 @@ const Login = ({ login, switchToSignup, error }) => {
             <img src={logo} alt="Pet Social" className={classes.logo} />
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
-                error={(error === "Username" || error === "Username empty")}
+                error={["Username", "Username empty"].includes(error)}
                 helperText={(error === "Username") ? "Username does not exist"
                   : (error === "Username empty") ? "Username cannot be empty" : ""}
                 variant="outlined"
@@ -81,7 +81,7 @@ const Login = ({ login, switchToSignup, error }) => {
                 onChange={handleChange('username')}
               />
               <TextField
-                error={(error === "Password" || error === "Password empty")}
+                error={["Password", "Password empty"].includes(error)}
                 helperText={(error === "Password") ? "Password is incorrect"
                   : (error === "Password empty") ? "Password cannot be empty" : ""}
                 variant="outlined"
@@ -112,7 +112,7 @@ const Login = ({ login, switchToSignup, error }) => {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="#" onClick={switchToResetPassword} variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>
