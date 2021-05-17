@@ -164,7 +164,6 @@ const Post = () => {
                                 </IconButton>
                             </CardActions>
                         </Card>
-                        
                     </Grid>
                 </Grid>
             </Container>
