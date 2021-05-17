@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import TopBar from './components/TopBar.js'
-import Post from './components/Post.js'
 import Login from './components/Login.js'
 import Signup from './components/Signup.js'
 import ResetPassword from './components/ResetPassword.js'
@@ -8,6 +7,7 @@ import ProfilePage from './components/ProfilePage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import PostsContainer from './components/PostsContainer.js';
 
 const customTheme = createMuiTheme({
   palette: {
@@ -176,7 +176,8 @@ function App() {
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <Post />}
-              {appState === "Profile" && <ProfilePage />}
+              {appState === "Profile" && <ProfilePage />
+              <PostsContainer />}
             </div>
           ) : (
             <div className="loggedOut">
