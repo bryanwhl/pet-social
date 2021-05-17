@@ -38,7 +38,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
             onClick: switchToProfile
         },
         {
-            text: "Account Settings",
+            text: "Settings",
             icon: <SettingsIcon />,
             path: "/",
             onClick: console.log("Go to account settings")
