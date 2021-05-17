@@ -116,6 +116,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                                 <ChatIcon />
                             </Badge>
                         </IconButton>
+                        <Notifications />
                         <IconButton ref={anchorProfileRef} onClick={handleProfilePopper}>
                             <AccountCircleIcon />
                         </IconButton>

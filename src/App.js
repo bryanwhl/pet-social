@@ -175,9 +175,8 @@ function App() {
             <div className="loggedIn">
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
-              {appState === "Home" && <Post />}
-              {appState === "Profile" && <ProfilePage />
-              <PostsContainer />}
+              {appState === "Home" && <PostsContainer />}
+              {appState === "Profile" && <ProfilePage />}
             </div>
           ) : (
             <div className="loggedOut">
