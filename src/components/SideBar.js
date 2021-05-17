@@ -7,6 +7,7 @@ import MapIcon from '@material-ui/icons/Map';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 
 const drawerWidth = 240;
 
@@ -23,27 +24,62 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const handleHomeClick = () => {
-    console.log('Navigate to home')
-}
+const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState }) => {
+    
+    const switchToHome = () => {
+        setAppState("Home")
+    }
 
-const handleNewsClick = () => {
-    console.log('Navigate to news')
-}
+    const handleNewsClick = () => {
+        console.log('Navigate to news')
+    }
+    
+    const handlePlaygroupsClick = () => {
+        console.log('Navigate to playgroups')
+    }
+    
+    const handleAdvertisingClick = () => {
+        console.log('Navigate to advertising')
+    }
+    
+    const handleShopClick = () => {
+        console.log('Navigate to shop')
+    }
+    
+    const handleSettingsClick = () => {
+        console.log('Navigate to settings')
+    }
 
-const handlePlaygroupsClick = () => {
-    console.log('Navigate to playgroups')
-}
-
-const handleShopClick = () => {
-    console.log('Navigate to shop')
-}
-
-const handleSettingsClick = () => {
-    console.log('Navigate to settings')
-}
-
-const SideBar = ({ drawerState, closeDrawer }) => {
+    const sidebarItems = [
+        {
+            text: "Home",
+            icon: <HomeIcon/>,
+            path: "/",
+            selected: (appState === "Home"),
+            onClick: switchToHome
+        },
+        {
+            text: "News Feed",
+            icon: <AnnouncementIcon />,
+            path: "/",
+            selected: (appState === "News"),
+            onClick: handleNewsClick
+        },
+        {
+            text: (accountType === "Personal") ? "Playgroups" : "Advertising",
+            icon: (accountType === "Personal") ? <MapIcon /> : <MonetizationOnIcon />,
+            path: "/",
+            selected: (accountType === "Personal") ? (appState === "News") : (appState === "Advert"),
+            onClick: (accountType === "Personal") ? handlePlaygroupsClick : handleAdvertisingClick
+        },
+        {
+            text: (accountType === "Personal") ? "Shop" : "Your Store",
+            icon: <LocalMallIcon />,
+            path: "/",
+            selected: (appState === "Shop"),
+            onClick: handleShopClick
+        }
+    ]
 
     const classes = useStyles();
 
@@ -66,30 +102,17 @@ const SideBar = ({ drawerState, closeDrawer }) => {
                 <Divider />
                 <div className={classes.drawerContainer}>
                 <List>
-                    <ListItem button key='Home' onClick={handleHomeClick}>
-                        <ListItemIcon>
-                            <HomeIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Home"/>
-                    </ListItem>
-                    <ListItem button key='News Feed' onClick={handleNewsClick}>
-                        <ListItemIcon>
-                            <AnnouncementIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="News Feed"/>
-                    </ListItem>
-                    <ListItem button key='Playgroups' onClick={handlePlaygroupsClick}>
-                        <ListItemIcon>
-                            <MapIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Playgroups"/>
-                    </ListItem>
-                    <ListItem button key='Shop' onClick={handleShopClick}>
-                        <ListItemIcon>
-                            <LocalMallIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Shop"/>
-                    </ListItem>
+                    {sidebarItems.map(item => (
+                        <ListItem
+                            button
+                            key={item.text}
+                            selected={item.selected}
+                            onClick={item.onClick}
+                        >
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text}></ListItemText>
+                        </ListItem>
+                    ))}
                     <Divider/>
                     <ListItem button key ='Settings' onClick={handleSettingsClick}>
                         <ListItemIcon>
