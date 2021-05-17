@@ -13,7 +13,6 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import SideBar from './SideBar';
 import { makeStyles } from '@material-ui/core/styles';
 import logo from "./static/images/pet-social-logo.jpg";
-import { Settings } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -21,7 +20,15 @@ const useStyles = makeStyles((theme) => ({
       },
 }));
 
-const TopBar = ({ logout, user, switchToProfile, switchToHome}) => {
+const TopBar = ({ logout, user, appState, setAppState }) => {
+
+    const switchToProfile = () => {
+        setAppState("Profile")
+      }
+
+    const switchToHome = () => {
+        setAppState("Home")
+    }
 
     const profileItems = [
         {
@@ -31,13 +38,13 @@ const TopBar = ({ logout, user, switchToProfile, switchToHome}) => {
             onClick: switchToProfile
         },
         {
-            text: "Account Settings",
+            text: "Settings",
             icon: <SettingsIcon />,
             path: "/",
             onClick: console.log("Go to account settings")
         },
         {
-            text: "Logout",
+            text: "Sign Out",
             icon: <ExitToAppIcon />,
             path: "/",
             onClick: logout
@@ -100,7 +107,7 @@ const TopBar = ({ logout, user, switchToProfile, switchToHome}) => {
                     </Grid>
                     <Grid container alignItems="center" justify="center">
                         <Grid item>
-                            <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} />
+                            <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
                         </Grid>
                     </Grid>
                     <Grid container spacing={1} alignItems="center" justify="flex-end">
@@ -138,7 +145,7 @@ const TopBar = ({ logout, user, switchToProfile, switchToHome}) => {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <SideBar position="relative" drawerState={drawerState} closeDrawer={closeDrawer} accountType={user.accountType} switchToHome={switchToHome}/>
+            <SideBar position="relative" drawerState={drawerState} closeDrawer={closeDrawer} accountType={user.accountType} appState={appState} setAppState={setAppState} />
         </div>
     )
 }

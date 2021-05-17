@@ -79,6 +79,7 @@ function App() {
     console.log("Logout " + user.username);
     setUser(null);
     setError(null)
+    setAppState("Signin")
   }
 
   const signup = details => {
@@ -163,10 +164,6 @@ function App() {
     setResetSuccess(false)
   }
 
-  const switchToProfile = () => {
-    setAppState("Profile")
-  }
-
   const switchToHome = () => {
     setAppState("Home")
   }
@@ -177,7 +174,7 @@ function App() {
           {(user !== null) ? (
             <div className="loggedIn">
               <CssBaseline />
-              <TopBar logout={logout} user={user} switchToProfile={switchToProfile} switchToHome={switchToHome} />
+              <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <Post />}
               {appState === "Profile" && <ProfilePage />}
             </div>
