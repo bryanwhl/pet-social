@@ -4,6 +4,7 @@ import Post from './components/Post.js'
 import Login from './components/Login.js'
 import Signup from './components/Signup.js'
 import ResetPassword from './components/ResetPassword.js'
+import ProfilePage from './components/ProfilePage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
@@ -37,13 +38,14 @@ const customTheme = createMuiTheme({
 function App() {
   const adminUser={
     username: "admin",
-    password: "admin123"
+    password: "admin123",
+    accountType: "Personal"
   }
 
   const [users, setUsers] = useState([adminUser,]);
-  const [username, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [signedOutState, setSignedOutState] = useState("Signin");
+  const [appState, setAppState] = useState("Signin");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
 
@@ -63,8 +65,9 @@ function App() {
           return
         }
         console.log("Logged in to account");
-        setUser("admin");
+        setUser(users[i]);
         setError(null)
+        switchToHome();
       }
     }
 
@@ -73,7 +76,7 @@ function App() {
   }
 
   const logout = () => {
-    console.log("Logout ", username);
+    console.log("Logout " + user.username);
     setUser(null);
     setError(null)
   }
@@ -89,6 +92,9 @@ function App() {
     } else if (details.confirmPassword === "") {
       setError("Confirm Password empty")
       return;
+    } else if (details.accountType === "") {
+      setError("Account Type empty")
+      return;
     }
     for (var i = 0; i < users.length; i++) {
       if (users[i].username === details.username){
@@ -103,7 +109,8 @@ function App() {
 
     setUsers( [...users, {
       username: details.username,
-      password: details.password
+      password: details.password,
+      accountType: details.accountType
     }])
     setSignupSuccess(true)
     setError(null)
@@ -141,37 +148,46 @@ function App() {
   }
 
   const switchToSignup = () => {
-    setSignedOutState("Signup")
+    setAppState("Signup")
     setError(null)
   }
   const switchToSignin = () => {
-    setSignedOutState("Signin")
+    setAppState("Signin")
     setError(null)
     setSignupSuccess(false)
     setResetSuccess(false)
   }
   const switchToResetPassword = () => {
-    setSignedOutState("Reset")
+    setAppState("Reset Password")
     setError(null)
     setResetSuccess(false)
+  }
+
+  const switchToProfile = () => {
+    setAppState("Profile")
+  }
+
+  const switchToHome = () => {
+    setAppState("Home")
   }
 
   return (
     <div className="App">
       <ThemeProvider theme = {customTheme}>
-          {(username !== null) ? (
+          {(user !== null) ? (
             <div className="loggedIn">
               <CssBaseline />
-              <TopBar logout={logout} />
-              <Post />
+              <TopBar logout={logout} user={user} switchToProfile={switchToProfile} switchToHome={switchToHome} />
+              {appState === "Home" && <Post />}
+              {appState === "Profile" && <ProfilePage />}
             </div>
           ) : (
             <div className="loggedOut">
-              {signedOutState === "Signin"
+              {appState === "Signin"
                 && <Login login={login} switchToSignup={switchToSignup} switchToResetPassword={switchToResetPassword} error={error}/>}
-              {signedOutState === "Signup"
+              {appState === "Signup"
                 && <Signup signup={signup} switchToSignin={switchToSignin} success={signupSuccess} error={error}/>}
-              {signedOutState === "Reset"
+              {appState === "Reset Password"
                 && <ResetPassword resetPassword={resetPassword} switchToSignin={switchToSignin} success={resetSuccess} error={error}/>}
             </div>
           )}
