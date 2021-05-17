@@ -107,7 +107,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                     </Grid>
                     <Grid container alignItems="center" justify="center">
                         <Grid item>
-                            <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} />
+                            <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
                         </Grid>
                     </Grid>
                     <Grid container spacing={1} alignItems="center" justify="flex-end">
