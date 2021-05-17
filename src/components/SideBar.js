@@ -24,8 +24,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SideBar = ({ drawerState, closeDrawer, accountType, switchToHome }) => {
+const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState }) => {
     
+    const switchToHome = () => {
+        setAppState("Home")
+    }
+
     const handleNewsClick = () => {
         console.log('Navigate to news')
     }
@@ -51,24 +55,28 @@ const SideBar = ({ drawerState, closeDrawer, accountType, switchToHome }) => {
             text: "Home",
             icon: <HomeIcon/>,
             path: "/",
+            selected: (appState === "Home"),
             onClick: switchToHome
         },
         {
             text: "News Feed",
             icon: <AnnouncementIcon />,
             path: "/",
+            selected: (appState === "News"),
             onClick: handleNewsClick
         },
         {
             text: (accountType === "Personal") ? "Playgroups" : "Advertising",
             icon: (accountType === "Personal") ? <MapIcon /> : <MonetizationOnIcon />,
             path: "/",
+            selected: (accountType === "Personal") ? (appState === "News") : (appState === "Advert"),
             onClick: (accountType === "Personal") ? handlePlaygroupsClick : handleAdvertisingClick
         },
         {
             text: (accountType === "Personal") ? "Shop" : "Your Store",
             icon: <LocalMallIcon />,
             path: "/",
+            selected: (appState === "Shop"),
             onClick: handleShopClick
         }
     ]
@@ -98,6 +106,7 @@ const SideBar = ({ drawerState, closeDrawer, accountType, switchToHome }) => {
                         <ListItem
                             button
                             key={item.text}
+                            selected={item.selected}
                             onClick={item.onClick}
                         >
                             <ListItemIcon>{item.icon}</ListItemIcon>
