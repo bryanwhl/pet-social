@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   drawerPaper: {
+    paddingTop: 7,
     width: drawerWidth,
   },
   root: {
@@ -28,10 +29,6 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
     
     const switchToHome = () => {
         setAppState("Home")
-    }
-
-    const handleNewsClick = () => {
-        console.log('Navigate to news')
     }
     
     const handlePlaygroupsClick = () => {
@@ -57,13 +54,6 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
             path: "/",
             selected: (appState === "Home"),
             onClick: switchToHome
-        },
-        {
-            text: "News Feed",
-            icon: <AnnouncementIcon />,
-            path: "/",
-            selected: (appState === "News"),
-            onClick: handleNewsClick
         },
         {
             text: (accountType === "Personal") ? "Playgroups" : "Advertising",
