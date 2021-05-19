@@ -8,6 +8,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 import { red } from '@material-ui/core/colors';
 import dogImage from './static/images/eastcoast.jpg';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
@@ -39,6 +40,7 @@ const Post = () => {
     const [open, setOpen] = React.useState(false);
     const anchorOptionsRef = React.useRef(null);
     const [liked, setLiked] = React.useState(false);
+    const [saved, setSaved] = React.useState(false);
 
     const menuItems = [
         {
@@ -72,6 +74,10 @@ const Post = () => {
 
     const handleLikedToggle = () => {
       setLiked((liked) => !liked);
+    };
+
+    const handleSavedToggle = () => {
+      setSaved((saved) => !saved);
     };
   
     function handleListKeyDown(event) {
@@ -165,8 +171,8 @@ const Post = () => {
                                 <IconButton aria-label="share">
                                     <ShareIcon />
                                 </IconButton>
-                                <IconButton className={classes.bookmark} aria-label="bookmark">
-                                    <BookmarkBorderIcon />
+                                <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
+                                    {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                                 </IconButton>
                             </CardActions>
                         </Card>
