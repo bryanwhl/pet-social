@@ -16,6 +16,17 @@ const customTheme = createMuiTheme({
     },
     secondary: {
       main: red[400],
+    },
+    info: {
+      light: "#64b5f6",
+      main: "#2196f3",
+      dark: "#1976d2"
+    },
+    success: {
+      main: "#4caf50",
+    },
+    warning: {
+      main: "#ff9800",
     }
   },
   typography: {

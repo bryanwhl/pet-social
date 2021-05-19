@@ -1,5 +1,6 @@
 import React from 'react'
 import Post from './Post.js'
+import SubmitPost from './SubmitPost.js'
 import { Grid, makeStyles, Container } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -9,11 +10,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PostsContainer = () => {
-  const classes = useStyles();
 
+  const classes = useStyles();
+  
   return (
     <Container className={classes.containerGrid}>
       <Grid container justify="center">
+        <Grid item>
+          <SubmitPost />
+        </Grid>
         <Grid item>
           <Post />
         </Grid>
