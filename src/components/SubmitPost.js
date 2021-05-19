@@ -1,19 +1,8 @@
 import React from 'react';
-import {Grid, Container, Card, IconButton, 
-    CardMedia, CardContent, Typography, 
-    Avatar, CardHeader, Button, makeStyles, 
-    CardActions, TextField, Grow, Paper, ClickAwayListener, MenuList, Popper, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
-import ShareIcon from '@material-ui/icons/Share';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import CommentIcon from '@material-ui/icons/Comment';
-import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
+import {Card, IconButton, CardContent, CardHeader, Button, makeStyles, 
+    CardActions, TextField, Avatar} from '@material-ui/core';
+
 import { red } from '@material-ui/core/colors';
-import dogImage from './static/images/eastcoast.jpg';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import CancelIcon from '@material-ui/icons/Cancel';
-import ReportIcon from '@material-ui/icons/Report';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import VideocamIcon from '@material-ui/icons/Videocam';
 
@@ -44,7 +33,7 @@ const SubmitPost = () => {
 
   return (
     <div>
-      <Card className="pt-6" className={classes.root}>
+      <Card className={classes.root}>
         <CardHeader
           avatar={
             <Avatar aria-label="avatar" className={classes.avatar}>
