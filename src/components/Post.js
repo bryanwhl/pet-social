@@ -14,6 +14,7 @@ import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
 
+
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
         padding: "20px",
@@ -36,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
 const Post = () => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const anchorRef = React.useRef(null);
+    const anchorOptionsRef = React.useRef(null);
+    const [liked, setLiked] = React.useState(false);
 
     const menuItems = [
         {
@@ -56,16 +58,20 @@ const Post = () => {
         }
     ]
   
-    const handleToggle = () => {
+    const handleOptionsToggle = () => {
       setOpen((prevOpen) => !prevOpen);
     };
   
-    const handleClose = (event) => {
-      if (anchorRef.current && anchorRef.current.contains(event.target)) {
+    const handleOptionsClose = (event) => {
+      if (anchorOptionsRef.current && anchorOptionsRef.current.contains(event.target)) {
         return;
       }
   
       setOpen(false);
+    };
+
+    const handleLikedToggle = () => {
+      setLiked((liked) => !liked);
     };
   
     function handleListKeyDown(event) {
@@ -79,7 +85,7 @@ const Post = () => {
     const prevOpen = React.useRef(open);
     React.useEffect(() => {
       if (prevOpen.current === true && open === false) {
-        anchorRef.current.focus();
+        anchorOptionsRef.current.focus();
       }
   
       prevOpen.current = open;
@@ -100,27 +106,27 @@ const Post = () => {
                                 action={
                                     <div>
                                         <IconButton
-                                        ref={anchorRef}
+                                        ref={anchorOptionsRef}
                                         aria-controls={open ? 'menu-list-grow' : undefined}
                                         aria-haspopup="true"
-                                        onClick={handleToggle}
+                                        onClick={handleOptionsToggle}
                                         >
                                             <MoreVertIcon />
                                         </IconButton>
-                                        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                                        <Popper open={open} anchorEl={anchorOptionsRef.current} role={undefined} transition disablePortal>
                                         {({ TransitionProps, placement }) => (
                                             <Grow
                                             {...TransitionProps}
                                             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
                                             >
                                             <Paper>
-                                                <ClickAwayListener onClickAway={handleClose}>
+                                                <ClickAwayListener onClickAway={handleOptionsClose}>
                                                 <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                                                     {menuItems.map(item => (
                                                         <ListItem
                                                             button
                                                             key={item.text}
-                                                            onClick={handleClose}
+                                                            onClick={handleOptionsClose}
                                                         >
                                                             <ListItemIcon>{item.icon}</ListItemIcon>
                                                             <ListItemText primary={item.text}></ListItemText>
@@ -150,8 +156,8 @@ const Post = () => {
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
-                                <IconButton aria-label="like">
-                                    <ThumbUpAltIcon />
+                                <IconButton aria-label="like" onClick={handleLikedToggle}>
+                                    {liked === true ? <ThumbUpAltIcon color="secondary"/> : <ThumbUpAltIcon />} 
                                 </IconButton>
                                 <IconButton aria-label="comment">
                                     <CommentIcon />
