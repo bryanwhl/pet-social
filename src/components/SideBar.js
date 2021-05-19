@@ -2,7 +2,6 @@ import { Drawer, IconButton, Divider } from '@material-ui/core';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import HomeIcon from '@material-ui/icons/Home';
-import AnnouncementIcon from '@material-ui/icons/Announcement';
 import MapIcon from '@material-ui/icons/Map';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import SettingsIcon from '@material-ui/icons/Settings';
