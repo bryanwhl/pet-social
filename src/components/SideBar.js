@@ -2,7 +2,6 @@ import { Drawer, IconButton, Divider } from '@material-ui/core';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import HomeIcon from '@material-ui/icons/Home';
-import AnnouncementIcon from '@material-ui/icons/Announcement';
 import MapIcon from '@material-ui/icons/Map';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -17,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   drawerPaper: {
+    paddingTop: 7,
     width: drawerWidth,
   },
   root: {
@@ -28,10 +28,6 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
     
     const switchToHome = () => {
         setAppState("Home")
-    }
-
-    const handleNewsClick = () => {
-        console.log('Navigate to news')
     }
     
     const handlePlaygroupsClick = () => {
@@ -57,13 +53,6 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
             path: "/",
             selected: (appState === "Home"),
             onClick: switchToHome
-        },
-        {
-            text: "News Feed",
-            icon: <AnnouncementIcon />,
-            path: "/",
-            selected: (appState === "News"),
-            onClick: handleNewsClick
         },
         {
             text: (accountType === "Personal") ? "Playgroups" : "Advertising",
