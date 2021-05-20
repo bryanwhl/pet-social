@@ -42,8 +42,8 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
         console.log('Navigate to shop')
     }
     
-    const handleSettingsClick = () => {
-        console.log('Navigate to settings')
+    const switchToSettings = () => {
+        setAppState("Settings")
     }
 
     const sidebarItems = [
@@ -66,7 +66,15 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
             icon: <LocalMallIcon />,
             path: "/",
             selected: (appState === "Shop"),
+            divider: true,
             onClick: handleShopClick
+        },
+        {
+            text: "Settings",
+            icon: <SettingsIcon />,
+            path: "/",
+            selected: (appState === "Settings"),
+            onClick: switchToSettings
         }
     ]
 
@@ -96,21 +104,14 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
                             button
                             key={item.text}
                             selected={item.selected}
+                            divider={item.divider}
                             onClick={item.onClick}
                         >
                             <ListItemIcon>{item.icon}</ListItemIcon>
                             <ListItemText primary={item.text}></ListItemText>
                         </ListItem>
                     ))}
-                    <Divider/>
-                    <ListItem button key ='Settings' onClick={handleSettingsClick}>
-                        <ListItemIcon>
-                            <SettingsIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary='Settings'/>
-                    </ListItem>
-                </List>
-                
+                </List>           
                 </div>
             </Drawer>
         </div>

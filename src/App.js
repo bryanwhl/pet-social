@@ -4,6 +4,7 @@ import Login from './components/Login.js'
 import Signup from './components/Signup.js'
 import ResetPassword from './components/ResetPassword.js'
 import ProfilePage from './components/ProfilePage.js'
+import SettingsPage from './components/Settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
@@ -187,7 +188,8 @@ function App() {
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer />}
-              {appState === "Profile" && <ProfilePage />}
+              {appState === "Profile" && <ProfilePage user={user} />}
+              {appState === "Settings" && <SettingsPage user={user} />}
             </div>
           ) : (
             <div className="loggedOut">
