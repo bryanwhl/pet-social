@@ -24,10 +24,14 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
 
     const switchToProfile = () => {
         setAppState("Profile")
-      }
+    }
 
     const switchToHome = () => {
         setAppState("Home")
+    }
+
+    const switchToSettings = () => {
+        setAppState("Settings")
     }
 
     const profileItems = [
@@ -41,7 +45,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
             text: "Settings",
             icon: <SettingsIcon />,
             path: "/",
-            onClick: console.log("Go to account settings")
+            onClick: switchToSettings
         },
         {
             text: "Sign Out",
