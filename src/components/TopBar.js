@@ -1,27 +1,71 @@
 import React from 'react';
 import { useState } from 'react';
 import {IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
-    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
+    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import SearchIcon from '@material-ui/icons/Search';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SettingsIcon from '@material-ui/icons/Settings';
 import SideBar from './SideBar';
+import RightNotificationBar from './RightNotificationBar';
+import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
 import logo from "./static/images/pet-social-logo.jpg";
-import Notifications from './Notifications.js'
+import { red } from '@material-ui/core/colors';
 
+// for root AppBar component use
 const useStyles = makeStyles((theme) => ({
+    root: {
+        display: "flex"
+    },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
-      },
+    },
+    avatar: {
+        backgroundColor: red[500],
+    }
 }));
 
+// constructor function for TopBar
+// appState helps navigate the app, and goes one level deeper for SideBar to change the app state
 const TopBar = ({ logout, user, appState, setAppState }) => {
 
+    // const for all components
+    const classes = useStyles();
+
+    // data set up for notifications
+    const notifications = [
+        {
+        text: "Bryan Wong liked your post.",
+        icon: <Avatar aria-label="bryan" className={classes.avatar}>
+                B
+                </Avatar>,
+        path: "/",
+        time: "45 minutes ago"
+        },
+        {
+        text: "Benedict Tan has commented on your post.",
+        icon: <Avatar aria-label="bryan" className={classes.avatar}>
+                B
+                </Avatar>,
+        path: "/",
+        time: "53 minutes ago"
+        },
+        {
+        text: "Brendan Lim has shared your post.",
+        icon: <Avatar aria-label="bryan" className={classes.avatar}>
+                B
+                </Avatar>,
+        path: "/",
+        time: "an hour ago"
+        }
+    ]    
+
+    // state changes from clicking buttons
     const switchToProfile = () => {
         setAppState("Profile")
     }
@@ -34,6 +78,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
         setAppState("Settings")
     }
 
+    // top right profile menu drop bar options
     const profileItems = [
         {
             text: "Profile",
@@ -55,6 +100,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
         }
     ]
 
+    // handles opening profile menu
     const [profileOpen, setProfileOpen] = useState(false);
     const [anchorProfileRef, setAnchorProfileRef] = useState(null);
 
@@ -66,20 +112,19 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
     const handleProfileClose = (event) => {
         if (anchorProfileRef.current && anchorProfileRef.current.contains(event.target)) {
             return;
-          }
+        }
       
-          setProfileOpen(false);
+        setProfileOpen(false);
     }
 
     function handleListKeyDown(event) {
         if (event.key === 'Tab') {
-          event.preventDefault();
-          setProfileOpen(false);
+            event.preventDefault();
+            setProfileOpen(false);
         }
-      }
+    }
 
-    const classes = useStyles();
-
+    // handles opening and closing of left drawer
     const [leftDrawerState, setLeftDrawerState] = useState(false);
 
     const toggleLeftDrawer = () => {
@@ -92,8 +137,27 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
         setLeftDrawerState(false);
     }
 
+    // handles opening and closing of right drawer
+    const [rightDrawerState, setRightDrawerState] = useState('notification');
+
+    const handleRightDrawerNotification = () => {
+        if (rightDrawerState === 'closed' || rightDrawerState === 'chat') {
+            setRightDrawerState('notification');
+        } else {
+            setRightDrawerState('closed');
+        }
+    }
+
+    const handleRightDrawerChat = () => {
+        if (rightDrawerState === 'closed' || rightDrawerState === 'notification') {
+            setRightDrawerState('chat');
+        } else {
+            setRightDrawerState('closed');
+        }
+    }
+
     return (
-        <div>
+        <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
                 <Toolbar>
                     <Grid container spacing={1} alignItems="center" justify="flex-start">
@@ -115,12 +179,16 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                         </Grid>
                     </Grid>
                     <Grid container spacing={1} alignItems="center" justify="flex-end">
-                        <IconButton>
+                        <IconButton onClick={handleRightDrawerChat}>
                             <Badge badgeContent={1} color="secondary">
                                 <ChatIcon />
                             </Badge>
                         </IconButton>
-                        <Notifications />
+                        <IconButton onClick={handleRightDrawerNotification}>
+                            <Badge badgeContent={notifications.length} color="secondary">
+                                <NotificationsIcon />
+                            </Badge>
+                        </IconButton>
                         <IconButton ref={anchorProfileRef} onClick={handleProfilePopper}>
                             <AccountCircleIcon />
                         </IconButton>
@@ -150,6 +218,8 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                 </Toolbar>
             </AppBar>
             <SideBar position="relative" drawerState={leftDrawerState} closeDrawer={closeLeftDrawer} accountType={user.accountType} appState={appState} setAppState={setAppState} />
+            <RightNotificationBar drawerState={rightDrawerState === 'notification'} />
+            <RightChatBar drawerState={rightDrawerState === 'chat'} />
         </div>
     )
 }

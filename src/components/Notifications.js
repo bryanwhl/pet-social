@@ -14,7 +14,7 @@ const Notifications = () => {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
-  const menuItems = [
+  const notifications = [
     {
       text: "Bryan Wong liked your post.",
       icon: <Avatar aria-label="bryan" className={classes.avatar}>
@@ -79,7 +79,7 @@ const Notifications = () => {
       aria-haspopup="true"
       onClick={handleToggle}
       >
-        <Badge badgeContent={menuItems.length} color="secondary">
+        <Badge badgeContent={notifications.length} color="secondary">
           <NotificationsIcon />
         </Badge>
       </IconButton>
@@ -92,7 +92,7 @@ const Notifications = () => {
           <Paper>
               <ClickAwayListener onClickAway={handleClose}>
               <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                  {menuItems.map(item => (
+                  {notifications.map(item => (
                       <ListItem
                           button
                           key={item.text}
