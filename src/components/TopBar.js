@@ -173,7 +173,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                             </IconButton>
                         </Grid>
                         <Grid item alignItems="center">
-                            <TextField id="input-with-icon-grid" placeholder="Search" />
+                            <TextField id="input-with-icon-grid" placeholder="Search"/>
                         </Grid>
                     </Grid>
                     <Grid container alignItems="center" justify="center">
