@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     },
     avatar: {
         backgroundColor: red[500],
+    },
+    rightPopper: {
+        zIndex: theme.zIndex.drawer + 2,
     }
 }));
 
@@ -192,7 +195,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                         <IconButton ref={anchorProfileRef} onClick={handleProfilePopper}>
                             <AccountCircleIcon />
                         </IconButton>
-                        <Popper open={profileOpen} anchorEl={anchorProfileRef} placement={'bottom-end'} transition>
+                        <Popper className={classes.rightPopper} open={profileOpen} anchorEl={anchorProfileRef} placement={'bottom-end'} transition>
                             {({ TransitionProps }) => (
                             <Grow {...TransitionProps}>
                                 <Paper>
