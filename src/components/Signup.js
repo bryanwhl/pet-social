@@ -47,7 +47,7 @@ function Copyright() {
 const Signup = ({ signup, switchToSignin, success, error }) => {
     const classes = useStyles();
 
-    const [details, setDetails] = useState({username:"", password:"", confirmPassword:"", accountType:""});
+    const [details, setDetails] = useState({givenName:"", familyName:"", username:"", password:"", confirmPassword:"", accountType:""});
     const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
 
     const handleSubmit = event => {
@@ -67,6 +67,35 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
           <div className={classes.paper}>
             <img src={logo} alt="Pet Social" className={classes.logo} />
             <form className={classes.form} noValidate onSubmit={success ? switchToSignin : handleSubmit}>
+              <TextField
+                error={["Given name empty"].includes(error)}
+                helperText={(error === "Given name empty") ? "Given name cannot be empty" : ""}
+                variant="outlined"
+                margin="normal"
+                required
+                id="givenName"
+                label="Given Name"
+                name="givenName"
+                autoFocus
+                style={{width:'50%'}}
+                onChange={handleChange('givenName')}
+                disabled={success}
+              />
+              <TextField
+                error={["Family name empty"].includes(error)}
+                helperText={(error === "Family name empty") ? "Family name cannot be empty" : ""}
+                variant="outlined"
+                margin="normal"
+                required
+                id="username"
+                label="Family Name"
+                name="familyName"
+                autoFocus
+                style={{width:'50%'}}
+                align='right'
+                onChange={handleChange('familyName')}
+                disabled={success}
+              />
               <TextField
                 error={["Username", "Username empty"].includes(error)}
                 helperText={(error === "Username") ? "Username already exists"
