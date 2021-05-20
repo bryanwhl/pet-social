@@ -51,7 +51,11 @@ function App() {
   const adminUser={
     username: "admin",
     password: "admin123",
-    accountType: "Personal"
+    accountType: "Personal",
+    givenName: "Ad",
+    familyName: "Min",
+    displayName: "Ad Min",
+    nameOrder: false
   }
 
   const [users, setUsers] = useState([adminUser,]);
@@ -96,7 +100,13 @@ function App() {
 
   const signup = details => {
     console.log("Signup ", details)
-    if (details.username === "") {
+    if (details.givenName === "") {
+      setError("Given name empty")
+      return;
+    } else if (details.familyName === "") {
+      setError("Family name empty")
+      return;
+    } else if (details.username === "") {
       setError("Username empty")
       return;
     } else if (details.password === "") {
@@ -121,9 +131,13 @@ function App() {
     } 
 
     setUsers( [...users, {
+      givenName: details.givenName,
+      familyName: details.familyName,
       username: details.username,
       password: details.password,
-      accountType: details.accountType
+      accountType: details.accountType,
+      displayName: details.givenName + " " + details.familyName,
+      nameOrder: false
     }])
     setSignupSuccess(true)
     setError(null)

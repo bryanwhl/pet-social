@@ -13,6 +13,7 @@ import SecurityIcon from '@material-ui/icons/Security';
 import AccountSettings from './AccountSettings.js';
 import NotificationsSettings from './NotificationsSettings.js';
 import PrivacySettings from './PrivacySettings.js';
+import { red } from '@material-ui/core/colors';
 
 const drawerWidth = 240;
 
@@ -38,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    avatar: {
+      backgroundColor: red[500],
+    }
   }));
 
 const SettingsPage = ({user, deleteAccount}) => {
