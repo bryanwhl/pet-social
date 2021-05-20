@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,14 +6,26 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
 
 const AccountSettings = ({ user, deleteAccount }) => {
 
+    const [confirmPassword, setConfirmPassword] = useState(null);
+    const [error, setError] = useState(null);
+
     const [open, setOpen] = React.useState(false);
 
     const handleConfirm = () => {
+        console.log(confirmPassword)
+        if (confirmPassword === null || confirmPassword === "") {
+            setError("Empty");
+            return
+        } else if (confirmPassword !== user.password) {
+            setError("Wrong Password");
+            return
+        }
         handleClose();
         console.log("Confirm delete")
         deleteAccount(user.username);
@@ -29,7 +41,12 @@ const AccountSettings = ({ user, deleteAccount }) => {
             return
         }
         setOpen(true);
+        setError(null);
     }
+
+    const handleChange = () => (event) => {
+        setConfirmPassword(event.target.value);
+    };
 
     return (
         <div>
@@ -55,6 +72,17 @@ const AccountSettings = ({ user, deleteAccount }) => {
                 <DialogContentText id="alert-dialog-description">
                     You would not be able to restore your account. All data will be lost.
                 </DialogContentText>
+                <TextField
+                    error={["Empty", "Wrong Password"].includes(error)}
+                    helperText={(error === "Empty") ? "Password cannot be empty"
+                  : (error === "Wrong Password") ? "Incorrect Password" : ""}
+                    autoFocus
+                    margin='dense'
+                    label="Enter your password to confirm"
+                    type="password"
+                    fullWidth
+                    onChange={handleChange()}
+                />
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose} color="primary">
