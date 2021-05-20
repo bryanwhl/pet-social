@@ -160,6 +160,16 @@ function App() {
     setError("Username")
   }
 
+  const deleteAccount = username => {
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].username === username){
+        logout()
+        users.splice(i, 1)
+        console.log(user, " removed")
+      }
+    }
+  }
+
   const switchToSignup = () => {
     setAppState("Signup")
     setError(null)
@@ -189,7 +199,7 @@ function App() {
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer />}
               {appState === "Profile" && <ProfilePage user={user} />}
-              {appState === "Settings" && <SettingsPage user={user} />}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount}/>}
             </div>
           ) : (
             <div className="loggedOut">

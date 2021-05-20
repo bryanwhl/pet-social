@@ -19,6 +19,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
+      marginLeft: 150,
     },
     drawer: {
       width: drawerWidth,
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const SettingsPage = (user) => {
+const SettingsPage = ({user, deleteAccount}) => {
     
     const classes = useStyles();
     const [settingsState, setSettingsState] = useState("Account");
@@ -113,7 +114,7 @@ const SettingsPage = (user) => {
         </Drawer>
         <main className={classes.content}>
           <Toolbar />
-          {settingsState === "Account" && <AccountSettings user={user} classes={classes}/>}
+          {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount}/>}
           {settingsState === "Notifications" && <NotificationsSettings />}
           {settingsState === "Privacy" && <PrivacySettings />}
         </main>

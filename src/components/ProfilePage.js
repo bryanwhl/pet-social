@@ -1,7 +1,7 @@
 import React from 'react'
 import Toolbar from '@material-ui/core/Toolbar';
 
-const ProfilePage = ( user ) => {
+const ProfilePage = ({ user }) => {
     return (
         <main>
         <Toolbar />
