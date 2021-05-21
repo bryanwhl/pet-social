@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
-import {IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
-    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar} from '@material-ui/core';
+import { IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
+    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, Typography, Divider } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -23,13 +23,14 @@ const useStyles = makeStyles((theme) => ({
         display: "flex"
     },
     appBar: {
-        zIndex: theme.zIndex.drawer + 1,
+        zIndex: theme.zIndex.drawer + 2,
     },
     avatar: {
         backgroundColor: red[500],
     },
     rightPopper: {
-        zIndex: theme.zIndex.drawer + 2,
+        zIndex: theme.zIndex.drawer + 1,
+        width: '200px',
     }
 }));
 
@@ -79,6 +80,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
 
     const switchToSettings = () => {
         setAppState("Settings")
+        closeLeftDrawer()
     }
 
     // top right profile menu drop bar options
@@ -201,6 +203,15 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                                 <Paper>
                                     <ClickAwayListener onClickAway={handleProfileClose}>
                                         <MenuList autoFocusItem={profileOpen} id="profile-list-grow" onKeyDown={handleListKeyDown}>
+                                            <ListItem>
+                                                <ListItemIcon>
+                                                    <Avatar>
+                                                        {user.givenName[0]}
+                                                    </Avatar>
+                                                </ListItemIcon>
+                                                <Typography>{user.displayName}</Typography>
+                                            </ListItem>
+                                            <Divider />
                                             {profileItems.map(item => (
                                                 <ListItem
                                                     button

@@ -30,20 +30,21 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
         setAppState("Home")
     }
     
-    const handlePlaygroupsClick = () => {
-        console.log('Navigate to playgroups')
+    const switchToPlaygroups = () => {
+        setAppState("Playgroups")
     }
     
     const handleAdvertisingClick = () => {
         console.log('Navigate to advertising')
     }
     
-    const handleShopClick = () => {
-        console.log('Navigate to shop')
+    const switchToShop = () => {
+        setAppState("Shop")
     }
     
     const switchToSettings = () => {
         setAppState("Settings")
+        closeDrawer()
     }
 
     const sidebarItems = [
@@ -59,7 +60,7 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
             icon: (accountType === "Personal") ? <MapIcon /> : <MonetizationOnIcon />,
             path: "/",
             selected: (accountType === "Personal") ? (appState === "News") : (appState === "Advert"),
-            onClick: (accountType === "Personal") ? handlePlaygroupsClick : handleAdvertisingClick
+            onClick: (accountType === "Personal") ? switchToPlaygroups : handleAdvertisingClick
         },
         {
             text: (accountType === "Personal") ? "Shop" : "Your Store",
@@ -67,7 +68,7 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
             path: "/",
             selected: (appState === "Shop"),
             divider: true,
-            onClick: handleShopClick
+            onClick: switchToShop
         },
         {
             text: "Settings",
