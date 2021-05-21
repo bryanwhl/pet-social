@@ -10,7 +10,7 @@ import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import { red, blue } from '@material-ui/core/colors';
-import dogImage from './static/images/eastcoast.jpg';
+import dogImage from '../static/images/eastcoast.jpg';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';

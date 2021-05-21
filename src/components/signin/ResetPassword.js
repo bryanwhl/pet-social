@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import logo from "./static/images/pet-social-logo.jpg";
+import logo from "../static/images/pet-social-logo.jpg";
 
 function Copyright() {
     return (
@@ -25,7 +23,7 @@ function Copyright() {
 
   const useStyles = makeStyles((theme) => ({
     paper: {
-      marginTop: theme.spacing(20),
+      marginTop: theme.spacing(17),
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -45,14 +43,15 @@ function Copyright() {
     },
   }));
 
-const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
+const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
     const classes = useStyles();
 
-    const [details, setDetails] = useState({username:"", password:"", remember:false});
+    const [details, setDetails] = useState({username:"", password:"", confirmPassword:""});
+    const buttonText = (success) ? "Password reset | Back to Sign In" : "Reset Password"
 
     const handleSubmit = event => {
         event.preventDefault();
-        login(details);
+        resetPassword(details);
     }
 
     const handleChange = (prop) => (event) => {
@@ -64,7 +63,7 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
           <CssBaseline />
           <div className={classes.paper}>
             <img src={logo} alt="Pet Social" className={classes.logo} />
-            <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <form className={classes.form} noValidate onSubmit={success ? switchToSignin : handleSubmit}>
               <TextField
                 error={["Username", "Username empty"].includes(error)}
                 helperText={(error === "Username") ? "Username does not exist"
@@ -79,27 +78,39 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
                 autoComplete="username"
                 autoFocus
                 onChange={handleChange('username')}
+                disabled={success}
               />
               <TextField
-                error={["Password", "Password empty"].includes(error)}
-                helperText={(error === "Password") ? "Password is incorrect"
-                  : (error === "Password empty") ? "Password cannot be empty" : ""}
+                error={["Password", "Password empty", "Password same"].includes(error)}
+                helperText={(error === "Password") ? "Passwords do not match"
+                  : (error === "Password empty") ? "Password cannot be empty"
+                  : (error === "Password same") ? "New password cannot be the same as previous" : ""}
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="New Password"
                 type="password"
                 id="password"
-                autoComplete="current-password"
                 onChange={handleChange('password')}
+                disabled={success}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" name="remember" color="primary" />}
-                label="Remember me" 
-                defaultValue={false}
-                onClick={handleChange('remember')}
+              <TextField
+                error={["Password", "Confirm Password empty", "Password same"].includes(error)}
+                helperText={(error === "Password") ? "Passwords do not match"
+                  : (error === "Confirm Password empty") ? "Password cannot be empty"
+                  : (error === "Password same") ? "New password cannot be the same as previous" : ""}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Re-enter Password"
+                type="password"
+                id="confirmPassword"
+                onChange={handleChange('confirmPassword')}
+                disabled={success}
               />
               <Button
                 type="submit"
@@ -108,17 +119,12 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
                 color="primary"
                 className={classes.submit}
               >
-                Sign In
+                {buttonText}
               </Button>
               <Grid container>
-                <Grid item xs>
-                  <Link href="#" onClick={switchToResetPassword} variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
                 <Grid item>
-                  <Link href="#" onClick={switchToSignup} variant="body2">
-                    {"Don't have an account? Sign Up"}
+                  <Link href="#" onClick={switchToSignin} variant="body2">
+                    {"Back to sign in page"}
                   </Link>
                 </Grid>
               </Grid>
@@ -131,4 +137,4 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
       );
 }
 
-export default Login
+export default ResetPassword

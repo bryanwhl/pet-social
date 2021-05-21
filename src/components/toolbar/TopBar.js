@@ -14,7 +14,7 @@ import SideBar from './SideBar';
 import RightNotificationBar from './RightNotificationBar';
 import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
-import logo from "./static/images/pet-social-logo.jpg";
+import logo from "../static/images/pet-social-logo.jpg";
 import { red } from '@material-ui/core/colors';
 
 // for root AppBar component use

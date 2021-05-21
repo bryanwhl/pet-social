@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import TopBar from './components/TopBar.js'
-import Login from './components/Login.js'
-import Signup from './components/Signup.js'
-import ResetPassword from './components/ResetPassword.js'
-import ProfilePage from './components/ProfilePage.js'
-import Playgroups from './components/Playgroups.js'
-import Shop from './components/Shop.js'
-import SettingsPage from './components/Settings/SettingsPage.js'
+import TopBar from './components/toolbar/TopBar.js'
+import Login from './components/signin/Login.js'
+import Signup from './components/signin/Signup.js'
+import ResetPassword from './components/signin/ResetPassword.js'
+import ProfilePage from './components/pages/ProfilePage.js'
+import Playgroups from './components/pages/Playgroups.js'
+import Shop from './components/pages/Shop.js'
+import SettingsPage from './components/settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import PostsContainer from './components/PostsContainer.js';
+import PostsContainer from './components/posts/PostsContainer.js';
 
 const customTheme = createMuiTheme({
   palette: {
