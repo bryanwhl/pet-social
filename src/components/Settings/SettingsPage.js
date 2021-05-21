@@ -15,12 +15,12 @@ import NotificationsSettings from './NotificationsSettings.js';
 import PrivacySettings from './PrivacySettings.js';
 import { red } from '@material-ui/core/colors';
 
-const drawerWidth = 240;
+const drawerWidth = 320;
 
 const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
-      marginLeft: 150,
+      marginLeft: 70,
     },
     drawer: {
       width: drawerWidth,

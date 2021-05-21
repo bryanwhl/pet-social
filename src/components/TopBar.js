@@ -23,13 +23,13 @@ const useStyles = makeStyles((theme) => ({
         display: "flex"
     },
     appBar: {
-        zIndex: theme.zIndex.drawer + 1,
+        zIndex: theme.zIndex.drawer + 2,
     },
     avatar: {
         backgroundColor: red[500],
     },
     rightPopper: {
-        zIndex: theme.zIndex.drawer + 2,
+        zIndex: theme.zIndex.drawer + 1,
     }
 }));
 
@@ -79,6 +79,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
 
     const switchToSettings = () => {
         setAppState("Settings")
+        closeLeftDrawer()
     }
 
     // top right profile menu drop bar options

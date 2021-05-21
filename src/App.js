@@ -4,6 +4,8 @@ import Login from './components/Login.js'
 import Signup from './components/Signup.js'
 import ResetPassword from './components/ResetPassword.js'
 import ProfilePage from './components/ProfilePage.js'
+import Playgroups from './components/Playgroups.js'
+import Shop from './components/Shop.js'
 import SettingsPage from './components/Settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -214,6 +216,8 @@ function App() {
               {appState === "Home" && <PostsContainer />}
               {appState === "Profile" && <ProfilePage user={user} />}
               {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount}/>}
+              {appState === "Playgroups" && <Playgroups />}
+              {appState === "Shop" && <Shop />}
             </div>
           ) : (
             <div className="loggedOut">
