@@ -6,7 +6,7 @@ import ResetPassword from './components/signin/ResetPassword.js'
 import ProfilePage from './components/pages/ProfilePage.js'
 import Playgroups from './components/pages/Playgroups.js'
 import Shop from './components/pages/Shop.js'
-import SettingsPage from './components/Settings/SettingsPage.js'
+import SettingsPage from './components/settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
@@ -52,6 +52,7 @@ const customTheme = createMuiTheme({
 })
 
 function App() {
+  // All user data can be centralized here
   const adminUser={
     username: "admin",
     password: "admin123",
