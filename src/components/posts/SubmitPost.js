@@ -5,6 +5,7 @@ import {Card, IconButton, CardContent, CardHeader, Button, makeStyles,
 import { red } from '@material-ui/core/colors';
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import VideocamIcon from '@material-ui/icons/Videocam';
+import doctorstrange from '../static/images/doctorstrange.jpg';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,9 +37,7 @@ const SubmitPost = () => {
       <Card className={classes.root}>
         <CardHeader
           avatar={
-            <Avatar aria-label="avatar" className={classes.avatar}>
-              B
-            </Avatar>
+            <Avatar alt="Bryan Wong" src={doctorstrange} />
           }
           title="Bryan Wong"
         />

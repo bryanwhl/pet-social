@@ -1,7 +1,7 @@
 import React from 'react';
 import {Grid, Container, Card, IconButton, 
     CardMedia, CardContent, Typography, 
-    Avatar, CardHeader, makeStyles, 
+    CardHeader, makeStyles,
     CardActions, Grow, Paper, ClickAwayListener, MenuList, Popper, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -10,7 +10,6 @@ import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import { red, blue } from '@material-ui/core/colors';
-import dogImage from '../static/images/eastcoast.jpg';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
@@ -21,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
         padding: "20px",
     },
     root: {
-        maxWidth: 700,
+        width: 700,
     },
     media: {
         height: 0,
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     bookmark: {
         marginLeft: 'auto',
     },
-    avatar: {
+    avatarRed: {
         backgroundColor: red[500],
     },
     avatarBlue: {
@@ -38,41 +37,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Post = () => {
+const Post = ({post}) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorOptionsRef = React.useRef(null);
     const [liked, setLiked] = React.useState(false);
     const [saved, setSaved] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
-
-    const comments = [
-        {
-            text: "Bryan Tan",
-            icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                    B
-                </Avatar>,
-            path: "/",
-            comment: "OMG your dogs are so cute!!"
-        },
-        {
-            text: "Gregg Tang",
-            icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                    G
-                </Avatar>,
-            path: "/",
-            comment: "Was the sea breeze strong at East Coast Park? I want to bring my Rabbit there too!"
-        },
-        {
-            text: "Zanden Lim",
-            icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                    Z
-                </Avatar>,
-            path: "/",
-            comment: "I was there an hour ago too! Was a pity we missed each other."
-        }
-    ]
-    
 
     const menuItems = [
         {
@@ -140,11 +111,7 @@ const Post = () => {
                     <Grid item>
                         <Card className={classes.root}>
                             <CardHeader
-                                avatar={
-                                <Avatar aria-label="bryan" className={classes.avatar}>
-                                    B
-                                </Avatar>
-                                }
+                                avatar={post.avatar}
                                 action={
                                     <div>
                                         <IconButton
@@ -182,19 +149,18 @@ const Post = () => {
                                         </Popper>
                                     </div>
                                 }
-                                title="Bryan Wong"
-                                subheader="May 8, 2021"
+                                title={post.name}
+                                subheader={post.date}
                             />
                             <CardMedia
                                 className={classes.media}
-                                image= {dogImage}
+                                image= {post.image}
                                 title="dogs"
                             />
                             
                             <CardContent>
                                 <Typography variant="body2" component="p">
-                                Took my dogs out to East Coast Park for a walk today.
-                                They seem to enjoy the sea breeze a lot!
+                                    {post.content}
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
@@ -215,7 +181,7 @@ const Post = () => {
                                 <CardContent>
                                     <MenuList id="menu-list-grow">
                                     <div className={classes.drawerContainer}>
-                                        {comments.map(item => (
+                                        {post.comments.map(item => (
                                             <ListItem
                                                 button
                                                 divider="true"
@@ -234,6 +200,10 @@ const Post = () => {
             </Container>
         </div>
     )
+}
+
+Post.defaultProps = {
+    comments:[]
 }
 
 export default Post
