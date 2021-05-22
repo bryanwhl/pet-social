@@ -3,7 +3,7 @@ import Post from './Post.js'
 import SubmitPost from './SubmitPost.js'
 import { Grid, makeStyles, Container, Avatar } from '@material-ui/core';
 import dogImage from '../static/images/eastcoast.jpg';
-import { red } from '@material-ui/core/colors';
+import { red, blue } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   containerGrid: {
@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
   avatarRed: {
       backgroundColor: red[500],
   },
+  avatarBlue: {
+    backgroundColor: blue[500],
+},
 }));
 
 const PostsContainer = () => {
