@@ -25,40 +25,6 @@ const PostsContainer = () => {
   
   const posts = [
     {
-      name: "Bryan Wong",
-      avatar: <Avatar alt="Bryan Wong" src={doctorstrange} />,
-      // path to the OP's profile
-      path: "/",
-      content: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
-      image: eastcoast,
-      date: "21 May 2021",
-      comments: [
-      {
-          text: "Bryan Tan",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  B
-              </Avatar>,
-          path: "/",
-          comment: "OMG your dogs are so cute!!"
-      },
-      {
-          text: "Gregg Tang",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  G
-              </Avatar>,
-          path: "/",
-          comment: "Was the sea breeze strong at East Coast Park? I want to bring my Rabbit there too!"
-      },
-      {
-          text: "Zanden Lim",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  Z
-              </Avatar>,
-          path: "/",
-          comment: "I was there an hour ago too! Was a pity we missed each other."
-      }]
-    },
-    {
       name: "Bryan Leong",
       avatar: <Avatar aria-label="bryan" className={classes.avatarRed}>
               C
@@ -67,6 +33,24 @@ const PostsContainer = () => {
       path: "/",
       content: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment!",
       image: jaryl,
+      date: "21 May 2021",
+      comments: [
+      {
+          text: "Axel",
+          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
+                  A
+              </Avatar>,
+          path: "/",
+          comment: "Let's go together some day with my Corgi!"
+      }]
+    },
+    {
+      name: "Bryan Wong",
+      avatar: <Avatar alt="Bryan Wong" src={doctorstrange} />,
+      // path to the OP's profile
+      path: "/",
+      content: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
+      image: eastcoast,
       date: "21 May 2021",
       comments: [
       {
