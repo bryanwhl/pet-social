@@ -19,14 +19,14 @@ const useStyles = makeStyles((theme) => ({
 },
 }));
 
-const PostsContainer = () => {
+const PostsContainer = ({user}) => {
 
   const classes = useStyles();
   
   const posts = [
     {
       name: "Bryan Leong",
-      avatar: <Avatar aria-label="bryan" className={classes.avatarRed}>
+      avatar: <Avatar className={classes.avatarRed}>
               C
           </Avatar>,
       // path to the OP's profile
@@ -83,7 +83,7 @@ const PostsContainer = () => {
     <Container className={classes.containerGrid}>
       <Grid container justify="center">
         <Grid item>
-          <SubmitPost />
+          <SubmitPost user={user}/>
         </Grid>
         {posts.map(item => (
           <Grid item>

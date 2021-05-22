@@ -1,8 +1,10 @@
 import React from 'react';
 import {Grid, Container, Card, IconButton, 
     CardMedia, CardContent, Typography, 
-    CardHeader, makeStyles,
-    CardActions, Grow, Paper, ClickAwayListener, MenuList, Popper, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
+    CardHeader, makeStyles, CardActions, 
+    Grow, Paper, ClickAwayListener, 
+    MenuList, Popper, ListItem, 
+    ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';

@@ -10,7 +10,9 @@ import SettingsPage from './components/Settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
+import profilePic from './components/static/images/cute-dog.jpg';
 
 const customTheme = createMuiTheme({
   palette: {
@@ -57,7 +59,8 @@ function App() {
     givenName: "Ad",
     familyName: "Min",
     displayName: "Ad Min",
-    nameOrder: false
+    nameOrder: false,
+    avatar: <Avatar src={profilePic} />
   }
 
   const [users, setUsers] = useState([adminUser,]);
@@ -213,7 +216,7 @@ function App() {
             <div className="loggedIn">
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
-              {appState === "Home" && <PostsContainer />}
+              {appState === "Home" && <PostsContainer user={adminUser}/>}
               {appState === "Profile" && <ProfilePage user={user} />}
               {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount}/>}
               {appState === "Playgroups" && <Playgroups />}
