@@ -2,7 +2,9 @@ import React from 'react'
 import Post from './Post.js'
 import SubmitPost from './SubmitPost.js'
 import { Grid, makeStyles, Container, Avatar } from '@material-ui/core';
-import dogImage from '../static/images/eastcoast.jpg';
+import eastcoast from '../static/images/eastcoast.jpg';
+import jaryl from '../static/images/jaryl.jpg';
+import doctorstrange from '../static/images/doctorstrange.jpg';
 import { red, blue } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,13 +26,11 @@ const PostsContainer = () => {
   const posts = [
     {
       name: "Bryan Wong",
-      avatar: <Avatar aria-label="bryan" className={classes.avatarRed}>
-              B
-          </Avatar>,
+      avatar: <Avatar alt="Bryan Wong" src={doctorstrange} />,
       // path to the OP's profile
       path: "/",
       content: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
-      image: dogImage,
+      image: eastcoast,
       date: "21 May 2021",
       comments: [
       {
@@ -65,8 +65,8 @@ const PostsContainer = () => {
           </Avatar>,
       // path to the OP's profile
       path: "/",
-      content: "I hate dogs",
-      image: dogImage,
+      content: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment!",
+      image: jaryl,
       date: "21 May 2021",
       comments: [
       {
