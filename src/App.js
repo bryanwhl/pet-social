@@ -6,11 +6,13 @@ import ResetPassword from './components/signin/ResetPassword.js'
 import ProfilePage from './components/pages/ProfilePage.js'
 import Playgroups from './components/pages/Playgroups.js'
 import Shop from './components/pages/Shop.js'
-import SettingsPage from './components/Settings/SettingsPage.js'
+import SettingsPage from './components/settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
+import profilePic from './components/static/images/cute-dog.jpg';
 
 const customTheme = createMuiTheme({
   palette: {
@@ -50,6 +52,7 @@ const customTheme = createMuiTheme({
 })
 
 function App() {
+  // All user data can be centralized here
   const adminUser={
     username: "admin",
     password: "admin123",
@@ -57,7 +60,8 @@ function App() {
     givenName: "Ad",
     familyName: "Min",
     displayName: "Ad Min",
-    nameOrder: false
+    nameOrder: false,
+    avatar: <Avatar src={profilePic} />
   }
 
   const [users, setUsers] = useState([adminUser,]);
@@ -213,7 +217,7 @@ function App() {
             <div className="loggedIn">
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
-              {appState === "Home" && <PostsContainer />}
+              {appState === "Home" && <PostsContainer user={adminUser}/>}
               {appState === "Profile" && <ProfilePage user={user} />}
               {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount}/>}
               {appState === "Playgroups" && <Playgroups />}
