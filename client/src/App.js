@@ -98,7 +98,7 @@ function App() {
   }
 
   const logout = () => {
-    console.log("Logout " + user.username);
+    console.log("Logout ", user.username);
     setUser(null);
     setError(null)
     setAppState("Signin")
@@ -134,9 +134,9 @@ function App() {
     if (details.password !== details.confirmPassword) {
       setError("Password")
       return;
-    } 
+    }
 
-    setUsers( [...users, {
+    const newUser = {
       givenName: details.givenName,
       familyName: details.familyName,
       username: details.username,
@@ -144,7 +144,9 @@ function App() {
       accountType: details.accountType,
       displayName: details.givenName + " " + details.familyName,
       nameOrder: false
-    }])
+    }
+
+    setUsers(users.concat(newUser)) 
     setSignupSuccess(true)
     setError(null)
   }
@@ -171,9 +173,15 @@ function App() {
           setError("Password same")
           return;
         }
-        console.log("Password reset successfully")
-        users[i].password = details.password
+        const updatedUser = {
+          ...users[i],
+          password: details.password
+        }
+        const updatedUsers = [users.slice(0, i), updatedUser, users.slice(i + 1)]
+        setUsers(updatedUsers)
         setResetSuccess(true)
+        setError(null)
+        console.log("Password reset successfully")
         return;
       }
     }

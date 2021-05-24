@@ -55,8 +55,8 @@ const AccountSettings = ({ user, deleteAccount }) => {
     };
 
     const handleNameOrder = (event) => {
-        user.nameOrder = event.target.checked;
         setNameOrderState(event.target.checked);
+        user.nameOrder = event.target.checked;
         user.displayName = event.target.checked ? (user.familyName + " " + user.givenName)
             : (user.givenName + " " + user.familyName)
       };
