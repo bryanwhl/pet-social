@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 
 
-const AccountSettings = ({ user, deleteAccount }) => {
+const AccountSettings = ({ user, deleteAccount, updateUser }) => {
 
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [error, setError] = useState(null);
@@ -56,9 +56,13 @@ const AccountSettings = ({ user, deleteAccount }) => {
 
     const handleNameOrder = (event) => {
         setNameOrderState(event.target.checked);
-        user.nameOrder = event.target.checked;
-        user.displayName = event.target.checked ? (user.familyName + " " + user.givenName)
+        const updatedUser = {
+            ...user,
+            nameOrder: event.target.checked,
+            displayName: event.target.checked ? (user.familyName + " " + user.givenName)
             : (user.givenName + " " + user.familyName)
+        }
+        updateUser(user, updatedUser)
       };
 
     return (

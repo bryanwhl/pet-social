@@ -71,6 +71,13 @@ function App() {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
 
+  const updateUser = (userToUpdate, updatedUser) => {
+    const userIndex = users.indexOf(userToUpdate)
+    const updatedUsers = [users.slice(0, userIndex), updatedUser, users.slice(userIndex + 1)]
+    setUsers(updatedUsers)
+    setUser(updatedUser)
+  }
+
   const login = details => {
     console.log("Login ", details);
     if (details.username === "") {
@@ -227,7 +234,7 @@ function App() {
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer user={adminUser}/>}
               {appState === "Profile" && <ProfilePage user={user} />}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount}/>}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} updateUser={updateUser}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>
