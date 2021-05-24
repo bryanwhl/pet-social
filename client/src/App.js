@@ -71,6 +71,13 @@ function App() {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
 
+  const updateUser = (userToUpdate, updatedUser) => {
+    const userIndex = users.indexOf(userToUpdate)
+    const updatedUsers = [users.slice(0, userIndex), updatedUser, users.slice(userIndex + 1)]
+    setUsers(updatedUsers)
+    setUser(updatedUser)
+  }
+
   const login = details => {
     console.log("Login ", details);
     if (details.username === "") {
@@ -98,7 +105,7 @@ function App() {
   }
 
   const logout = () => {
-    console.log("Logout " + user.username);
+    console.log("Logout ", user.username);
     setUser(null);
     setError(null)
     setAppState("Signin")
@@ -134,9 +141,9 @@ function App() {
     if (details.password !== details.confirmPassword) {
       setError("Password")
       return;
-    } 
+    }
 
-    setUsers( [...users, {
+    const newUser = {
       givenName: details.givenName,
       familyName: details.familyName,
       username: details.username,
@@ -144,7 +151,9 @@ function App() {
       accountType: details.accountType,
       displayName: details.givenName + " " + details.familyName,
       nameOrder: false
-    }])
+    }
+
+    setUsers(users.concat(newUser)) 
     setSignupSuccess(true)
     setError(null)
   }
@@ -171,9 +180,15 @@ function App() {
           setError("Password same")
           return;
         }
-        console.log("Password reset successfully")
-        users[i].password = details.password
+        const updatedUser = {
+          ...users[i],
+          password: details.password
+        }
+        const updatedUsers = [users.slice(0, i), updatedUser, users.slice(i + 1)]
+        setUsers(updatedUsers)
         setResetSuccess(true)
+        setError(null)
+        console.log("Password reset successfully")
         return;
       }
     }
@@ -219,7 +234,7 @@ function App() {
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer user={adminUser}/>}
               {appState === "Profile" && <ProfilePage user={user} />}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount}/>}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} updateUser={updateUser}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>
