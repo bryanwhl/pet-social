@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
-    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, Typography, Divider } from '@material-ui/core';
+    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, Typography, Divider, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -165,7 +165,7 @@ const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
                 <Toolbar>
-                    <Grid container spacing={1} alignItems="center" justify="flex-start">
+                    <Grid container spacing={1} alignItems="center" justify="flex-start" wrap="nowrap">
                         <IconButton onClick={toggleLeftDrawer}>
                             <MenuIcon />
                         </IconButton>
@@ -178,12 +178,14 @@ const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
                             <TextField id="input-with-icon-grid" placeholder="Search"/>
                         </Grid>
                     </Grid>
-                    <Grid container alignItems="center" justify="center">
-                        <Grid item>
-                            <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
+                    <Hidden smDown>
+                        <Grid container alignItems="center" justify="center" xs={0} md={0}>
+                            <Grid item>
+                                <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid container spacing={1} alignItems="center" justify="flex-end">
+                    </Hidden>
+                    <Grid container spacing={1} alignItems="center" justify="flex-end" wrap="nowrap">
                         <IconButton onClick={handleRightDrawerChat}>
                             <Badge badgeContent={1} color="secondary">
                                 <ChatIcon />
