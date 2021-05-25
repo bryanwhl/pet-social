@@ -6,11 +6,12 @@ const {
     GraphQLID,
     GraphQLList,
     GraphQLNonNull,
+    GraphQLInputObjectType
   } = require('graphql')
 
 
 // Temporary Database
-const users = [
+let users = [
     {
       id: "1",
       username: "admin",
@@ -35,7 +36,7 @@ const users = [
       playgrouops: [],
       pets: [],
       otherSettings: {
-        nameOrder: false,
+        familyNameFirst: false,
         defaultPrivacy: true
       }
     },
@@ -48,7 +49,11 @@ const users = [
         givenName: "Pet",
         familyName: "Social",
       },
-      avatarPath: './components/static/images/cute-dog.jpg'
+      avatarPath: './components/static/images/cute-dog.jpg',
+      otherSettings: {
+        familyNameFirst: false,
+        defaultPrivacy: true
+      }
     },
     {
       id: "3",
@@ -60,6 +65,10 @@ const users = [
         familyName: "Wong",
       },
       avatarPath: './components/static/images/doctorstrange.jpg',
+      otherSettings: {
+        familyNameFirst: false,
+        defaultPrivacy: true
+      },
     },
   ]
 
@@ -127,8 +136,28 @@ const UserType = new GraphQLObjectType({
     })
 })
 
+const UserInputType = new GraphQLInputObjectType({
+    name: 'UserInput',
+    fields: () => ({
+    id: { type: GraphQLID },
+    username: { type: GraphQLString },
+    password: { type: GraphQLString },
+    email: { type: GraphQLString },
+    accountType: { type: GraphQLString },
+    name: { type: NameInputType },
+    })
+})
+
 const NameType = new GraphQLObjectType({
     name: 'Name',
+    fields: () => ({
+        givenName: { type: GraphQLString },
+        familyName: { type: GraphQLString },
+    })
+})
+
+const NameInputType = new GraphQLInputObjectType({
+    name: 'NameInput',
     fields: () => ({
         givenName: { type: GraphQLString },
         familyName: { type: GraphQLString },
@@ -281,6 +310,45 @@ const RootQuery = new GraphQLObjectType({
     }
 })
 
+const Mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+        addUser: {
+            type: UserType,
+            args: {
+                username: { type: new GraphQLNonNull(GraphQLString) },
+                password: { type: new GraphQLNonNull(GraphQLString) },
+                email: { type: new GraphQLNonNull(GraphQLString) },
+                accountType: { type: new GraphQLNonNull(GraphQLString) },
+                name: { type: new GraphQLNonNull(NameInputType) }
+            },
+            resolve(root, args) {
+                const newUser = {
+                    ...args,
+                    id: String(users.length + 1),
+                    avatarPath: null,
+                    profilePicturePath: null,
+                    posts: [],
+                    savedPosts: [],
+                    friends: [],
+                    blockedUsers: [],
+                    chats: [],
+                    notifications: [],
+                    online: false,
+                    registeredDate: "Current Date", //Need Change
+                    profileBio: null,
+                    playgroups: [],
+                    pets: [],
+                    otherSettings: { nameOrder: false, defaultPrivacy: true },
+                }
+                users = users.concat(newUser)
+                return newUser
+            }
+        }
+    }
+})
+
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation: Mutation
 })

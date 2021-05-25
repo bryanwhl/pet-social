@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 
 
-const AccountSettings = ({ user, deleteAccount, updateUser }) => {
+const AccountSettings = ({ user, deleteAccount, updateUser, displayName }) => {
 
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [error, setError] = useState(null);
@@ -58,9 +58,7 @@ const AccountSettings = ({ user, deleteAccount, updateUser }) => {
         setNameOrderState(event.target.checked);
         const updatedUser = {
             ...user,
-            nameOrder: event.target.checked,
-            displayName: event.target.checked ? (user.familyName + " " + user.givenName)
-            : (user.givenName + " " + user.familyName)
+            otherSettings: {...user.otherSettings, familyNameFirst: event.target.checked},
         }
         updateUser(user, updatedUser)
       };
@@ -80,10 +78,10 @@ const AccountSettings = ({ user, deleteAccount, updateUser }) => {
             <ListItem>
                 <ListItemIcon>
                     <Avatar>
-                        {user.givenName[0]}
+                        {user.name.givenName[0]}
                     </Avatar>
                 </ListItemIcon>
-                <Typography>{user.displayName}</Typography>
+                <Typography>{displayName(user)}</Typography>
             </ListItem>
             <Typography>
             <Grid component="label" container spacing={1}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TopBar from './components/toolbar/TopBar.js'
 import Login from './components/signin/Login.js'
 import Signup from './components/signin/Signup.js'
@@ -13,6 +13,8 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
 import profilePic from './components/static/images/cute-dog.jpg';
+import { useQuery } from '@apollo/client'
+import { getAllUsersQuery } from './queries.js'
 
 const customTheme = createMuiTheme({
   palette: {
@@ -53,6 +55,8 @@ const customTheme = createMuiTheme({
 
 function App() {
   // All user data can be centralized here
+  const allUsers = useQuery(getAllUsersQuery)
+
   const adminUser={
     username: "admin",
     password: "admin123",
@@ -64,12 +68,21 @@ function App() {
     avatar: <Avatar src={profilePic} />
   }
 
-  const [users, setUsers] = useState([adminUser,]);
+
+  const [users, setUsers] = useState([adminUser]);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [appState, setAppState] = useState("Signin");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
+
+
+  useEffect(() => {
+    if (allUsers.data) {
+      setUsers(allUsers.data.users)
+    }
+  }, [allUsers])
+
 
   const updateUser = (userToUpdate, updatedUser) => {
     const userIndex = users.indexOf(userToUpdate)
@@ -78,7 +91,13 @@ function App() {
     setUser(updatedUser)
   }
 
+  const displayName = (user) => {
+    return user.otherSettings.familyNameFirst ? (user.name.familyName + " " + user.name.givenName)
+      : (user.name.givenName + " " + user.name.familyName)
+  }
+
   const login = details => {
+    console.log(users)
     console.log("Login ", details);
     if (details.username === "") {
       setError("Username empty")
@@ -130,6 +149,12 @@ function App() {
       return;
     } else if (details.accountType === "") {
       setError("Account Type empty")
+      return;
+    } else if (details.email === "") {
+      setError("Email empty")
+      return;
+    } else if (!details.email.includes('@') || !details.email.includes('.')) {
+      setError("Email")
       return;
     }
     for (var i = 0; i < users.length; i++) {
@@ -231,10 +256,10 @@ function App() {
           {(user !== null) ? (
             <div className="loggedIn">
               <CssBaseline />
-              <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
-              {appState === "Home" && <PostsContainer user={adminUser}/>}
-              {appState === "Profile" && <ProfilePage user={user} />}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} updateUser={updateUser}/>}
+              <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} displayName={displayName} />
+              {appState === "Home" && <PostsContainer user={users[0]} displayName={displayName}/>}
+              {appState === "Profile" && <ProfilePage user={user} displayName={displayName} />}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} updateUser={updateUser} displayName={displayName}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>

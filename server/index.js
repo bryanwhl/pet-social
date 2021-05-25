@@ -1,6 +1,7 @@
 const express = require('express')
 const { graphqlHTTP } = require('express-graphql')
 const schema = require('./schema.js')
+const cors = require('cors')
 
 // GraphQL Imports
 const {
@@ -9,6 +10,9 @@ const {
   GraphQLString
 } = require('graphql')
 const app = express()
+
+//Allow cross-origin requests
+app.use(cors())
 
 // GraphiQL interface on localhost:5000/graphql
 app.use('/graphql', graphqlHTTP({

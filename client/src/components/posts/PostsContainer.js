@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 },
 }));
 
-const PostsContainer = ({user}) => {
+const PostsContainer = ({user, displayName}) => {
 
   const classes = useStyles();
   
@@ -83,7 +83,7 @@ const PostsContainer = ({user}) => {
     <Container className={classes.containerGrid}>
       <Grid container justify="center">
         <Grid item>
-          <SubmitPost user={user}/>
+          <SubmitPost user={user} displayName={displayName}/>
         </Grid>
         {posts.map(item => (
           <Grid item>

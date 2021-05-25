@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const ProfilePage = ({ user }) => {
+const ProfilePage = ({ user, displayName }) => {
     const classes=useStyles();
 
     return (
@@ -32,10 +32,10 @@ const ProfilePage = ({ user }) => {
             <ListItem>
                 <ListItemIcon>
                     <Avatar>
-                        {user.givenName[0]}
+                        {user.name.givenName[0]}
                     </Avatar>
                 </ListItemIcon>
-                <Typography>{user.displayName}</Typography>
+                <Typography>{displayName(user)}</Typography>
             </ListItem>
         </div>
         </main>
