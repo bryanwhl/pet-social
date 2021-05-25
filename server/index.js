@@ -1,7 +1,7 @@
 const express = require('express')
 const { graphqlHTTP } = require('express-graphql')
 
-//GraphQL Imports
+// GraphQL Imports
 const {
   GraphQLSchema,
   GraphQLObjectType,
@@ -9,17 +9,33 @@ const {
 } = require('graphql')
 const app = express()
 
+// Temporary Database
 const users = [
   {
     id: "1",
     username: "admin",
     password: "admin123",
+    email: "admin@gmail.com",
     accountType: "Personal",
-    givenName: "Ad",
-    familyName: "Min",
-    displayName: "Ad Min",
-    nameOrder: false,
-    avatarPath: './components/static/images/cute-dog.jpg'
+    name: {
+      givenName: "Ad",
+      familyName: "Min",
+    },
+    avatarPath: './components/static/images/cute-dog.jpg',
+    profilePicturePath: String,
+    posts: Array[Post],
+    friends: Array[User],
+    chat: Array[Chat],
+    savedPosts: Array[Post],
+    blockedUsers: Array[User],
+    notifications: Array[Notification],
+    online: Boolean,
+    registered: Date,
+    profileBio: "String",
+    otherSettings: {
+      nameOrder: Boolean,
+      defaultPrivacy: Boolean
+    }
   },
   {
     id: "2",
@@ -30,7 +46,7 @@ const users = [
     familyName: "Social",
     displayName: "Pet Social",
     nameOrder: false,
-    avatar: './components/static/images/cute-dog.jpg'
+    avatarPath: './components/static/images/cute-dog.jpg'
   },
   {
     id: "3",
@@ -41,10 +57,11 @@ const users = [
     familyName: "Wong",
     displayName: "Bryan Wong",
     nameOrder: false,
-    avatar: './components/static/images/doctorstrange.jpg'
+    avatarPath: './components/static/images/doctorstrange.jpg',
   },
 ]
 
+// Instance of GraphQL Schema
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'HelloWorld',
@@ -57,6 +74,7 @@ const schema = new GraphQLSchema({
   })
 })
 
+// GraphiQL interface on localhost:5000/graphql
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   graphiql: true

@@ -1,0 +1,107 @@
+User {
+  id: String,
+  username: String,
+  password: String,
+  email: String,
+  accountType: String,
+  name: {
+    givenName: String,
+    familyName: String,
+  },
+  avatarPath: String,
+  profilePicturePath: String,
+  posts: Array[Post],
+  friends: Array[User],
+  chat: Array[Chat],
+  savedPosts: Array[Post],
+  blockedUsers: Array[User],
+  notifications: Array[Notification],
+  online: Boolean,
+  registeredDate: Date,
+  profileBio: String,
+  playgroups: Array[Playgroup],
+  pets: Array[Pet],
+  otherSettings: {
+    familyNameFirst: Boolean,
+    defaultPrivacy: String
+  }
+}
+
+Post {
+  id: String,
+  user: User,
+  date: Date,
+  postType: String,
+  privacy: String,
+  imageFilePath: String,
+  videoFilePath: String,
+  tagged: Array[Pet],
+  location: String,
+  text: String,
+  likedBy: Array[User],
+  comments: Array[Comment],
+  isEdited: Boolean,
+}
+
+Comment {
+  id: String,
+  user: User,
+  date: Date,
+  text: String,
+  likedBy: Array[User],
+  isEdited: Boolean,
+  replies: Array[Comment],
+}
+
+// Share, Like Post, Like Comment, Commented, Reply On Comment, Tagged, Friend Request
+Notification {
+  id: String,
+  fromUser: User,
+  date: Date,
+  notificationType: String
+  post: Post,
+  friendRequest: FriendRequest,
+  comment: Comment,
+}
+
+Chat {
+  id: String,
+  users: Array[User],
+  messages: Array[Message]
+}
+
+Message {
+  id: String,
+  user: User,
+  date: Date,
+  isEdited: Boolean
+  isSeen: Boolean
+}
+
+Pet {
+  id: String,
+  name: String,
+  dateOfBirth: Date,
+  gender: String,
+  breed: String,
+  picturePath: String
+}
+
+Playgroup {
+  id: String,
+  name: String,
+  description: String,
+  playgroupAdmin: User,
+  members: Array[User],
+  meetingDates: Array[Date],
+  meetingLocation: Location,
+  dateCreated: Date,
+  playgroupChat: Chat,
+}
+
+FriendRequest {
+  id: String,
+  fromUser: User,
+  toUser: User,
+  date: Date
+}
