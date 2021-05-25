@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
         padding: "20px",
     },
     root: {
-        width: 700,
+        width: "75vmin",
     },
     media: {
         height: 0,

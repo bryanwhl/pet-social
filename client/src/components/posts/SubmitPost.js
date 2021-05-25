@@ -7,7 +7,7 @@ import VideocamIcon from '@material-ui/icons/Videocam';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 700,
+    width: "75vmin",
     margin: "20px",
   },
   media: {

@@ -1,7 +1,7 @@
 import React from 'react'
 import Post from './Post.js'
 import SubmitPost from './SubmitPost.js'
-import { Grid, makeStyles, Container, Avatar } from '@material-ui/core';
+import { Grid, makeStyles, Container, Avatar, Divider } from '@material-ui/core';
 import eastcoast from '../static/images/eastcoast.jpg';
 import jaryl from '../static/images/jaryl.jpg';
 import doctorstrange from '../static/images/doctorstrange.jpg';
@@ -15,8 +15,8 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: red[500],
   },
   avatarBlue: {
-    backgroundColor: blue[500],
-},
+      backgroundColor: blue[500],
+  },
 }));
 
 const PostsContainer = ({user, displayName}) => {
@@ -81,12 +81,13 @@ const PostsContainer = ({user, displayName}) => {
   ]
   return (
     <Container className={classes.containerGrid}>
-      <Grid flex container justify="center">
-        <Grid item>
+      <Grid container justify="center" alignItems="stretch">
+        <Grid item justify="center">
           <SubmitPost user={user} displayName={displayName}/>
         </Grid>
+        <Divider />
         {posts.map(item => (
-          <Grid item>
+          <Grid item justify="center">
             <Post post={item} />
           </Grid>
         ))}

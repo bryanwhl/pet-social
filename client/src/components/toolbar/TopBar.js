@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
         width: '200px',
     },
     customizeToolbar: {
-        minHeight: 70
+        minHeight: 65
     }
 }));
 
