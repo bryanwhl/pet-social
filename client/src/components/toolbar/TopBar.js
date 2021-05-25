@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 // constructor function for TopBar
 // appState helps navigate the app, and goes one level deeper for SideBar to change the app state
-const TopBar = ({ logout, user, appState, setAppState }) => {
+const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
 
     // const for all components
     const classes = useStyles();
@@ -206,10 +206,10 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                                             <ListItem>
                                                 <ListItemIcon>
                                                     <Avatar>
-                                                        {user.givenName[0]}
+                                                        {user.name.givenName[0]}
                                                     </Avatar>
                                                 </ListItemIcon>
-                                                <Typography>{user.displayName}</Typography>
+                                                <Typography>{displayName(user)}</Typography>
                                             </ListItem>
                                             <Divider />
                                             {profileItems.map(item => (

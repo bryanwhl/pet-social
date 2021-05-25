@@ -47,7 +47,7 @@ function Copyright() {
 const Signup = ({ signup, switchToSignin, success, error }) => {
     const classes = useStyles();
 
-    const [details, setDetails] = useState({givenName:"", familyName:"", username:"", password:"", confirmPassword:"", accountType:""});
+    const [details, setDetails] = useState({givenName:"", familyName:"", username:"", password:"", confirmPassword:"", accountType:"", email:""});
     const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
 
     const handleSubmit = event => {
@@ -94,6 +94,22 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 style={{width:'50%'}}
                 align='right'
                 onChange={handleChange('familyName')}
+                disabled={success}
+              />
+              <TextField
+                error={["Email", "Email empty"].includes(error)}
+                helperText={(error === "Email") ? "Invalid Email"
+                  : (error === "Email empty") ? "Email cannot be empty" : ""}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                onChange={handleChange('email')}
                 disabled={success}
               />
               <TextField

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Card, IconButton, CardContent, CardHeader, Button, makeStyles, 
-    CardActions, TextField} from '@material-ui/core';
+import { Avatar, Card, IconButton, CardContent, CardHeader, Button, makeStyles, 
+    CardActions, TextField } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import VideocamIcon from '@material-ui/icons/Videocam';
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const SubmitPost = ({user}) => {
+const SubmitPost = ({user, displayName}) => {
 
   const classes = useStyles();
 
@@ -34,8 +34,8 @@ const SubmitPost = ({user}) => {
     <div>
       <Card className={classes.root}>
         <CardHeader
-          avatar={user.avatar}
-          title={user.displayName}
+          avatar={<Avatar src={user.avatarPath} />}
+          title={displayName(user)}
         />
         <CardContent>
           <TextField
