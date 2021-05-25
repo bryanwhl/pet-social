@@ -1,107 +1,112 @@
-User {
-  id: String,
-  username: String,
-  password: String,
-  email: String,
-  accountType: String,
-  name: {
-    givenName: String,
-    familyName: String,
-  },
-  avatarPath: String,
-  profilePicturePath: String,
-  posts: Array[Post],
-  friends: Array[User],
-  chat: Array[Chat],
-  savedPosts: Array[Post],
-  blockedUsers: Array[User],
-  notifications: Array[Notification],
-  online: Boolean,
-  registeredDate: Date,
-  profileBio: String,
-  playgroups: Array[Playgroup],
-  pets: Array[Pet],
-  otherSettings: {
-    familyNameFirst: Boolean,
-    defaultPrivacy: String
-  }
+type User {
+  id: ID!
+  username: String!
+  password: String!
+  email: String!
+  accountType: String!
+  name: Name!
+  avatarPath: String
+  profilePicturePath: String
+  posts: [Post]!
+  friends: [User]!
+  chat: [Chat]!
+  savedPosts: [Post]!
+  blockedUsers: [User]!
+  notifications: [Notification]!
+  online: Boolean!
+  registeredDate: Date!
+  profileBio: String
+  playgroups: [Playgroup]!
+  pets: [Pet]!
+  otherSettings: Settings!
 }
 
-Post {
-  id: String,
-  user: User,
-  date: Date,
-  postType: String,
-  privacy: String,
-  imageFilePath: String,
-  videoFilePath: String,
-  tagged: Array[Pet],
-  location: String,
-  text: String,
-  likedBy: Array[User],
-  comments: Array[Comment],
-  isEdited: Boolean,
+type Name {
+  givenName: String!
+  familyName: String!
 }
 
-Comment {
-  id: String,
-  user: User,
-  date: Date,
-  text: String,
-  likedBy: Array[User],
-  isEdited: Boolean,
-  replies: Array[Comment],
+type Settings {
+  familyNameFirst: Boolean!
+  defaultPrivacy: String!
+}
+
+type Post {
+  id: ID!
+  user: User!
+  date: Date!
+  postType: String!
+  privacy: String!
+  imageFilePath: String
+  videoFilePath: String
+  tagged: [Pet]!
+  location: String
+  text: String!
+  likedBy: [User]!
+  comments: [Comment]!
+  isEdited: Boolean!
+}
+
+type Comment {
+  id: ID!
+  user: User!
+  date: Date!
+  text: String!
+  likedBy: [User]!
+  isEdited: Boolean!
+  replies: [Comment]!
 }
 
 // Share, Like Post, Like Comment, Commented, Reply On Comment, Tagged, Friend Request
-Notification {
-  id: String,
-  fromUser: User,
-  date: Date,
-  notificationType: String
-  post: Post,
-  friendRequest: FriendRequest,
-  comment: Comment,
+type Notification {
+  id: ID!
+  fromUser: User!
+  date: Date!
+  notificationType: String!
+  post: Post
+  friendRequest: FriendRequest
+  comment: Comment
 }
 
-Chat {
-  id: String,
-  users: Array[User],
-  messages: Array[Message]
+type Chat {
+  id: ID!
+  users: [User!]!
+  messages: [Message]!
 }
 
-Message {
-  id: String,
-  user: User,
-  date: Date,
-  isEdited: Boolean
-  isSeen: Boolean
+type Message {
+  id: ID!
+  user: User!
+  date: Date!
+  isEdited: Boolean!
+  isSeen: Boolean!
 }
 
-Pet {
-  id: String,
-  name: String,
-  dateOfBirth: Date,
-  gender: String,
-  breed: String,
+type Pet {
+  id: ID!
+  name: String!
+  dateOfBirth: Date!
+  owners: [Users!]!
+  gender: String!
+  breed: String!
   picturePath: String
 }
 
-Playgroup {
-  id: String,
-  name: String,
-  description: String,
-  playgroupAdmin: User,
-  members: Array[User],
-  meetingDates: Array[Date],
-  meetingLocation: Location,
-  dateCreated: Date,
-  playgroupChat: Chat,
+type Playgroup {
+  id: ID!
+  name: String!
+  description: String
+  playgroupAdmin: [User!]!
+  members: [User!]!
+  meetingDates: [Date]!
+  meetingLocation: Location!
+  dateCreated: Date!
+  playgroupChat: Chat!
 }
 
-FriendRequest {
-  id: String,
-  fromUser: User,
-  toUser: User,
-  date: Date
+type FriendRequest {
+  id: ID!
+  fromUser: User!
+  toUser: User!
+  date: Date!
 }
