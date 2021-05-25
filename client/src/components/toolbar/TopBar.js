@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     rightPopper: {
         zIndex: theme.zIndex.drawer + 1,
         width: '200px',
+    },
+    customizeToolbar: {
+        minHeight: 70
     }
 }));
 
@@ -164,7 +167,7 @@ const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
     return (
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
-                <Toolbar>
+                <Toolbar className={classes.customizeToolbar}>
                     <Grid container spacing={1} alignItems="center" justify="flex-start" wrap="nowrap">
                         <IconButton onClick={toggleLeftDrawer}>
                             <MenuIcon />

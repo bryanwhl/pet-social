@@ -81,7 +81,7 @@ const PostsContainer = ({user, displayName}) => {
   ]
   return (
     <Container className={classes.containerGrid}>
-      <Grid container justify="center">
+      <Grid flex container justify="center">
         <Grid item>
           <SubmitPost user={user} displayName={displayName}/>
         </Grid>
