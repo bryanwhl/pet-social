@@ -87,7 +87,7 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 variant="outlined"
                 margin="normal"
                 required
-                id="username"
+                id="familyName"
                 label="Family Name"
                 name="familyName"
                 autoFocus

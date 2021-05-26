@@ -1,3 +1,4 @@
+const { ApolloServer, gql } = require('apollo-server')
 const {
     GraphQLSchema,
     GraphQLObjectType,
@@ -6,8 +7,11 @@ const {
     GraphQLID,
     GraphQLList,
     GraphQLNonNull,
-    GraphQLInputObjectType
+    GraphQLInputObjectType,
+    GraphQLScalarType,
+    Kind
   } = require('graphql')
+
 
 
 // Temporary Database
@@ -18,10 +22,8 @@ let users = [
       password: "admin123",
       email: "admin@gmail.com",
       accountType: "Personal",
-      name: {
-        givenName: "Ad",
-        familyName: "Min",
-      },
+      givenName: "Ad",
+      familyName: "Min",
       avatarPath: './components/static/images/cute-dog.jpg',
       profilePicturePath: "",
       posts: ["1"],
@@ -35,40 +37,30 @@ let users = [
       profileBio: "Profile Bio",
       playgrouops: [],
       pets: [],
-      otherSettings: {
-        familyNameFirst: false,
-        defaultPrivacy: true
-      }
+      familyNameFirst: false,
+      defaultPrivacy: true
     },
     {
       id: "2",
       username: "Pet Social",
       password: "admin123",
       accountType: "Business",
-      name: {
-        givenName: "Pet",
-        familyName: "Social",
-      },
+      givenName: "Pet",
+      familyName: "Social",
       avatarPath: './components/static/images/cute-dog.jpg',
-      otherSettings: {
-        familyNameFirst: false,
-        defaultPrivacy: true
-      }
+      familyNameFirst: false,
+      defaultPrivacy: true
     },
     {
       id: "3",
       username: "bryanwhl",
       password: "admin123",
       accountType: "Personal",
-      name: {
-        givenName: "Bryan",
-        familyName: "Wong",
-      },
+      givenName: "Bryan",
+      familyName: "Wong",
       avatarPath: './components/static/images/doctorstrange.jpg',
-      otherSettings: {
-        familyNameFirst: false,
-        defaultPrivacy: true
-      },
+      familyNameFirst: true,
+      defaultPrivacy: true
     },
   ]
 
@@ -90,265 +82,240 @@ const posts = [
     }
 ]
 
-const DateType = new GraphQLObjectType({
+const dateScalar = new GraphQLScalarType({
     name: 'Date',
-    fields: () => ({
-        date: { type: GraphQLString } //Need change
-    })
-})
+    description: 'Date custom scalar type',
+    serialize(value) {
+      return value.getTime(); // Convert outgoing Date to integer for JSON
+    },
+    parseValue(value) {
+      return new Date(value); // Convert incoming integer to Date
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
+      }
+      return null; // Invalid hard-coded value (not an integer)
+    },
+});
 
-//Types
-const UserType = new GraphQLObjectType({
-    name: 'User',
-    fields: () => ({
-    id: { type: GraphQLID },
-    username: { type: GraphQLString },
-    password: { type: GraphQLString },
-    email: { type: GraphQLString },
-    accountType: { type: GraphQLString },
-    name: { type: NameType },
-    avatarPath: { type: GraphQLString },
-    profilePicturePath: { type: GraphQLString },
-    posts: { type: new GraphQLList(PostType),
-            resolve(root, args){
-                return posts.filter(post => post.userID === root.id)
-            } },
-    savedPosts: { type: new GraphQLList(PostType),
-                resolve(root, args){
-                return posts.filter(post => root.savedPosts.includes(post.id))
-            } },
-    friends: { type: new GraphQLList(UserType),
-                resolve(root, args){
-                    return users.filter(user => root.friends.includes(user.id))
-                } },
-    blockedUsers: { type: new GraphQLList(UserType),
-                    resolve(root, args){
-                    return users.filter(user => root.blockedUsers.includes(user.id))
-        } },
-    chats: { type: new GraphQLList(ChatType) },
-    notifications: { type: new GraphQLList(NotificationType) },
-    online: { type: GraphQLBoolean },
-    registeredDate: { type: GraphQLString }, //Need Change
-    profileBio: { type: GraphQLString },
-    playgroups: { type: new GraphQLList(PlaygroupType) },
-    pets: { type: new GraphQLList(PetType) },
-    otherSettings: { type: SettingsType },
-    })
-})
+const typeDefs = gql`
+    scalar Date
 
-const UserInputType = new GraphQLInputObjectType({
-    name: 'UserInput',
-    fields: () => ({
-    id: { type: GraphQLID },
-    username: { type: GraphQLString },
-    password: { type: GraphQLString },
-    email: { type: GraphQLString },
-    accountType: { type: GraphQLString },
-    name: { type: NameInputType },
-    })
-})
+    type User {
+        id: ID!
+        username: String!
+        password: String!
+        email: String!
+        accountType: String!
+        name: Name!
+        avatarPath: String!
+        profilePicturePath: String!
+        posts: [Post]!
+        savedPosts: [Post]!
+        friends: [User]!
+        blockedUser: [User]!
+        chats: [Chat]!
+        notifications: [Notification]!
+        online: Boolean!
+        registeredDate: Date!
+        profileBio: String
+        playgroups: [Playgroup]!
+        pets: [Pet]!
+        otherSettings: Settings!
+    }
 
-const NameType = new GraphQLObjectType({
-    name: 'Name',
-    fields: () => ({
-        givenName: { type: GraphQLString },
-        familyName: { type: GraphQLString },
-    })
-})
+    type Name {
+        givenName: String!
+        familyName: String!
+    }
 
-const NameInputType = new GraphQLInputObjectType({
-    name: 'NameInput',
-    fields: () => ({
-        givenName: { type: GraphQLString },
-        familyName: { type: GraphQLString },
-    })
-})
+    type NameInput {
+        givenName: String!
+        familyName: String!
+    }
 
-const SettingsType = new GraphQLObjectType({
-    name: 'Settings',
-    fields: () => ({
-        familyNameFirst: { type: GraphQLBoolean },
-        defaultPrivacy: { type: GraphQLString },
-    })
-})
+    type Settings {
+        familyNameFirst: Boolean!
+        defaultPrivacy: String!
+    }
 
-const PostType = new GraphQLObjectType({
-    name: 'Post',
-    fields: () => ({
-        id: { type: GraphQLID },
-        user: { type: UserType,
-                resolve(root, args){
-                    return users.find(user => user.id === root.userID)
-                } },
-        date: { type: DateType },
-        postType: { type: GraphQLString },
-        privacy: { type: GraphQLString },
-        imageFilePath: { type: GraphQLString },
-        videoFilePath: { type: GraphQLString },
-        location: { type: GraphQLString }, //Need Change
-        text: { type: GraphQLString },
-        tagged: { type: new GraphQLList(PetType) },
-        likedBy: { type: new GraphQLList(UserType) },
-        comments: { type: new GraphQLList(CommentType) },
-        isEdited: { type: GraphQLBoolean },
-    })
-})
+    type Post {
+        id: ID!
+        user: User!
+        date: Date!
+        postType: String!
+        privacy: String!
+        imageFilePath: String
+        videoFilePath: String
+        tagged: [Pet]!
+        location: String
+        text: String!
+        likedBy: [User]!
+        comments: [Comment]!
+        isEdited: Boolean!
+    }
 
-const CommentType = new GraphQLObjectType({
-    name: 'Comment',
-    fields: () => ({
-        id: { type: GraphQLID },
-        user: { type: UserType },
-        date: { type: DateType },
-        text: { type: GraphQLString },
-        likedBy: { type: new GraphQLList(UserType) },
-        replies: { type: new GraphQLList(CommentType) },
-        isEdited: { type: GraphQLBoolean },
-    })
-})
+    type Comment {
+        id: ID!
+        user: User!
+        date: Date!
+        text: String!
+        likedBy: [User]!
+        isEdited: Boolean!
+        replies: [Comment]!
+    }
 
-const NotificationType = new GraphQLObjectType({
-    name: 'Notification',
-    fields: () => ({
-        id: { type: GraphQLID },
-        fromUser: { type: UserType },
-        date: { type: DateType },
-        notificationType: { type: GraphQLString },
-        post: { type: PostType },
-        friendRequest: { type: FriendRequestType },
-        comment: { type: CommentType },
-    })
-})
+    type Notification {
+        id: ID!
+        fromUser: User!
+        date: Date!
+        notificationType: String!
+        post: Post
+        friendRequest: FriendRequest
+        comment: Comment
+    }
 
-const ChatType = new GraphQLObjectType({
-    name: 'Chat',
-    fields: () => ({
-        id: { type: GraphQLID },
-        users: { type: new GraphQLList(UserType) },
-        messages: { type: new GraphQLList(MessageType) },
-    })
-})
+    type Chat {
+        id: ID!
+        users: [User!]!
+        messages: [Message]!
+    }
 
-const MessageType = new GraphQLObjectType({
-    name: 'Message',
-    fields: () => ({
-        id: { type: GraphQLID },
-        user: { type: UserType },
-        date: { type: DateType },
-        isEdited: { type: GraphQLBoolean },
-        isSeen: { type: GraphQLBoolean },
-    })
-})
+    type Message {
+        id: ID!
+        user: User!
+        date: Date!
+        isEdited: Boolean!
+        isSeen: Boolean!
+    }
 
-const PetType = new GraphQLObjectType({
-    name: 'Pet',
-    fields: () => ({
-        id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        owners: { type: new GraphQLList(UserType) },
-        dateOfBirth: { type: DateType },
-        gender: { type: GraphQLString },
-        breed: { type: GraphQLString },
-        picturePath: { type: GraphQLString },
-    })
-})
+    type Pet {
+        id: ID!
+        name: String!
+        owners: [User!]!
+        dateOfBirth: Date!
+        gender: String!
+        breed: String!
+        picturePath: String
+    }
 
-const PlaygroupType = new GraphQLObjectType({
-    name: 'Playgroup',
-    fields: () => ({
-        id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        description: { type: GraphQLString },
-        playgroupAdmins: { type: new GraphQLList(UserType) },
-        members: { type: new GraphQLList(UserType) },
-        meetingDates: { type: new GraphQLList(DateType) },
-        meetingLocation: { type: GraphQLString }, //Need Change
-        dateCreated: { type: DateType },
-        playgroupChat: { type: ChatType },
-    })
-})
+    type Playgroup {
+        id: ID!
+        name: String!
+        description: String
+        playgroupAdmin: [User!]!
+        members: [User!]!
+        meetingDates: [Date]!
+        meetingLocation: String!
+        dateCreated: Date!
+        playgroupChat: Chat!
+    }
 
-const FriendRequestType = new GraphQLObjectType({
-    name: 'FriendRequest',
-    fields: () => ({
-        id: { type: GraphQLID },
-        fromUser: { type: UserType },
-        toUser: { type: UserType },
-        date: { type: DateType },
-    })
-})
+    type FriendRequest {
+        id: ID!
+        fromUser: User!
+        toUser: User!
+        date: Date!
+    }
 
-const RootQuery = new GraphQLObjectType({
-    name: 'RootQueryType',
-    fields:{
-        users:{
-            type: new GraphQLList(UserType),
-            resolve(root, args){
-                return users
+    type Query {
+        allUsers: [User]!
+        findUser(id: ID): User
+    }
+
+    type Mutation {
+        addUser(
+            username: String!
+            password: String!
+            email: String!
+            accountType: String!
+            givenName: String!
+            familyName: String!
+        ): User
+        editPassword(
+            id: ID!
+            password: String!
+        ): User
+        editSettings(
+            id: ID!
+            familyNameFirst: Boolean
+            defaultPrivacy: String
+        ): User
+    }
+
+`
+const resolvers = {
+    Date: dateScalar,
+    User: {
+        name: (root) => {
+            return {
+                givenName: root.givenName,
+                familyName: root.familyName
             }
         },
-        user:{
-            type: UserType,
-            args: {id: {type: GraphQLID}},
-            resolve(root, args){
-                return users.find(user => user.id === args.id)
-            }
-        },
-        posts:{
-            type: new GraphQLList(PostType),
-            resolve(root, args){
-                return posts
-            }
-        },
-        post:{
-            type: PostType,
-            args: {id: {type: GraphQLID}},
-            resolve(root, args){
-                return posts.find(post => post.id === args.id)
+        otherSettings: (root) => {
+            return {
+                familyNameFirst: root.familyNameFirst,
+                defaultPrivacy: root.defaultPrivacy
             }
         }
-    }
-})
-
-const Mutation = new GraphQLObjectType({
-    name: 'Mutation',
-    fields: {
-        addUser: {
-            type: UserType,
-            args: {
-                username: { type: new GraphQLNonNull(GraphQLString) },
-                password: { type: new GraphQLNonNull(GraphQLString) },
-                email: { type: new GraphQLNonNull(GraphQLString) },
-                accountType: { type: new GraphQLNonNull(GraphQLString) },
-                name: { type: new GraphQLNonNull(NameInputType) }
-            },
-            resolve(root, args) {
-                const newUser = {
-                    ...args,
-                    id: String(users.length + 1),
-                    avatarPath: null,
-                    profilePicturePath: null,
-                    posts: [],
-                    savedPosts: [],
-                    friends: [],
-                    blockedUsers: [],
-                    chats: [],
-                    notifications: [],
-                    online: false,
-                    registeredDate: "Current Date", //Need Change
-                    profileBio: null,
-                    playgroups: [],
-                    pets: [],
-                    otherSettings: { nameOrder: false, defaultPrivacy: true },
-                }
-                users = users.concat(newUser)
-                return newUser
+    },
+    Query: {
+        allUsers: () => users,
+        findUser: (root, args) =>
+            users.find(user => user.id === args.id)
+    },
+    Mutation: {
+        addUser: (root, args) => {
+            const newUser = {
+                ...args,
+                id: String(users.length + 1),
+                avatarPath: "",
+                profilePicturePath: "",
+                posts: [],
+                savedPosts: [],
+                friends: [],
+                blockedUsers: [],
+                chats: [],
+                notifications: [],
+                online: false,
+                registeredDate: "Current Date", //Need Change
+                profileBio: "",
+                playgroups: [],
+                pets: [],
+                familyNameFirst: false, 
+                defaultPrivacy: "Hello"
             }
+            users = users.concat(newUser)
+            return newUser
+        },
+        editPassword: (root, args) => {
+            const userToUpdate = users.find(user => user.id === args.id)
+            if (!userToUpdate) {
+                return null
+            }
+            const updatedUser = { ...userToUpdate, password: args.password }
+            users = users.map(user => user.id === args.id ? updatedUser: user)
+            return updatedUser
+        },
+        editSettings: (root, args) => {
+            const userToUpdate = users.find(user => user.id === args.id)
+            if (!userToUpdate) {
+                return null
+            }
+            const updatedUser = { ...userToUpdate, ...args }
+            users = users.map(user => user.id === args.id ? updatedUser: user)
+            return updatedUser
         }
     }
-})
+}
 
-module.exports = new GraphQLSchema({
-    query: RootQuery,
-    mutation: Mutation
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  })
+  
+server.listen().then(({ url }) => {
+    console.log(`Server ready at ${url}`)
 })

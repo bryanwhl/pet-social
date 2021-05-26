@@ -13,8 +13,8 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
 import profilePic from './components/static/images/cute-dog.jpg';
-import { useQuery } from '@apollo/client'
-import { getAllUsersQuery } from './queries.js'
+import { useQuery, useMutation } from '@apollo/client'
+import { allUsersQuery, addUserQuery, editPasswordQuery } from './queries.js'
 
 const customTheme = createMuiTheme({
   palette: {
@@ -55,21 +55,23 @@ const customTheme = createMuiTheme({
 
 function App() {
   // All user data can be centralized here
-  const allUsers = useQuery(getAllUsersQuery)
+  const allUsers = useQuery(allUsersQuery)
+  const [ createUser ] = useMutation(addUserQuery, {refetchQueries: [{query: allUsersQuery}]})
+  const [ editPassword ] = useMutation(editPasswordQuery, {refetchQueries: [{query: allUsersQuery}]})
+  
+  // const adminUser={
+  //   username: "admin",
+  //   password: "admin123",
+  //   accountType: "Personal",
+  //   givenName: "Ad",
+  //   familyName: "Min",
+  //   displayName: "Ad Min",
+  //   nameOrder: false,
+  //   avatar: <Avatar src={profilePic} />
+  // }
 
-  const adminUser={
-    username: "admin",
-    password: "admin123",
-    accountType: "Personal",
-    givenName: "Ad",
-    familyName: "Min",
-    displayName: "Ad Min",
-    nameOrder: false,
-    avatar: <Avatar src={profilePic} />
-  }
 
-
-  const [users, setUsers] = useState([adminUser]);
+  const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [appState, setAppState] = useState("Signin");
@@ -79,7 +81,8 @@ function App() {
 
   useEffect(() => {
     if (allUsers.data) {
-      setUsers(allUsers.data.users)
+      console.log(allUsers.data)
+      setUsers(allUsers.data.allUsers)
     }
   }, [allUsers])
 
@@ -92,6 +95,7 @@ function App() {
   }
 
   const displayName = (user) => {
+    console.log("Display name: ", user)
     return user.otherSettings.familyNameFirst ? (user.name.familyName + " " + user.name.givenName)
       : (user.name.givenName + " " + user.name.familyName)
   }
@@ -114,8 +118,10 @@ function App() {
         }
         console.log("Logged in to account");
         setUser(users[i]);
+        console.log(users[i])
         setError(null)
         switchToHome();
+        return
       }
     }
 
@@ -168,17 +174,7 @@ function App() {
       return;
     }
 
-    const newUser = {
-      givenName: details.givenName,
-      familyName: details.familyName,
-      username: details.username,
-      password: details.password,
-      accountType: details.accountType,
-      displayName: details.givenName + " " + details.familyName,
-      nameOrder: false
-    }
-
-    setUsers(users.concat(newUser)) 
+    createUser({ variables: { username: details.username, password: details.password, email: details.email, accountType: details.accountType, givenName: details.givenName, familyName: details.familyName } })
     setSignupSuccess(true)
     setError(null)
   }
@@ -209,8 +205,10 @@ function App() {
           ...users[i],
           password: details.password
         }
-        const updatedUsers = [users.slice(0, i), updatedUser, users.slice(i + 1)]
-        setUsers(updatedUsers)
+        console.log(users[i].id, details.password)
+        editPassword( { variables: { id: users[i].id, password: details.password } })
+        //const updatedUsers = [users.slice(0, i), updatedUser, users.slice(i + 1)]
+        //setUsers(updatedUsers)
         setResetSuccess(true)
         setError(null)
         console.log("Password reset successfully")
@@ -257,7 +255,7 @@ function App() {
             <div className="loggedIn">
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} displayName={displayName} />
-              {appState === "Home" && <PostsContainer user={users[0]} displayName={displayName}/>}
+              {appState === "Home" && <PostsContainer user={user} displayName={displayName}/>}
               {appState === "Profile" && <ProfilePage user={user} displayName={displayName} />}
               {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} updateUser={updateUser} displayName={displayName}/>}
               {appState === "Playgroups" && <Playgroups />}

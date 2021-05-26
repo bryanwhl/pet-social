@@ -1,9 +1,10 @@
 import { gql  } from '@apollo/client'
 
 //Can improve to make more specific query
-export const getAllUsersQuery=gql`
-  {
-    users {
+export const allUsersQuery=gql`
+  query {
+    allUsers {
+      id
       username
       password
       name {
@@ -20,8 +21,28 @@ export const getAllUsersQuery=gql`
   }
 `
 
-// export const addUserQuery=gql`
-//   mutation {
-//       addUser($username: String!, $password: String!, $email: String!, $accountType: String!, name: {$givenName: String!, $familyName: String!})
-//   }
-// `
+export const addUserQuery=gql`
+  mutation ($username: String!, $password: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
+    addUser(
+      username: $username,
+      password: $password,
+      email: $email,
+      accountType: $accountType,
+      givenName: $givenName,
+      familyName: $familyName
+    ) {
+      id
+    }
+  }
+`
+
+export const editPasswordQuery=gql`
+  mutation ($id: ID!, $password: String!) {
+    editPassword(
+      id: $id,
+      password: $password
+    ) {
+      id
+    }
+  }
+`
