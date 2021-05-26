@@ -19,6 +19,7 @@
   "homepage": "https://github.com/bryanwhl/pet-social#readme",
   "dependencies": {
     "@apollo/client": "^3.3.19",
+    "apollo-server": "^2.24.1",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
