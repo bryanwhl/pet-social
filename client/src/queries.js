@@ -46,3 +46,66 @@ export const editPasswordQuery=gql`
     }
   }
 `
+
+export const submitPostQuery=gql`
+  mutation ($user: User!, $date: Date!, $postType: String!, $privacy: String!, $imageFilePath: String, $videoFilePath: String, $tagged: [Pet]!, $location: String, $text: String!, $likedBy: [User]!, $comments: [Comment]!, $isEdited: Boolean!) {
+    addPost(
+      user: $id,
+      date: $date,
+      postType: $postType,
+      privacy: $privacy,
+      imageFilePath: $imageFilePath,
+      videoFilePath: $videoFilePath,
+      tagged: $tagged,
+      location: $location,
+      text: $text,
+      likedBy: $likedBy,
+      comments: $comments,
+      isEdited: $isEdited
+    ) {
+      id
+    }
+  }
+`
+
+export const getPostsQuery=gql`
+  query {
+    getPosts {
+      id
+      user {
+        id
+        username
+        accountType
+        name {
+          givenName
+          familyName
+        }
+        avatarPath
+        otherSettings {
+          familyNameFirst
+        }
+      }
+      date
+      postType
+      privacy
+      imageFilePath
+      videoFilePath
+      location
+      text
+      comments {
+        user {
+          name {
+            givenName
+            familyName
+          }
+          otherSettings {
+            familyNameFirst
+          }
+          avatarPath
+        }
+        text
+      }
+      isEdited
+    }
+  }
+`

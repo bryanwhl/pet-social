@@ -14,8 +14,10 @@ import SideBar from './SideBar';
 import RightNotificationBar from './RightNotificationBar';
 import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
-import logo from "../static/images/pet-social-logo.jpg";
 import { red } from '@material-ui/core/colors';
+
+// image file path for Pet Social logo
+const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
 
 // for root AppBar component use
 const useStyles = makeStyles((theme) => ({
@@ -184,7 +186,7 @@ const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
                     <Hidden smDown>
                         <Grid container alignItems="center" justify="center" xs={0} md={0}>
                             <Grid item>
-                                <img src={logo} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
+                                <img src={LOGO_PATH} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
                             </Grid>
                         </Grid>
                     </Hidden>
