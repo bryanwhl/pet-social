@@ -15,11 +15,11 @@ import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 
 
-const AccountSettings = ({ user, deleteAccount, updateUser, displayName }) => {
+const AccountSettings = ({ user, deleteAccount, editFamilyNameFirst, displayName }) => {
 
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [error, setError] = useState(null);
-    const [nameOrderState, setNameOrderState] = useState(user.nameOrder);
+    const [nameOrderState, setNameOrderState] = useState(user.otherSettings.familyNameFirst);
 
     const [open, setOpen] = React.useState(false);
 
@@ -34,7 +34,7 @@ const AccountSettings = ({ user, deleteAccount, updateUser, displayName }) => {
         }
         handleClose();
         console.log("Confirm delete")
-        deleteAccount(user.username);
+        deleteAccount(user.id);
     }
 
     const handleClose = () => {
@@ -56,11 +56,7 @@ const AccountSettings = ({ user, deleteAccount, updateUser, displayName }) => {
 
     const handleNameOrder = (event) => {
         setNameOrderState(event.target.checked);
-        const updatedUser = {
-            ...user,
-            otherSettings: {...user.otherSettings, familyNameFirst: event.target.checked},
-        }
-        updateUser(user, updatedUser)
+        editFamilyNameFirst({ variables: { id: user.id, familyNameFirst: event.target.checked } } )
       };
 
     return (

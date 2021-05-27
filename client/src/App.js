@@ -14,7 +14,7 @@ import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
 import profilePic from './components/static/images/cute-dog.jpg';
 import { useQuery, useMutation } from '@apollo/client'
-import { allUsersQuery, addUserQuery, editPasswordQuery } from './queries.js'
+import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, deleteUserQuery } from './queries.js'
 
 const customTheme = createMuiTheme({
   palette: {
@@ -58,18 +58,8 @@ function App() {
   const allUsers = useQuery(allUsersQuery)
   const [ createUser ] = useMutation(addUserQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editPassword ] = useMutation(editPasswordQuery, {refetchQueries: [{query: allUsersQuery}]})
-  
-  // const adminUser={
-  //   username: "admin",
-  //   password: "admin123",
-  //   accountType: "Personal",
-  //   givenName: "Ad",
-  //   familyName: "Min",
-  //   displayName: "Ad Min",
-  //   nameOrder: false,
-  //   avatar: <Avatar src={profilePic} />
-  // }
-
+  const [ editFamilyNameFirst ] = useMutation(editFamilyNameFirstQuery, {refetchQueries: [{query: allUsersQuery}]})
+  const [ deleteUser ] = useMutation(deleteUserQuery, {refetchQueries: [{query: allUsersQuery}]})
 
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
@@ -86,13 +76,24 @@ function App() {
     }
   }, [allUsers])
 
+  useEffect(() => {
+    if (user) {
+      const updatedUser = users.find(u => u.id === user.id)
+      if (updatedUser) {
+        setUser(updatedUser)
+      } else {
+        setUser(null)
+      }
+    }
+  }, [users])
 
-  const updateUser = (userToUpdate, updatedUser) => {
-    const userIndex = users.indexOf(userToUpdate)
-    const updatedUsers = [users.slice(0, userIndex), updatedUser, users.slice(userIndex + 1)]
-    setUsers(updatedUsers)
-    setUser(updatedUser)
-  }
+
+  // const updateUser = (userToUpdate, updatedUser) => {
+  //   const userIndex = users.indexOf(userToUpdate)
+  //   const updatedUsers = [users.slice(0, userIndex), updatedUser, users.slice(userIndex + 1)]
+  //   setUsers(updatedUsers)
+  //   setUser(updatedUser)
+  // }
 
   const displayName = (user) => {
     console.log("Display name: ", user)
@@ -202,14 +203,8 @@ function App() {
           setError("Password same")
           return;
         }
-        const updatedUser = {
-          ...users[i],
-          password: details.password
-        }
         console.log(users[i].id, details.password)
-        editPassword( { variables: { id: users[i].id, password: details.password } })
-        //const updatedUsers = [users.slice(0, i), updatedUser, users.slice(i + 1)]
-        //setUsers(updatedUsers)
+        editPassword( { variables: { id: users[i].id, password: details.password } } )
         setResetSuccess(true)
         setError(null)
         console.log("Password reset successfully")
@@ -219,14 +214,10 @@ function App() {
     setError("Username")
   }
 
-  const deleteAccount = username => {
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].username === username){
-        logout()
-        users.splice(i, 1)
-        console.log(user, " removed")
-      }
-    }
+  const deleteAccount = id => {
+    deleteUser( { variables: { id: id } } )
+    console.log(id, " removed")
+    logout()
   }
 
   const switchToSignup = () => {
@@ -258,7 +249,7 @@ function App() {
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} displayName={displayName} />
               {appState === "Home" && <PostsContainer user={user} displayName={displayName}/>}
               {appState === "Profile" && <ProfilePage user={user} displayName={displayName} />}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} updateUser={updateUser} displayName={displayName}/>}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst} displayName={displayName}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>
