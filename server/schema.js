@@ -233,14 +233,16 @@ const typeDefs = gql`
             givenName: String!
             familyName: String!
         ): User
+        deleteUser(
+            id: ID!
+        ): User
         editPassword(
             id: ID!
             password: String!
         ): User
-        editSettings(
+        editFamilyNameFirst(
             id: ID!
-            familyNameFirst: Boolean
-            defaultPrivacy: String
+            familyNameFirst: Boolean!
         ): User
     }
 
@@ -290,6 +292,14 @@ const resolvers = {
             users = users.concat(newUser)
             return newUser
         },
+        deleteUser: (root, args) => {
+            const userToDelete = users.find(user => user.id === args.id)
+            if (!userToDelete) {
+                return null
+            }
+            users = users.filter(user => user.id !== args.id)
+            return userToDelete
+        },
         editPassword: (root, args) => {
             const userToUpdate = users.find(user => user.id === args.id)
             if (!userToUpdate) {
@@ -299,12 +309,12 @@ const resolvers = {
             users = users.map(user => user.id === args.id ? updatedUser: user)
             return updatedUser
         },
-        editSettings: (root, args) => {
+        editFamilyNameFirst: (root, args) => {
             const userToUpdate = users.find(user => user.id === args.id)
             if (!userToUpdate) {
                 return null
             }
-            const updatedUser = { ...userToUpdate, ...args }
+            const updatedUser = { ...userToUpdate, familyNameFirst: args.familyNameFirst }
             users = users.map(user => user.id === args.id ? updatedUser: user)
             return updatedUser
         }

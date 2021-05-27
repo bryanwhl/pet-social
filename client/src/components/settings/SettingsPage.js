@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const SettingsPage = ({ user, deleteAccount, updateUser, displayName }) => {
+const SettingsPage = ({ user, deleteAccount, editFamilyNameFirst, displayName }) => {
     
     const classes = useStyles();
     const [settingsState, setSettingsState] = useState("Account");
@@ -118,7 +118,7 @@ const SettingsPage = ({ user, deleteAccount, updateUser, displayName }) => {
         </Drawer>
         <main className={classes.content}>
           <Toolbar />
-          {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount} updateUser={updateUser} displayName={displayName}/>}
+          {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst} displayName={displayName}/>}
           {settingsState === "Notifications" && <NotificationsSettings />}
           {settingsState === "Privacy" && <PrivacySettings />}
         </main>

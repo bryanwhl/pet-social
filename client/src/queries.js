@@ -36,11 +36,32 @@ export const addUserQuery=gql`
   }
 `
 
+export const deleteUserQuery=gql`
+  mutation ($id: ID!) {
+    deleteUser(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
+
 export const editPasswordQuery=gql`
   mutation ($id: ID!, $password: String!) {
     editPassword(
       id: $id,
       password: $password
+    ) {
+      id
+    }
+  }
+`
+
+export const editFamilyNameFirstQuery=gql`
+  mutation ($id: ID!, $familyNameFirst: Boolean!) {
+    editFamilyNameFirst(
+      id: $id,
+      familyNameFirst: $familyNameFirst
     ) {
       id
     }
