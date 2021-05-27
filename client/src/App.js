@@ -252,13 +252,13 @@ function App() {
 
 
   if (rememberMe) {
-    console.log("Users", users)
-    console.log("User", user)
     if (users !== null){
       setUser(users.find(u => u.id === rememberMe));
-      while (!user) { // When user is deleted from server
+      while (!user) { //When user is deleted from server
         if (rememberMeQueryCount === 2) {
+          setRememberMe(false)
           localStorage.clear()
+          setUser(null)
           return
         }
         setRememberMeQueryCount(rememberMeQueryCount + 1)
