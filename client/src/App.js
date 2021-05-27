@@ -68,7 +68,7 @@ function App() {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
-
+  const [rememberMeQueryCount, setRememberMeQueryCount] = useState(0);
 
   useEffect(() => {
     if (allUsers.data) {
@@ -142,6 +142,7 @@ function App() {
     setUser(null);
     setError(null)
     localStorage.clear()
+    setRememberMeQueryCount(0)
     setAppState("Signin")
   }
 
@@ -249,12 +250,18 @@ function App() {
 
   console.log("Remember Me ", rememberMe)
 
+
   if (rememberMe) {
+    console.log("Users", users)
+    console.log("User", user)
     if (users !== null){
       setUser(users.find(u => u.id === rememberMe));
-      if (!user) { // When user is deleted from server
-        setRememberMe(false)
-        localStorage.clear()
+      while (!user) { // When user is deleted from server
+        if (rememberMeQueryCount === 2) {
+          localStorage.clear()
+          return
+        }
+        setRememberMeQueryCount(rememberMeQueryCount + 1)
         return
       }
       switchToHome();
