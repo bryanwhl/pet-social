@@ -1,8 +1,8 @@
-import {Grid, Container, Card, IconButton, 
-    CardMedia, CardContent, Typography, 
-    Avatar, CardHeader, makeStyles, 
-    CardActions, TextField, CardActionArea} from '@material-ui/core';
-import logo from "./static/images/pet-social-logo.jpg";
+import {Grid, Container, Card,
+    CardContent, Typography, 
+    makeStyles, CardActions, TextField} from '@material-ui/core';
+
+const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -31,7 +31,7 @@ const LoginCard = () => {
                         <Card className={classes.root}>
                             <CardContent>
                                 <Grid container spacing={1} alignItems="flex-end" justify="center">
-                                    <img src={logo} alt="Pet Social" width="190" height="60" />
+                                    <img src={LOGO_PATH} alt="Pet Social" width="190" height="60" />
                                 </Grid>
                                 <Grid container spacing={1} alignItems="flex-end" justify="center">
                                     <Typography gutterBottom variant="h5" component="h2">

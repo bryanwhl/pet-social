@@ -2,10 +2,10 @@ import React from 'react'
 import Post from './Post.js'
 import SubmitPost from './SubmitPost.js'
 import { Grid, makeStyles, Container, Avatar, Divider } from '@material-ui/core';
-import eastcoast from '../static/images/eastcoast.jpg';
-import jaryl from '../static/images/jaryl.jpg';
-import doctorstrange from '../static/images/doctorstrange.jpg';
 import { red, blue } from '@material-ui/core/colors';
+import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client'
+import { getPostsQuery } from '../../queries.js'
 
 const useStyles = makeStyles((theme) => ({
   containerGrid: {
@@ -21,64 +21,127 @@ const useStyles = makeStyles((theme) => ({
 
 const PostsContainer = ({user, displayName}) => {
 
+  const allPosts = useQuery(getPostsQuery);
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    if (allPosts.data) {
+      console.log(allPosts.data)
+      setPosts(allPosts.data.getPosts)
+    }
+  }, [allPosts])
+
   const classes = useStyles();
   
-  const posts = [
-    {
-      name: "Bryan Leong",
-      avatar: <Avatar className={classes.avatarRed}>
-              C
-          </Avatar>,
-      // path to the OP's profile
-      path: "/",
-      content: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment!",
-      image: jaryl,
-      date: "21 May 2021",
-      comments: [
-      {
-          text: "Axel",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  A
-              </Avatar>,
-          path: "/",
-          comment: "Let's go together some day with my Corgi!"
-      }]
-    },
-    {
-      name: "Bryan Wong",
-      avatar: <Avatar alt="Bryan Wong" src={doctorstrange} />,
-      // path to the OP's profile
-      path: "/",
-      content: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
-      image: eastcoast,
-      date: "21 May 2021",
-      comments: [
-      {
-          text: "Bryan Tan",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  B
-              </Avatar>,
-          path: "/",
-          comment: "OMG your dogs are so cute!!"
-      },
-      {
-          text: "Gregg Tang",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  G
-              </Avatar>,
-          path: "/",
-          comment: "Was the sea breeze strong at East Coast Park? I want to bring my Rabbit there too!"
-      },
-      {
-          text: "Zanden Lim",
-          icon: <Avatar aria-label="bryan" className={classes.avatarBlue}>
-                  Z
-              </Avatar>,
-          path: "/",
-          comment: "I was there an hour ago too! Was a pity we missed each other."
-      }]
-    }
-  ]
+  // let posts = [
+  //     {
+  //         id: "1",
+  //         user: {
+  //             id: "3",
+  //             username: "bryanwhl",
+  //             accountType: "Personal",
+  //             name: {
+  //               givenName: "Bryan",
+  //               familyName: "Wong",
+  //             },
+  //             avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+  //             otherSettings: {
+  //               familyNameFirst: false,
+  //             }
+  //         },
+  //         date: "21 May 2021",
+  //         postType: "Image",
+  //         privacy: "Public",
+  //         imageFilePath: "http://localhost:4000/images/jaryl.jpg",
+  //         videoFilePath: "",
+  //         location: "",
+  //         text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment!",
+  //         tagged: [],
+  //         likedBy: [],
+  //         comments: [
+  //         {
+  //             user: {
+  //               name: {
+  //                 givenName: "Gregg",
+  //                 familyName: "Tang",
+  //               },
+  //               otherSettings: {
+  //                 familyNameFirst: false,
+  //               },
+  //               avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+  //             },
+  //             comment: "Let's go together some day with my Corgi!"
+  //         }],
+  //         isEdited: false,
+  //     },
+  //     {
+  //         id: "2",
+  //         user: {
+  //             id: "3",
+  //             username: "bryanwhl",
+  //             accountType: "Personal",
+  //             name: {
+  //               givenName: "Bryan",
+  //               familyName: "Wong",
+  //             },
+  //             avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+  //             otherSettings: {
+  //               familyNameFirst: false,
+  //             }
+  //         },
+  //         date: "21 May 2021",
+  //         postType: "Image",
+  //         privacy: "Public",
+  //         imageFilePath: "http://localhost:4000/images/eastcoast.jpg",
+  //         videoFilePath: "",
+  //         location: "",
+  //         text: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
+  //         tagged: [],
+  //         likedBy: [],
+  //         comments: [
+  //           {
+  //             user: {
+  //               name: {
+  //                 givenName: "Gregg",
+  //                 familyName: "Tang",
+  //               },
+  //               otherSettings: {
+  //                 familyNameFirst: false,
+  //               },
+  //               avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+  //             },
+  //             comment: "Let's go together some day with my Corgi!"
+  //           },
+  //           {
+  //             user: {
+  //               name: {
+  //                 givenName: "Gregg",
+  //                 familyName: "Tang",
+  //               },
+  //               otherSettings: {
+  //                 familyNameFirst: false,
+  //               },
+  //               avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+  //             },
+  //             comment: "Let's go together some day with my Corgi!"
+  //           },
+  //           {
+  //             user: {
+  //               name: {
+  //                 givenName: "Gregg",
+  //                 familyName: "Tang",
+  //               },
+  //               otherSettings: {
+  //                 familyNameFirst: false,
+  //               },
+  //               avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+  //             },
+  //             comment: "Let's go together some day with my Corgi!"
+  //           }],
+  //         isEdited: false,
+  //     }
+  // ]
   return (
     <Container className={classes.containerGrid}>
       <Grid container justify="center" alignItems="stretch">
@@ -88,7 +151,7 @@ const PostsContainer = ({user, displayName}) => {
         <Divider />
         {posts.map(item => (
           <Grid item justify="center">
-            <Post post={item} />
+            <Post user={user} post={item} />
           </Grid>
         ))}
       </Grid>

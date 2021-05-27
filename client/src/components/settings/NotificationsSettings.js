@@ -2,7 +2,7 @@ import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 
-const NotificationsSettings = () => {
+const NotificationsSettings = (user) => {
     return (
         <div>
             <CssBaseline />

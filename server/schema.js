@@ -1,4 +1,5 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql } = require('apollo-server-express')
+const express = require('express')
 const {
     GraphQLSchema,
     GraphQLObjectType,
@@ -12,7 +13,22 @@ const {
     Kind
   } = require('graphql')
 
-
+const dateScalar = new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    serialize(value) {
+      return value.getTime(); // Convert outgoing Date to integer for JSON
+    },
+    parseValue(value) {
+      return new Date(value); // Convert incoming integer to Date
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
+      }
+      return null; // Invalid hard-coded value (not an integer)
+    },
+});
 
 // Temporary Database
 let users = [
@@ -24,7 +40,7 @@ let users = [
       accountType: "Personal",
       givenName: "Ad",
       familyName: "Min",
-      avatarPath: './components/static/images/cute-dog.jpg',
+      avatarPath: 'http://localhost:4000/images/coco.png',
       profilePicturePath: "",
       posts: ["1"],
       savedPosts: [],
@@ -47,7 +63,7 @@ let users = [
       accountType: "Business",
       givenName: "Pet",
       familyName: "Social",
-      avatarPath: './components/static/images/cute-dog.jpg',
+      avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
       familyNameFirst: false,
       defaultPrivacy: true
     },
@@ -58,46 +74,96 @@ let users = [
       accountType: "Personal",
       givenName: "Bryan",
       familyName: "Wong",
-      avatarPath: './components/static/images/doctorstrange.jpg',
-      familyNameFirst: true,
+      avatarPath: 'http://localhost:4000/images/jaryl.jpg',
+      familyNameFirst: false,
       defaultPrivacy: true
     },
-  ]
+]
 
-const posts = [
+let posts = [
     {
         id: "1",
-        userID: "3",
-        date: "Date",
+        user: {
+            id: "3",
+            username: "bryanwhl",
+            accountType: "Personal",
+            givenName: "Bryan",
+            familyName: "Wong",
+            avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+            familyNameFirst: false,
+        },
+        date: dateScalar.parseValue("21 May 2021"),
         postType: "Image",
         privacy: "Public",
-        imageFilePath: "",
+        imageFilePath: "http://localhost:4000/images/jaryl.jpg",
         videoFilePath: "",
-        location: "Somewhere",
-        text: "Over the rainbow",
-        tagged: [],
-        likedBy: ["2"],
-        comments: [],
+        location: "",
+        text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment!",
+        comments: [
+        {
+            user: {
+                givenName: "Gregg",
+                familyName: "Tang",
+                familyNameFirst: false,
+                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+            },
+            text: "Let's go together some day with my Corgi!",
+            isEdited: false,
+        }],
+        isEdited: false
+    },
+    {
+        id: "2",
+        user: {
+            id: "3",
+            username: "bryanwhl",
+            accountType: "Personal",
+            givenName: "Bryan",
+            familyName: "Wong",
+            avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+            familyNameFirst: false,
+        },
+        date: dateScalar.parseValue("21 May 2021"),
+        postType: "Image",
+        privacy: "Public",
+        imageFilePath: "http://localhost:4000/images/eastcoast.jpg",
+        videoFilePath: "",
+        location: "",
+        text: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
+        comments: [
+          {
+            user: {
+                givenName: "Gregg",
+                familyName: "Tang",
+                familyNameFirst: false,
+                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+            },
+            text: "Let's go together some day with my Corgi!",
+            isEdited: false
+          },
+          {
+            user: {
+                givenName: "Gregg",
+                familyName: "Tang",
+                familyNameFirst: false,
+                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+            },
+            text: "Let's go together some day with my Corgi!",
+            isEdited: false
+          },
+          {
+            user: {
+                givenName: "Gregg",
+                familyName: "Tang",
+                familyNameFirst: false,
+                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+            },
+            text: "Let's go together some day with my Corgi!",
+            isEdited: false
+          }],
         isEdited: false,
     }
 ]
-
-const dateScalar = new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
-    serialize(value) {
-      return value.getTime(); // Convert outgoing Date to integer for JSON
-    },
-    parseValue(value) {
-      return new Date(value); // Convert incoming integer to Date
-    },
-    parseLiteral(ast) {
-      if (ast.kind === Kind.INT) {
-        return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
-      }
-      return null; // Invalid hard-coded value (not an integer)
-    },
-});
 
 const typeDefs = gql`
     scalar Date
@@ -148,10 +214,10 @@ const typeDefs = gql`
         privacy: String!
         imageFilePath: String
         videoFilePath: String
-        tagged: [Pet]!
+        tagged: [Pet]
         location: String
         text: String!
-        likedBy: [User]!
+        likedBy: [User]
         comments: [Comment]!
         isEdited: Boolean!
     }
@@ -161,9 +227,9 @@ const typeDefs = gql`
         user: User!
         date: Date!
         text: String!
-        likedBy: [User]!
+        likedBy: [User]
         isEdited: Boolean!
-        replies: [Comment]!
+        replies: [Comment]
     }
 
     type Notification {
@@ -222,6 +288,7 @@ const typeDefs = gql`
     type Query {
         allUsers: [User]!
         findUser(id: ID): User
+        getPosts: [Post]!
     }
 
     type Mutation {
@@ -263,6 +330,7 @@ const resolvers = {
     },
     Query: {
         allUsers: () => users,
+        getPosts: () => posts,
         findUser: (root, args) =>
             users.find(user => user.id === args.id)
     },
@@ -311,11 +379,21 @@ const resolvers = {
     }
 }
 
+const app = express()
+
 const server = new ApolloServer({
     typeDefs,
     resolvers,
   })
-  
-server.listen().then(({ url }) => {
-    console.log(`Server ready at ${url}`)
+
+server.applyMiddleware({app})
+
+app.use(express.static('server/public'))
+
+app.listen({port: 4000}, () => {
+    console.log(`Server ready at http://localhost:4000`)
 })
+
+// server.listen().then(({ url }) => {
+//     console.log(`Server ready at ${url}`)
+// })

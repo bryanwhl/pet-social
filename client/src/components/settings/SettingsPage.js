@@ -119,8 +119,8 @@ const SettingsPage = ({ user, deleteAccount, updateUser, displayName }) => {
         <main className={classes.content}>
           <Toolbar />
           {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount} updateUser={updateUser} displayName={displayName}/>}
-          {settingsState === "Notifications" && <NotificationsSettings />}
-          {settingsState === "Privacy" && <PrivacySettings />}
+          {settingsState === "Notifications" && <NotificationsSettings user={user} />}
+          {settingsState === "Privacy" && <PrivacySettings user={user} />}
         </main>
       </div>
     )
