@@ -61,12 +61,13 @@ function App() {
   const [ editFamilyNameFirst ] = useMutation(editFamilyNameFirstQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ deleteUser ] = useMutation(deleteUserQuery, {refetchQueries: [{query: allUsersQuery}]})
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(null);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [appState, setAppState] = useState("Signin");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
 
 
   useEffect(() => {
@@ -121,6 +122,11 @@ function App() {
         console.log("Logged in to account");
         setUser(users[i]);
         console.log(users[i])
+        if (details.remember) {
+          localStorage.setItem("rememberMe", users[i].id)
+        } else {
+          localStorage.clear()
+        }
         setError(null)
         switchToHome();
         return
@@ -135,6 +141,7 @@ function App() {
     console.log("Logout ", user.username);
     setUser(null);
     setError(null)
+    localStorage.clear()
     setAppState("Signin")
   }
 
@@ -238,6 +245,21 @@ function App() {
 
   const switchToHome = () => {
     setAppState("Home")
+  }
+
+  console.log("Remember Me ", rememberMe)
+
+  if (rememberMe) {
+    if (users !== null){
+      setUser(users.find(u => u.id === rememberMe));
+      if (!user) { // When user is deleted from server
+        setRememberMe(false)
+        localStorage.clear()
+        return
+      }
+      switchToHome();
+      setRememberMe(false)
+    }
   }
 
   return (
