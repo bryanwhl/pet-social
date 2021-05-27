@@ -3,7 +3,7 @@ import {Grid, Container, Card, IconButton,
     CardMedia, CardContent, Typography, 
     CardHeader, makeStyles, CardActions, 
     Grow, Paper, ClickAwayListener, 
-    MenuList, Popper, ListItem, 
+    MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Post = ({post}) => {
+const Post = ({user, post}) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorOptionsRef = React.useRef(null);
@@ -64,7 +64,18 @@ const Post = ({post}) => {
             path: "/"
         }
     ]
-  
+
+    const convertDate = (unixDate) => {
+        const normalDate = new Date(unixDate).toLocaleDateString("en-uk");
+        return normalDate;
+    }
+
+    const displayName = (user) => {
+        console.log("Display name: ", user)
+        return user.otherSettings.familyNameFirst ? (user.name.familyName + " " + user.name.givenName)
+        : (user.name.givenName + " " + user.name.familyName)
+    }
+
     const handleExpandClick = () => {
       setExpanded(!expanded);
     };
@@ -113,7 +124,9 @@ const Post = ({post}) => {
                     <Grid item>
                         <Card className={classes.root}>
                             <CardHeader
-                                avatar={post.avatar}
+                                avatar={
+                                    <Avatar src={post.user.avatarPath} />
+                                }
                                 action={
                                     <div>
                                         <IconButton
@@ -139,7 +152,9 @@ const Post = ({post}) => {
                                                             key={item.text}
                                                             onClick={handleOptionsClose}
                                                         >
-                                                            <ListItemIcon>{item.icon}</ListItemIcon>
+                                                            <ListItemIcon>
+                                                                {item.icon}
+                                                            </ListItemIcon>
                                                             <ListItemText primary={item.text}></ListItemText>
                                                         </ListItem>
                                                     ))}
@@ -151,18 +166,18 @@ const Post = ({post}) => {
                                         </Popper>
                                     </div>
                                 }
-                                title={post.name}
-                                subheader={post.date}
+                                title={displayName(post.user)}
+                                subheader={convertDate(post.date)}
                             />
                             <CardMedia
                                 className={classes.media}
-                                image= {post.image}
+                                image= {post.imageFilePath}
                                 title="dogs"
                             />
                             
                             <CardContent>
                                 <Typography variant="body2" component="p">
-                                    {post.content}
+                                    {post.text}
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
@@ -188,8 +203,10 @@ const Post = ({post}) => {
                                                 button
                                                 divider="true"
                                             >
-                                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                                <ListItemText primary={item.text} secondary={item.comment}></ListItemText>
+                                                <ListItemIcon>
+                                                    <Avatar src={item.user.avatarPath} />
+                                                </ListItemIcon>
+                                                <ListItemText primary={displayName(item.user)} secondary={item.text}></ListItemText>
                                             </ListItem>
                                         ))}
                                     </div>

@@ -101,6 +101,7 @@ function App() {
       : (user.name.givenName + " " + user.name.familyName)
   }
 
+  // Might be better to query server for user
   const login = details => {
     console.log(users)
     console.log("Login ", details);
@@ -262,7 +263,6 @@ function App() {
                 && <ResetPassword resetPassword={resetPassword} switchToSignin={switchToSignin} success={resetSuccess} error={error}/>}
             </div>
           )}
-
       </ThemeProvider>
     </div>
   );
