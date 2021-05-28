@@ -15,6 +15,7 @@ import RightNotificationBar from './RightNotificationBar';
 import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
+import { displayName } from '../../utility.js'
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 // constructor function for TopBar
 // appState helps navigate the app, and goes one level deeper for SideBar to change the app state
-const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
+const TopBar = ({ logout, user, appState, setAppState }) => {
 
     // const for all components
     const classes = useStyles();

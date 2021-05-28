@@ -6,6 +6,7 @@ import { red, blue } from '@material-ui/core/colors';
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client'
 import { getPostsQuery } from '../../queries.js'
+import { displayName } from '../../utility.js'
 
 const useStyles = makeStyles((theme) => ({
   containerGrid: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PostsContainer = ({user, displayName}) => {
+const PostsContainer = ({ user }) => {
 
   const allPosts = useQuery(getPostsQuery);
 
