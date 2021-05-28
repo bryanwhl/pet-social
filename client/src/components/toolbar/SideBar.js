@@ -59,7 +59,7 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
             text: (accountType === "Personal") ? "Playgroups" : "Advertising",
             icon: (accountType === "Personal") ? <MapIcon /> : <MonetizationOnIcon />,
             path: "/",
-            selected: (accountType === "Personal") ? (appState === "News") : (appState === "Advert"),
+            selected: (appState === "Playgroups"),
             onClick: (accountType === "Personal") ? switchToPlaygroups : handleAdvertisingClick
         },
         {

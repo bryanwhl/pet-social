@@ -5,7 +5,7 @@ import {Grid, Container, Card, IconButton,
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
-    Divider, List, TextField} from '@material-ui/core';
+    Divider, List, Button, TextField, InputAdornment} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 6,
+        marginTop: 14,
         fullWidth: true
     },
     input: {
@@ -231,9 +231,11 @@ const Post = ({user, post}) => {
                                         ))}
                                         <ListItem>
                                             <TextField
-                                                id="outlined-textarea"
+                                                id="outlined-multiline-static"
                                                 label="Write a comment..."
                                                 multiline
+                                                rows={4}
+                                                variant="outlined"
                                                 fullWidth
                                                 className={classes.textField}
                                             />

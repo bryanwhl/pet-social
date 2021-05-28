@@ -36,11 +36,10 @@ const PostsContainer = ({user, displayName}) => {
 
   return (
     <Container className={classes.containerGrid}>
-      <Grid container justify="center" alignItems="stretch">
+      <Grid container justify="center" alignItems="stretch" wrap="nowrap" direction="column">
         <Grid item justify="center">
           <SubmitPost user={user} displayName={displayName}/>
         </Grid>
-        <Divider />
         {posts.map(item => (
           <Grid item justify="center">
             <Post user={user} post={item} />
