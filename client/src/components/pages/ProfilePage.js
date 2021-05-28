@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
+import { displayName } from '../../utility.js';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const ProfilePage = ({ user, displayName }) => {
+const ProfilePage = ({ user }) => {
     const classes=useStyles();
 
     return (

@@ -13,9 +13,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
+import { displayName } from '../../utility.js'
 
 
-const AccountSettings = ({ user, deleteAccount, editFamilyNameFirst, displayName }) => {
+const AccountSettings = ({ user, deleteAccount, editFamilyNameFirst }) => {
 
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [error, setError] = useState(null);

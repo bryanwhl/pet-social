@@ -10,9 +10,7 @@ import SettingsPage from './components/settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
-import profilePic from './components/static/images/cute-dog.jpg';
 import { useQuery, useMutation } from '@apollo/client'
 import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, deleteUserQuery } from './queries.js'
 
@@ -87,20 +85,6 @@ function App() {
       }
     }
   }, [users])
-
-
-  // const updateUser = (userToUpdate, updatedUser) => {
-  //   const userIndex = users.indexOf(userToUpdate)
-  //   const updatedUsers = [users.slice(0, userIndex), updatedUser, users.slice(userIndex + 1)]
-  //   setUsers(updatedUsers)
-  //   setUser(updatedUser)
-  // }
-
-  const displayName = (user) => {
-    console.log("Display name: ", user)
-    return user.otherSettings.familyNameFirst ? (user.name.familyName + " " + user.name.givenName)
-      : (user.name.givenName + " " + user.name.familyName)
-  }
 
   // Might be better to query server for user
   const login = details => {
@@ -275,10 +259,10 @@ function App() {
           {(user !== null) ? (
             <div className="loggedIn">
               <CssBaseline />
-              <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} displayName={displayName} />
-              {appState === "Home" && <PostsContainer user={user} displayName={displayName}/>}
-              {appState === "Profile" && <ProfilePage user={user} displayName={displayName} />}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst} displayName={displayName}/>}
+              <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
+              {appState === "Home" && <PostsContainer user={user}/>}
+              {appState === "Profile" && <ProfilePage user={user}/>}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>
