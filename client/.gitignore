@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/src/client_secrets.js
 
 # testing
 /coverage

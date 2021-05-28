@@ -4,7 +4,8 @@ import {Grid, Container, Card, IconButton,
     CardHeader, makeStyles, CardActions, 
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
-    ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
+    ListItemIcon, ListItemText, Collapse,
+    Divider, List, TextField} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -36,7 +37,25 @@ const useStyles = makeStyles((theme) => ({
     },
     avatarBlue: {
         backgroundColor: blue[500],
-    }
+    },
+    textField: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 6,
+        fullWidth: true
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    iconButton: {
+        padding: 10,
+    },
+    divider: {
+        height: 28,
+        margin: 4,
+    },
 }));
 
 const Post = ({user, post}) => {
@@ -197,7 +216,8 @@ const Post = ({user, post}) => {
                             <Collapse in={expanded} timeout="auto" unmountOnExit>
                                 <CardContent>
                                     <MenuList id="menu-list-grow">
-                                    <div className={classes.drawerContainer}>
+                                        <Divider />
+                                        <List>
                                         {post.comments.map(item => (
                                             <ListItem
                                                 button
@@ -209,7 +229,17 @@ const Post = ({user, post}) => {
                                                 <ListItemText primary={displayName(item.user)} secondary={item.text}></ListItemText>
                                             </ListItem>
                                         ))}
-                                    </div>
+                                        <ListItem>
+                                            <TextField
+                                                id="outlined-textarea"
+                                                label="Write a comment..."
+                                                multiline
+                                                fullWidth
+                                                className={classes.textField}
+                                            />
+                                        </ListItem>
+                                        </List>
+                                        <Divider />
                                     </MenuList>
                                 </CardContent>
                             </Collapse>

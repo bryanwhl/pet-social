@@ -10,9 +10,7 @@ import SettingsPage from './components/settings/SettingsPage.js'
 import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { Avatar } from '@material-ui/core';
 import PostsContainer from './components/posts/PostsContainer.js';
-import profilePic from './components/static/images/cute-dog.jpg';
 import { useQuery, useMutation } from '@apollo/client'
 import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, deleteUserQuery } from './queries.js'
 
