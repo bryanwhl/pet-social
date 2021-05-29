@@ -1,0 +1,117 @@
+@startuml DataSchema
+hide circle
+skinparam classAttributeIconSize 0
+
+class User {
+    id: ID!
+    username: String!
+    password: String!
+    email: String!
+    accountType: String!
+    name: Name!
+    avatarPath: String!
+    profilePicturePath: String!
+    posts: [Post]!
+    savedPosts: [Post]!
+    friends: [User]!
+    blockedUser: [User]!
+    chats: [Chat]!
+    notifications: [Notification]!
+    online: Boolean!
+    registeredDate: Date!
+    profileBio: String
+    playgroups: [Playgroup]!
+    pets: [Pet]!
+    otherSettings: Settings!
+}
+
+class Name {
+    givenName: String!
+    familyName: String!
+}
+
+class Settings {
+    familyNameFirst: Boolean!
+    defaultPrivacy: String!
+}
+
+class Post {
+    id: ID!
+    user: User!
+    date: Date!
+    postType: String!
+    privacy: String!
+    imageFilePath: String
+    videoFilePath: String
+    tagged: [Pet]
+    location: String
+    text: String!
+    likedBy: [User]
+    comments: [Comment]!
+    isEdited: Boolean!
+}
+
+class Comment {
+    id: ID!
+    user: User!
+    date: Date!
+    text: String!
+    likedBy: [User]
+    isEdited: Boolean!
+    replies: [Comment]
+}
+
+class Notification {
+    id: ID!
+    fromUser: User!
+    date: Date!
+    notificationType: String!
+    post: Post
+    friendRequest: FriendRequest
+    comment: Comment
+}
+
+class Chat {
+    id: ID!
+    users: [User!]!
+    messages: [Message]!
+}
+
+class Message {
+    id: ID!
+    user: User!
+    date: Date!
+    isEdited: Boolean!
+    isSeen: Boolean!
+}
+
+class Pet {
+    id: ID!
+    name: String!
+    owners: [User!]!
+    dateOfBirth: Date!
+    gender: String!
+    breed: String!
+    picturePath: String
+}
+
+class Playgroup {
+    id: ID!
+    name: String!
+    description: String
+    playgroupAdmin: [User!]!
+    members: [User!]!
+    meetingDates: [Date]!
+    meetingLocation: String!
+    dateCreated: Date!
+    playgroupChat: Chat!
+}
+
+class FriendRequest {
+    id: ID!
+    fromUser: User!
+    toUser: User!
+    date: Date!
+}
+
+@enduml

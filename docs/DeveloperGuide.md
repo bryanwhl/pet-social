@@ -82,7 +82,13 @@ Server here
 
 ### Database
 
-Database here
+This diagram shows our data schema with connections shown explicitly.
+
+![Data Schema Explicit](uml/DataSchemaExplicitConnections.png)
+
+This diagram shows our data schema without connections shown explicitly.
+
+![Data Schema](uml/DataSchema.png)
 
 ### Hosting
 

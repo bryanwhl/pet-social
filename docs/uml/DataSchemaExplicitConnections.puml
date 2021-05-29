@@ -1,0 +1,126 @@
+@startuml DataSchemaExplicitConnections
+hide circle
+skinparam classAttributeIconSize 0
+
+class User {
+    id: ID!
+    username: String!
+    password: String!
+    email: String!
+    accountType: String!
+    avatarPath: String!
+    profilePicturePath: String!
+    online: Boolean!
+    registeredDate: Date!
+    profileBio: String
+}
+
+class Name {
+    givenName: String!
+    familyName: String!
+}
+
+class Settings {
+    familyNameFirst: Boolean!
+    defaultPrivacy: String!
+}
+
+class Post {
+    id: ID!
+    user: User!
+    date: Date!
+    postType: String!
+    privacy: String!
+    imageFilePath: String
+    videoFilePath: String
+    location: String
+    text: String!
+    isEdited: Boolean!
+}
+
+class Comment {
+    id: ID!
+    date: Date!
+    text: String!
+    isEdited: Boolean!
+}
+
+class Notification {
+    id: ID!
+    date: Date!
+    notificationType: String!
+}
+
+class Chat {
+    id: ID!
+}
+
+class Message {
+    id: ID!
+    date: Date!
+    isEdited: Boolean!
+    isSeen: Boolean!
+}
+
+class Pet {
+    id: ID!
+    name: String!
+    dateOfBirth: Date!
+    gender: String!
+    breed: String!
+    picturePath: String
+}
+
+class Playgroup {
+    id: ID!
+    name: String!
+    description: String
+    meetingDates: [Date]!
+    meetingLocation: String!
+    dateCreated: Date!
+}
+
+class FriendRequest {
+    id: ID!
+    date: Date!
+}
+
+User *-up-> "1" Name : name >
+User *-up-> "1" Settings : otherSettings >
+User --> "*" User : friends >
+User --> "*" User : blockedUser >
+User --> "*" Post : posts >
+User --> "*" Post : savedPosts >
+User -up-> "*" Chat: chats >
+User --> "*" Notification: notifications >
+User -up-> "*" Playgroup: playgroups >
+User --> "*" Pet: pets >
+
+Post --> "*" Pet: tagged >
+Post --> "*" User: likedBy >
+Post --> "*" Comment: comments >
+
+Comment --> "1" User: user >
+Comment --> "*" User: likedBy >
+Comment --> "*" Comment: comments >
+
+Notification --> "0..1" Post: post >
+Notification --> "1" User: fromUser >
+Notification --> "0..1" FriendRequest: friendRequest >
+Notification --> "0..1" Comment: comment >
+
+Chat --> "2..*" User: users >
+Chat --> "*" Message: messages >
+
+Message --> "1" User: user >
+
+Pet --> "1..*" User: owners >
+
+Playgroup --> "1..*" User: playgroupAdmin >
+Playgroup --> "*" User: members >
+Playgroup --> "1" Chat: playgroupChat >
+
+FriendRequest -left-> "1" User: fromUser >
+FriendRequest -left-> "1" User: toUser >
+
+@enduml
