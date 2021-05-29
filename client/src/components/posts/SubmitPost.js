@@ -37,7 +37,7 @@ const SubmitPost = ({user, displayName}) => {
               <Grid item>
                 <Card className={classes.root}>
                   <CardHeader
-                    avatar={<Avatar alt="Avatar" src='../static/images/cute-dog.jpg' />}
+                    avatar={<Avatar alt="Avatar" src={user.avatarPath} />}
                     title={displayName(user)}
                   />
                   <CardContent>
