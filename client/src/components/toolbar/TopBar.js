@@ -212,9 +212,7 @@ const TopBar = ({ logout, user, appState, setAppState, displayName }) => {
                                         <MenuList autoFocusItem={profileOpen} id="profile-list-grow" onKeyDown={handleListKeyDown}>
                                             <ListItem>
                                                 <ListItemIcon>
-                                                    <Avatar>
-                                                        {user.name.givenName[0]}
-                                                    </Avatar>
+                                                    <Avatar alt="Avatar" src={user.avatarPath} />
                                                 </ListItemIcon>
                                                 <Typography>{displayName(user)}</Typography>
                                             </ListItem>

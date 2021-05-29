@@ -40,7 +40,7 @@ let users = [
       accountType: "Personal",
       givenName: "Ad",
       familyName: "Min",
-      avatarPath: 'http://localhost:4000/images/coco.png',
+      avatarPath: 'http://localhost:4000/images/nerddog.jpg',
       profilePicturePath: "",
       posts: ["1"],
       savedPosts: [],
@@ -78,11 +78,53 @@ let users = [
       familyNameFirst: false,
       defaultPrivacy: true
     },
+    {
+        id: "4",
+        username: "matthewtan",
+        password: "admin123",
+        accountType: "Personal",
+        givenName: "Matthew",
+        familyName: "Tan",
+        avatarPath: 'http://localhost:4000/images/coco.png',
+        familyNameFirst: false,
+        defaultPrivacy: true
+    },
 ]
 
 let posts = [
     {
         id: "1",
+        user: {
+            id: "4",
+            username: "matthewtan",
+            accountType: "Personal",
+            givenName: "Matthew",
+            familyName: "Tan",
+            avatarPath: 'http://localhost:4000/images/coco.png',
+            familyNameFirst: false,
+        },
+        date: dateScalar.parseValue("22 May 2021"),
+        postType: "Image",
+        privacy: "Public",
+        imageFilePath: "http://localhost:4000/images/coco2.jpg",
+        videoFilePath: "",
+        location: "",
+        text: "Here's coco sunbathing at the balcony. Good way to spend her time during the lockdown!",
+        comments: [
+        {
+            user: {
+                givenName: "Ethan",
+                familyName: "Lee",
+                familyNameFirst: false,
+                avatarPath: "http://localhost:4000/images/husky.jpg",
+            },
+            text: "SO CUTEEEE",
+            isEdited: false,
+        }],
+        isEdited: false
+    },
+    {
+        id: "2",
         user: {
             id: "3",
             username: "bryanwhl",
@@ -98,11 +140,11 @@ let posts = [
         imageFilePath: "http://localhost:4000/images/jaryl.jpg",
         videoFilePath: "",
         location: "",
-        text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment!",
+        text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment",
         comments: [
         {
             user: {
-                givenName: "Gregg",
+                givenName: "Anderson",
                 familyName: "Tang",
                 familyNameFirst: false,
                 avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
@@ -113,7 +155,7 @@ let posts = [
         isEdited: false
     },
     {
-        id: "2",
+        id: "3",
         user: {
             id: "3",
             username: "bryanwhl",
@@ -136,29 +178,29 @@ let posts = [
                 givenName: "Gregg",
                 familyName: "Tang",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+                avatarPath: "http://localhost:4000/images/bulldog.jpg",
             },
-            text: "Let's go together some day with my Corgi!",
+            text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
             isEdited: false
           },
           {
             user: {
-                givenName: "Gregg",
-                familyName: "Tang",
+                givenName: "Patrick",
+                familyName: "Wong",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+                avatarPath: "http://localhost:4000/images/cutie.jpg",
             },
-            text: "Let's go together some day with my Corgi!",
+            text: "Your dogs seem to enjoy the sea breeze hahaha",
             isEdited: false
           },
           {
             user: {
-                givenName: "Gregg",
-                familyName: "Tang",
+                givenName: "Brendan",
+                familyName: "Lim",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+                avatarPath: "http://localhost:4000/images/pug.jpg",
             },
-            text: "Let's go together some day with my Corgi!",
+            text: "Awww did you really get a stroller for them too?",
             isEdited: false
           }],
         isEdited: false,
@@ -360,6 +402,29 @@ const resolvers = {
             users = users.concat(newUser)
             return newUser
         },
+        // addPost: (root, args) => {
+        //     const newPost = {
+        //         ...args,
+        //         id: String(users.length + 1),
+        //         avatarPath: "",
+        //         profilePicturePath: "",
+        //         posts: [],
+        //         savedPosts: [],
+        //         friends: [],
+        //         blockedUsers: [],
+        //         chats: [],
+        //         notifications: [],
+        //         online: false,
+        //         registeredDate: "Current Date", //Need Change
+        //         profileBio: "",
+        //         playgroups: [],
+        //         pets: [],
+        //         familyNameFirst: false, 
+        //         defaultPrivacy: "Hello"
+        //     }
+        //     posts = posts.concat(newPost)
+        //     return newPost
+        // },
         deleteUser: (root, args) => {
             const userToDelete = users.find(user => user.id === args.id)
             if (!userToDelete) {
