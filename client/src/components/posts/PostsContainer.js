@@ -1,7 +1,7 @@
 import React from 'react'
 import Post from './Post.js'
 import SubmitPost from './SubmitPost.js'
-import { Grid, makeStyles, Container, Divider } from '@material-ui/core';
+import { Grid, makeStyles, Container } from '@material-ui/core';
 import { red, blue } from '@material-ui/core/colors';
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client'

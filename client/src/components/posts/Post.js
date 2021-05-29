@@ -5,7 +5,7 @@ import {Grid, Container, Card, IconButton,
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
-    Divider, List, Button, TextField, InputAdornment} from '@material-ui/core';
+    Divider, List, TextField} from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';

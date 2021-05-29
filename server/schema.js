@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server-express')
 const express = require('express')
+
 const {
     GraphQLSchema,
     GraphQLObjectType,
@@ -459,7 +460,7 @@ const app = express()
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-  })
+})
 
 server.applyMiddleware({app})
 
@@ -469,6 +470,6 @@ app.listen({port: 4000}, () => {
     console.log(`Server ready at http://localhost:4000`)
 })
 
-// server.listen().then(({ url }) => {
-//     console.log(`Server ready at ${url}`)
+// app.listen().then(({ url, subscriptionsUrl }) => {
+//     console.log(`Server ready at ${subscriptionsUrl}`)
 // })
