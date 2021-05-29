@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState }) => {
+const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountType, appState, setAppState }) => {
     
     const switchToHome = () => {
         setAppState("Home")
@@ -32,6 +32,8 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
     
     const switchToPlaygroups = () => {
         setAppState("Playgroups")
+        closeLeftDrawer()
+        setRightDrawerState("false")
     }
     
     const handleAdvertisingClick = () => {
@@ -44,7 +46,7 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
     
     const switchToSettings = () => {
         setAppState("Settings")
-        closeDrawer()
+        closeLeftDrawer()
     }
 
     const sidebarItems = [
@@ -93,7 +95,7 @@ const SideBar = ({ drawerState, closeDrawer, accountType, appState, setAppState 
                 }}
             >
                 <div className={classes.drawerHeader}>
-                <IconButton onClick={closeDrawer}>
+                <IconButton onClick={closeLeftDrawer}>
                     {<ChevronLeftIcon />}
                 </IconButton>
                 </div>                
