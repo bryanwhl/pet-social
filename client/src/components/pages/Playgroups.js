@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import DirectionsIcon from '@material-ui/icons/Directions';
-import Key from '../../client_secrets.js'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,9 +33,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Playgroups = () => {
     const classes = useStyles();
+    console.log(process.env.REACT_APP_KEY);
 
     return (
-        <div style={{ height: '100vh', width: '100%' }}>
+        <div style={{ height: '94vh', width: '100%' }}>
         <Grid container alignItems="center" justify="flex-start">
             <Grid item>
                 <Paper component="form" className={classes.root}>
@@ -59,7 +59,7 @@ const Playgroups = () => {
             </Grid>
         </Grid>
         <GoogleMapReact
-            bootstrapURLKeys={{ key: Key() }}
+            bootstrapURLKeys={{ key: process.env.REACT_APP_KEY }}
             defaultCenter={{
                 lat: 1.3314930427408092,
                 lng: 103.80778265368694
