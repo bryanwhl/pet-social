@@ -237,7 +237,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <SideBar position="relative" drawerState={leftDrawerState} closeDrawer={closeLeftDrawer} accountType={user.accountType} appState={appState} setAppState={setAppState} />
+            <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} appState={appState} setAppState={setAppState} />
             <RightNotificationBar drawerState={rightDrawerState === 'notification'} />
             <RightChatBar drawerState={rightDrawerState === 'chat'} />
         </div>
