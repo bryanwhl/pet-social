@@ -1,0 +1,45 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class App 
+class ProfilePage
+class SettingsPage
+class PostsContainer
+class Playgroups
+class Shop
+class Post
+class SubmitPost
+class AccountSettings
+class NotificationsSettings
+class PrivacySettings
+class Chat
+class Login
+class ResetPassword
+class Signup
+class TopBar
+class SideBar
+class RightNotificationBar
+class RightChatBar
+class Notifications
+
+App -->"1" Login
+App -->"1" Signup
+App -->"1" ResetPassword
+App -->"1" PostsContainer
+App -->"1" ProfilePage
+App -->"1" SettingsPage
+App -->"1" Playgroups
+App -->"1" Shop
+SettingsPage --> "1" AccountSettings
+SettingsPage --> "1" NotificationsSettings
+SettingsPage --> "1" PrivacySettings
+PostsContainer --> "1" SubmitPost
+PostsContainer --> "0...*" Post
+TopBar --> "1" SideBar
+TopBar --> "1" RightNotificationBar
+TopBar --> "1" RightChatBar
+TopBar --> "1" Notifications
+RightChatBar --> "0...*" Chat
+App --> "1" TopBar
+@enduml
