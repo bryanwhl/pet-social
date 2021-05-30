@@ -111,6 +111,8 @@ GraphQL was chosen over the 'standard' REST API as data can be gathered more pre
 
 Apollo Client organises and simplifies the implementation of GraphQL by tracking the schema in a central registry and combining APIs, databases and microservices into a single data graph that can be queried with GraphQL.
 
+You may use _GraphQL Playground_ to make queries to the server by adding `/graphql` to the end of the web address.
+
 ### Database
 
 This diagram shows our data schema with connections shown explicitly.
