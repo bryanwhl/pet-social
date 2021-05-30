@@ -70,11 +70,36 @@ The overall tech stack of Pet Social is explained first, before diving into each
 
 ### Tech Stack
 
-Tech Stack here
+Pet Social is built using the follow technology:
+
+**JavaScript** <br />
+JavaScript is the default language for programming web applications. Pet Social uses JavaScript libraries for both the frontend and backend of the program.
+
+**Node.js**<br />
+Node.js is a server-side runtime environment that helps to ease the job of developing applications in JavaScript. Pet Social uses Node.js and its in-built package manager, Node Package Manager (npm), extensively to increase development efficiency.
+
+**React**<br />
+React is a modern JavaScript library used for building user interfaces. Applications built with React are single-page applications that works inside a browser and does not require page reloading during use. We chose react for the ease of development that it provides for us. We also chose to use the Material-UI framework which contains pre-built react components based on Google's material design.
+
+**Express.js**<br />
+Express.js is a Node.js framework that handles the backend of the application. It is used to ease the development of our backend system.
+
+**GraphQL**<br />
+Pet Social uses GraphQL to define our backend APIs. GraphQL is chosen for its efficiency in dealing with large amounts of data. GraphQL is also optimized for querying as only a single request is needed to retrieve all the information we need.
+
+**Apollo Client**<br />
+Apollo Client is a comprehensive state management library for JavaScript that enables us to manage both local and remote data with GraphQL. Apollo Client greatly eases the development process for writing and handling of GraphQL APIs.
+
+**MongoDB**<br />
+To complete our application, MongoDB is the database that we've chosen due to its NoSQL property. Upon research, MongoDB is a better choice than SQL languages due to its faster querying times for social media features like retrieving posts, friends, comments etc.
 
 ### Frontend and User Interface
 
-Frontend here
+The diagram below shows the component tree of our React frontend application. These components come together to provide a smooth application interface for users to use our application at ease.
+
+![React Components](uml/ReactComponents.png)
+
+Many of the components are made from sub-components taken from the Material-UI library. These components are made from Google's material design, with visuals and experiences that epitomizes modern web applications.
 
 ### Server
 
@@ -92,7 +117,7 @@ This diagram shows our data schema without connections shown explicitly.
 
 ### Hosting
 
-Hosting here
+Pet Social is being hosted on Amazon Web Services. It is hosted on an EC2 instance with the repository being housed on Amazon Web Services' Ubuntu Server. The backend of Pet Social is hosted using the pm2 package. All images are hosted on the /images route that is being run as a static folder.
 
 ## Implementation
 
