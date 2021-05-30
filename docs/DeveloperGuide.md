@@ -103,7 +103,15 @@ Many of the components are made from sub-components taken from the Material-UI l
 
 ### Server
 
-Server here
+We implemented our server using Express.js as a router and GraphQL with Apollo client as the query language to handle queries between the front and back end.
+
+Express is used as a router as middleware that defines the application's endpoints and corresponds to HTTP methods.
+
+GraphQL was chosen over the 'standard' REST API as data can be gathered more precisely using a single query, instead of accessing multiple endpoints. This would minimise overfetching of data.
+
+Apollo Client organises and simplifies the implementation of GraphQL by tracking the schema in a central registry and combining APIs, databases and microservices into a single data graph that can be queried with GraphQL.
+
+You may use _GraphQL Playground_ to make queries to the server by adding `/graphql` to the end of the web address.
 
 ### Database
 
@@ -121,7 +129,13 @@ Pet Social is being hosted on Amazon Web Services. It is hosted on an EC2 instan
 
 ## Implementation
 
-Implementation here
+This subsection provides activity diagrams detailing the workflows for more complicated processes in Pet Social.
+
+### Arrange Playgroup Meetup
+
+![Playgroup Meetup](uml/PlaygroupMeetupActivity.png)
+
+Playgroup Meetups can be suggested on the Playgroup. Upon agreement among the members, the meetup date is set. Else, new dates are suggested.
 
 ## Product scope
 
