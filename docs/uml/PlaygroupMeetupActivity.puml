@@ -1,0 +1,29 @@
+@startuml PlaygroupMeetupActivity
+
+start
+
+if (Account Created?) then (yes)
+    if (Forgot Password?) then (yes)
+        :Reset Password;
+    else (no)
+    endif
+else (no)
+  :Create Account;
+endif
+:Sign in;
+
+if (In playgroup?) then (yes)
+else (no)
+    :Create Playgroup\nand add members;
+endif
+
+repeat
+:Suggest Meetup Dates;
+repeat while (Agreement on Meetup Dates) is (no)
+->yes;
+:Meetup Set;
+
+
+stop
+
+@enduml
