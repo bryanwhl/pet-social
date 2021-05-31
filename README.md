@@ -4,6 +4,9 @@ Bryan Wong
 
 Wang Zihan
 
+### Link to current deployment
+You may access our current deployment [here](http://54.255.252.31/).
+
 ### Motivation
 
 As pet owners, we often have the urge to bring our pets out to meet, play or socialise with other pets. However, there is currently no easy way to do this besides meeting other pet owners from our own social circle. Apart from Facebook groups, there are no centralised digital platforms for pet owners to interact, socialize or advise one another on pet ownership. We want to be the first to conceptualise such an application; one that connects pet owners nearby in ways that will enhance their experience as pet owners.
