@@ -5,7 +5,7 @@ Bryan Wong
 Wang Zihan
 
 ### Link to current deployment
-You may access our current deployment [here](http://54.255.252.31/).
+You may access our current deployment [here](http://54.179.234.160/).
 
 ### Motivation
 
