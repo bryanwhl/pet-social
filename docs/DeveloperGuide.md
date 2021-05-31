@@ -144,22 +144,37 @@ Product scope provides you an insight into the value of Pet Social, and its bene
 ### Target user profile:
 
 - Pet owners who:
+
   - want to interact with other pet users and pets
+  - want to arrange meetups with other pet owners
   - want to purchase items and services for their pets
+
+- Business owners who:
+  - want to advertise their products or services to pet owners
+  - want to sell their products or services to pet owners
 
 ### Value proposition
 
-There is currently no easy way to do this besides meeting other pet owners from our own social circle. Furthermore, apart from Facebook groups, there are no centralised digital platforms for pet owners to interact, socialize or advise one another on pet ownership.
+There is currently no easy way to do this besides meeting other pet owners from our own social circle. Apart from Facebook groups, there are no centralised digital platforms for pet owners to interact, socialise or advise each other on pet ownership.
 
-Pet Social will be the first to conceptualise such an application; one that connects pet owners nearby in ways that will enhance their experience as pet owners.
+Pet Social will be the first to implement such an application; one that connects pet owners and that enhances their experience as pet owners.
 
 ### User Stories
 
-| Version | As a ...              | I want to ...                          | So that I can ...                           |
-| ------- | --------------------- | -------------------------------------- | ------------------------------------------- |
-| v1.0    | Pet Owner             | create an account                      | begin using the platform                    |
-| v2.0    | Pet Owner             | form playgroups with fellow pet owners | our pets can play together                  |
-| v3.0    | Pet Services Provider | join the platform                      | advertise and sell my products and services |
+| Version | As a ...              | I want to ...                                      | So that I can ...                                    |
+| ------- | --------------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| v1.0    | Pet Social User       | create a personal or business account              | begin using the platform                             |
+| v1.0    | Pet Social User       | delete my account                                  | remove my data if I no longer use the platform       |
+| v1.0    | Pet Social User       | post photos                                        | share my experiences and memories with my pets       |
+| v1.0    | Pet Social User       | comment on posts                                   | reply to posts that I enjoy                          |
+| v2.0    | Pet Owner             | add other users as friends                         | connect more easily with each other on the platform  |
+| v2.0    | Pet Social User       | chat with other users on the platform              | easily communicate without leaving Pet Social        |
+| v2.0    | Pet Social User       | view notifications                                 | quickly see events pertaining to me                  |
+| v2.0    | Pet Owner             | form playgroups with fellow pet owners             | our pets can play together                           |
+| v3.0    | Pet Services Provider | join the platform                                  | advertise and sell my products and services          |
+| v3.0    | Pet Services Provider | advertise my products and services                 | I can market my products to bigger audiences         |
+| v3.0    | Pet Social User       | adjust UI settings such as font size and dark mode | configure my experience to my preferences            |
+| v3.0    | Pet owner             | have friend suggestions                            | connect with others who have similar interests as me |
 
 ### Non-Functional Requirements
 
