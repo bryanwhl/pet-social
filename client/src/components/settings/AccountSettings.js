@@ -20,7 +20,7 @@ const AccountSettings = ({ user, deleteAccount, editFamilyNameFirst }) => {
 
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [error, setError] = useState(null);
-    const [nameOrderState, setNameOrderState] = useState(user.otherSettings.familyNameFirst);
+    const [nameOrderState, setNameOrderState] = useState(user.settings.familyNameFirst);
 
     const [open, setOpen] = React.useState(false);
 
@@ -70,11 +70,14 @@ const AccountSettings = ({ user, deleteAccount, editFamilyNameFirst }) => {
                 Your Account
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Signed in as {user.username} ({user.accountType} Account)
+                Signed in as {user.username} ({user.email})
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Account Type: {user.accountType} Account
             </Typography>
             <ListItem>
                 <ListItemIcon>
-                    <Avatar>
+                    <Avatar alt="Avatar" src={user.avatarPath}>
                         {user.name.givenName[0]}
                     </Avatar>
                 </ListItemIcon>

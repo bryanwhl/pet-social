@@ -55,29 +55,64 @@ let users = [
       playgrouops: [],
       pets: [],
       familyNameFirst: false,
-      defaultPrivacy: true
+      defaultPrivacy: true,
+      likeNotification: true,
+      commentNotification: true,
+      shareNotification: true
     },
     {
       id: "2",
       username: "Pet Social",
       password: "admin123",
       accountType: "Business",
+      email: "petsocial@gmail.com",
       givenName: "Pet",
       familyName: "Social",
       avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+      profilePicturePath: "",
+      posts: [],
+      savedPosts: [],
+      friends: [],
+      blockedUsers: [],
+      chat: [],
+      notifications: [],
+      online: false,
+      registeredDate: "Some Date",
+      profileBio: "Profile Bio",
+      playgrouops: [],
+      pets: [],
       familyNameFirst: false,
-      defaultPrivacy: true
+      defaultPrivacy: true,
+      likeNotification: true,
+      commentNotification: true,
+      shareNotification: true
     },
     {
       id: "3",
       username: "bryanwhl",
       password: "admin123",
       accountType: "Personal",
+      email: "bryanwhl@gmail.com",
       givenName: "Bryan",
       familyName: "Wong",
       avatarPath: 'http://localhost:4000/images/jaryl.jpg',
+      profilePicturePath: "",
+      posts: [],
+      savedPosts: [],
+      friends: [],
+      blockedUsers: [],
+      chat: [],
+      notifications: [],
+      online: false,
+      registeredDate: "Some Date",
+      profileBio: "Profile Bio",
+      playgrouops: [],
+      pets: [],
       familyNameFirst: false,
-      defaultPrivacy: true
+      defaultPrivacy: true,
+      likeNotification: true,
+      commentNotification: true,
+      shareNotification: true
     },
     {
         id: "4",
@@ -86,9 +121,25 @@ let users = [
         accountType: "Personal",
         givenName: "Matthew",
         familyName: "Tan",
+        email: "matthewtan@gmail.com",
         avatarPath: 'http://localhost:4000/images/coco.png',
+        profilePicturePath: "",
+        posts: [],
+        savedPosts: [],
+        friends: [],
+        blockedUsers: [],
+        chat: [],
+        notifications: [],
+        online: false,
+        registeredDate: "Some Date",
+        profileBio: "Profile Bio",
+        playgrouops: [],
+        pets: [],
         familyNameFirst: false,
-        defaultPrivacy: true
+        defaultPrivacy: true,
+        likeNotification: true,
+        commentNotification: true,
+        shareNotification: true
     },
 ]
 
@@ -231,7 +282,7 @@ const typeDefs = gql`
         profileBio: String
         playgroups: [Playgroup]!
         pets: [Pet]!
-        otherSettings: Settings!
+        settings: Settings!
     }
 
     type Name {
@@ -247,6 +298,9 @@ const typeDefs = gql`
     type Settings {
         familyNameFirst: Boolean!
         defaultPrivacy: String!
+        likeNotification: Boolean!
+        commentNotification: Boolean!
+        shareNotification: Boolean!
     }
 
     type Post {
@@ -354,6 +408,18 @@ const typeDefs = gql`
             id: ID!
             familyNameFirst: Boolean!
         ): User
+        editLikeNotification(
+            id: ID!
+            likeNotification: Boolean!
+        ): User
+        editCommentNotification(
+            id: ID!
+            commentNotification: Boolean!
+        ): User
+        editShareNotification(
+            id: ID!
+            shareNotification: Boolean!
+        ): User
     }
 
 `
@@ -366,10 +432,13 @@ const resolvers = {
                 familyName: root.familyName
             }
         },
-        otherSettings: (root) => {
+        settings: (root) => {
             return {
                 familyNameFirst: root.familyNameFirst,
-                defaultPrivacy: root.defaultPrivacy
+                defaultPrivacy: root.defaultPrivacy,
+                likeNotification: root.likeNotification,
+                commentNotification: root.commentNotification,
+                shareNotification: root.shareNotification
             }
         }
     },
@@ -398,7 +467,10 @@ const resolvers = {
                 playgroups: [],
                 pets: [],
                 familyNameFirst: false, 
-                defaultPrivacy: "Hello"
+                defaultPrivacy: "Hello",
+                likeNotification: true,
+                commentNotification: true,
+                shareNotification: true
             }
             users = users.concat(newUser)
             return newUser
@@ -443,12 +515,39 @@ const resolvers = {
             users = users.map(user => user.id === args.id ? updatedUser: user)
             return updatedUser
         },
-        editFamilyNameFirst: (root, args) => {
+        editFamilyNameFirst: (root, args) => { //Maybe can simplify all settings edits to one function that takes in parameter of which field to edit
             const userToUpdate = users.find(user => user.id === args.id)
             if (!userToUpdate) {
                 return null
             }
             const updatedUser = { ...userToUpdate, familyNameFirst: args.familyNameFirst }
+            users = users.map(user => user.id === args.id ? updatedUser: user)
+            return updatedUser
+        },
+        editLikeNotification: (root, args) => {
+            const userToUpdate = users.find(user => user.id === args.id)
+            if (!userToUpdate) {
+                return null
+            }
+            const updatedUser = { ...userToUpdate, likeNotification: args.likeNotification }
+            users = users.map(user => user.id === args.id ? updatedUser: user)
+            return updatedUser
+        },
+        editCommentNotification: (root, args) => {
+            const userToUpdate = users.find(user => user.id === args.id)
+            if (!userToUpdate) {
+                return null
+            }
+            const updatedUser = { ...userToUpdate, commentNotification: args.commentNotification }
+            users = users.map(user => user.id === args.id ? updatedUser: user)
+            return updatedUser
+        },
+        editShareNotification: (root, args) => {
+            const userToUpdate = users.find(user => user.id === args.id)
+            if (!userToUpdate) {
+                return null
+            }
+            const updatedUser = { ...userToUpdate, shareNotification: args.shareNotification }
             users = users.map(user => user.id === args.id ? updatedUser: user)
             return updatedUser
         }

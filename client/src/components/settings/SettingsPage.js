@@ -44,7 +44,8 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const SettingsPage = ({ user, deleteAccount, editFamilyNameFirst }) => {
+const SettingsPage = ({ user, deleteAccount, editFamilyNameFirst, editLikeNotification,
+  editCommentNotification, editShareNotification }) => {
     
     const classes = useStyles();
     const [settingsState, setSettingsState] = useState("Account");
@@ -119,7 +120,8 @@ const SettingsPage = ({ user, deleteAccount, editFamilyNameFirst }) => {
         <main className={classes.content}>
           <Toolbar />
           {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst}/>}
-          {settingsState === "Notifications" && <NotificationsSettings user={user} />}
+          {settingsState === "Notifications" && <NotificationsSettings user={user} editLikeNotification={editLikeNotification}
+          editCommentNotification={editCommentNotification} editShareNotification={editShareNotification}/>}
           {settingsState === "Privacy" && <PrivacySettings user={user} />}
         </main>
       </div>

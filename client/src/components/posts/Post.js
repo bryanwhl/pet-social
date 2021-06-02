@@ -16,6 +16,7 @@ import { red, blue } from '@material-ui/core/colors';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
+import { displayName } from '../../utility.js'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,12 +88,6 @@ const Post = ({user, post}) => {
     const convertDate = (unixDate) => {
         const normalDate = new Date(unixDate).toLocaleDateString("en-uk");
         return normalDate;
-    }
-
-    const displayName = (user) => {
-        console.log("Display name: ", user)
-        return user.otherSettings.familyNameFirst ? (user.name.familyName + " " + user.name.givenName)
-        : (user.name.givenName + " " + user.name.familyName)
     }
 
     const handleExpandClick = () => {

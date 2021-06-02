@@ -86,7 +86,7 @@ class FriendRequest {
 }
 
 User *-up-> "1" Name : name >
-User *-up-> "1" Settings : otherSettings >
+User *-up-> "1" Settings : settings >
 User --> "*" User : friends >
 User --> "*" User : blockedUser >
 User --> "*" Post : posts >
