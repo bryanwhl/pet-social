@@ -51,7 +51,7 @@ let users = [
       notifications: [],
       online: false,
       registeredDate: "Some Date",
-      profileBio: "Profile Bio",
+      profileBio: "I am the admin",
       playgrouops: [],
       pets: [],
       familyNameFirst: false,
