@@ -115,7 +115,7 @@ const ProfilePage = ({ user }) => {
             >
               <Tab label="Posts" />
               <Tab label="Tagged" />
-              <Tab label="Other" />
+              <Tab label="Saved" />
             </Tabs>
           </Box>
         </div>
