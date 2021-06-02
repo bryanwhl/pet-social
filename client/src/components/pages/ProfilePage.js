@@ -11,17 +11,23 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Divider from'@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import EditIcon from '@material-ui/icons/Edit';
+import Badge from '@material-ui/core/Badge';
 
 const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
-      marginLeft: 390,
-      marginRight: 390,
+      marginLeft: "20vw",
+      marginRight: "20vw",
       marginTop: 20,
       height: "100vh",
     },
     paper: {
       padding: theme.spacing(2),
+    },
+    input: {
+      display: "none"
     },
     content: {
       flexGrow: 1,
@@ -37,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 const ProfilePage = ({ user }) => {
     const classes=useStyles();
     const [profileTab, setProfileTab] = useState(0);
+    const [profileBadge, setProfileBadge] = useState(false);
 
     const handleProfileTabChange = (event, newValue) => {
       setProfileTab(newValue);
@@ -48,9 +55,23 @@ const ProfilePage = ({ user }) => {
         <div className={classes.root}>
           <Box width={0.3} bgcolor="grey" boxShadow={2}>
             <Grid className={classes.paper} align="center">
-              <Avatar alt="Avatar" src={user.avatarPath} className={classes.avatar}>
-                  {user.name.givenName[0]}
-              </Avatar>
+              <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
+              <label htmlFor="icon-button-file">
+                <IconButton aria-label="change profile picture" onClick={console.log("Click")} component="span" onMouseEnter={() => setProfileBadge(false)} onMouseLeave={() => setProfileBadge(true)}>
+                  <Badge
+                    invisible={profileBadge}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    }}
+                    badgeContent={<EditIcon/>}
+                  >
+                    <Avatar alt="Avatar" src={user.avatarPath} className={classes.avatar}>
+                        {user.name.givenName[0]}
+                    </Avatar>
+                  </Badge>
+                </IconButton>
+              </label>
             </Grid>
             <Grid className={classes.paper}>
               <Typography variant="h4" align="center">
