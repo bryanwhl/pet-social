@@ -7,15 +7,20 @@ export const allUsersQuery=gql`
       id
       username
       password
+      email
+      profileBio
       name {
           givenName
           familyName
       }
       accountType
       avatarPath
-      otherSettings {
+      settings {
           familyNameFirst
           defaultPrivacy
+          likeNotification
+          commentNotification
+          shareNotification
       }
     }
   }
@@ -68,6 +73,39 @@ export const editFamilyNameFirstQuery=gql`
   }
 `
 
+export const editLikeNotificationQuery=gql`
+  mutation ($id: ID!, $likeNotification: Boolean!) {
+    editLikeNotification(
+      id: $id,
+      likeNotification: $likeNotification
+    ) {
+      id
+    }
+  }
+`
+
+export const editCommentNotificationQuery=gql`
+  mutation ($id: ID!, $commentNotification: Boolean!) {
+    editCommentNotification(
+      id: $id,
+      commentNotification: $commentNotification
+    ) {
+      id
+    }
+  }
+`
+
+export const editShareNotificationQuery=gql`
+  mutation ($id: ID!, $shareNotification: Boolean!) {
+    editShareNotification(
+      id: $id,
+      shareNotification: $shareNotification
+    ) {
+      id
+    }
+  }
+`
+
 export const submitPostQuery=gql`
   mutation ($user: User!, $date: Date!, $postType: String!, $privacy: String!, $imageFilePath: String, $videoFilePath: String, $tagged: [Pet]!, $location: String, $text: String!, $likedBy: [User]!, $comments: [Comment]!, $isEdited: Boolean!) {
     addPost(
@@ -102,7 +140,7 @@ export const getPostsQuery=gql`
           familyName
         }
         avatarPath
-        otherSettings {
+        settings {
           familyNameFirst
         }
       }
@@ -119,7 +157,7 @@ export const getPostsQuery=gql`
             givenName
             familyName
           }
-          otherSettings {
+          settings {
             familyNameFirst
           }
           avatarPath

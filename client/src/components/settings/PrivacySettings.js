@@ -2,7 +2,7 @@ import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 
-const PrivacySettings = (user) => {
+const PrivacySettings = ( {user} ) => {
     return (
         <div>
             <CssBaseline />
@@ -13,7 +13,10 @@ const PrivacySettings = (user) => {
                 Manage your privacy settings
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Privacy Settings Here
+                Blocked Users: 
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Current Privacy Setting: {user.settings.defaultPrivacy}
             </Typography>
         </div>
     )

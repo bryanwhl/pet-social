@@ -12,7 +12,9 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import PostsContainer from './components/posts/PostsContainer.js';
 import { useQuery, useMutation } from '@apollo/client'
-import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, deleteUserQuery } from './queries.js'
+import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, editLikeNotificationQuery,
+  editCommentNotificationQuery, editShareNotificationQuery, deleteUserQuery } from './queries.js'
+import { useApolloClient } from '@apollo/client';
 
 const customTheme = createMuiTheme({
   palette: {
@@ -57,6 +59,9 @@ function App() {
   const [ createUser ] = useMutation(addUserQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editPassword ] = useMutation(editPasswordQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editFamilyNameFirst ] = useMutation(editFamilyNameFirstQuery, {refetchQueries: [{query: allUsersQuery}]})
+  const [ editLikeNotification ] = useMutation(editLikeNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
+  const [ editCommentNotification ] = useMutation(editCommentNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
+  const [ editShareNotification ] = useMutation(editShareNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ deleteUser ] = useMutation(deleteUserQuery, {refetchQueries: [{query: allUsersQuery}]})
 
   const [users, setUsers] = useState(null);
@@ -67,6 +72,8 @@ function App() {
   const [resetSuccess, setResetSuccess] = useState(false);
   const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
   const [rememberMeQueryCount, setRememberMeQueryCount] = useState(0);
+
+  const client = useApolloClient()
 
   useEffect(() => {
     if (allUsers.data) {
@@ -126,6 +133,7 @@ function App() {
     setUser(null);
     setError(null)
     localStorage.clear()
+    client.resetStore()
     setRememberMeQueryCount(0)
     setAppState("Signin")
   }
@@ -242,6 +250,7 @@ function App() {
         if (rememberMeQueryCount === 2) {
           setRememberMe(false)
           localStorage.clear()
+          client.resetStore()
           setUser(null)
           return
         }
@@ -262,7 +271,8 @@ function App() {
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer user={user}/>}
               {appState === "Profile" && <ProfilePage user={user}/>}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst}/>}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst}
+              editLikeNotification={editLikeNotification} editCommentNotification={editCommentNotification} editShareNotification={editShareNotification}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>
