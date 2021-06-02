@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 const ProfilePage = ({ user }) => {
     const classes=useStyles();
     const [profileTab, setProfileTab] = useState(0);
-    const [profileBadge, setProfileBadge] = useState(false);
+    const [profileBadge, setProfileBadge] = useState(true);
 
     const handleProfileTabChange = (event, newValue) => {
       setProfileTab(newValue);
