@@ -1,72 +1,81 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import GoogleMapReact from 'google-map-react';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
+import { GoogleMap, useLoadScript, withGoogleMap, Marker } from "@react-google-maps/api";
+import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        padding: '2px 4px',
-        display: 'flex',
-        alignItems: 'center',
-        width: 400,
-        zIndex: theme.zIndex.drawer + 10,
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        flex: 1,
-    },
-    iconButton: {
-        padding: 10,
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-    },
+    mapContainerStyle: {
+        width: "100vw",
+        height: "94vh"
+    }
 }));
+
+let a = 1;
+
+const center = {
+    lat: 1.3314930427408092,
+    lng: 103.80778265368694
+}
+
+const mapStyle = {
+    width: "100vw",
+    height: "100vh",
+}
+
+const options = {
+    disableDefaultUI: true,
+};
+
+const generateNewID = () => {
+    const newID = uuidv4();
+    return newID;
+}
+
+const libraries = ["places"];
 
 const Playgroups = () => {
     const classes = useStyles();
-    console.log(process.env.REACT_APP_KEY);
+
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: process.env.REACT_APP_KEY,
+        libraries,
+    })
+
+    const [markers, setMarkers] = React.useState([]);
+
+    const onMapClick = React.useCallback((e) => {
+        setMarkers((current) => [
+            ...current,
+            {
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng(),
+                id: generateNewID(),
+            },
+        ]);
+    }, []);
+
+    if (loadError) return "Error loading maps";
+    if (!isLoaded) return "Loading Maps...";
 
     return (
-        <div style={{ height: '94vh', width: '100%' }}>
-        <Grid container alignItems="center" justify="flex-start">
-            <Grid item>
-                <Paper component="form" className={classes.root}>
-                    <IconButton className={classes.iconButton} aria-label="menu">
-                        <MenuIcon />
-                    </IconButton>
-                    <InputBase
-                        className={classes.input}
-                        placeholder="Search Google Maps"
-                        inputProps={{ 'aria-label': 'search google maps' }}
+        <div>
+            <GoogleMap
+                mapContainerStyle={mapStyle}
+                zoom={12}
+                center={center}
+                onClick={onMapClick}
+                options={options}
+            >
+                {markers.map(marker =>
+                    <Marker 
+                        key={marker.id} 
+                        position={{
+                            lat: marker.lat,
+                            lng: marker.lng
+                        }}
                     />
-                    <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                        <SearchIcon />
-                    </IconButton>
-                    <Divider className={classes.divider} orientation="vertical" />
-                    <IconButton color="primary" className={classes.iconButton} aria-label="directions">
-                        <DirectionsIcon />
-                    </IconButton>
-                </Paper>
-            </Grid>
-        </Grid>
-        <GoogleMapReact
-            bootstrapURLKeys={{ key: process.env.REACT_APP_KEY }}
-            defaultCenter={{
-                lat: 1.3314930427408092,
-                lng: 103.80778265368694
-            }}
-            defaultZoom={12}
-        >
-        </GoogleMapReact>
+                )}
+            </GoogleMap>
         </div>
     );
 }
