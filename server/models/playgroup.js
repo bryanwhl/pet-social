@@ -4,7 +4,6 @@ const User = require('./user.js')
 const Schema = mongoose.Schema;
 
 const playgroupSchema = new Schema({
-    _id: Schema.Types.ObjectId,
     name: String,
     description: String,
     playgroupAdmin: [{type: Schema.Types.ObjectId, ref: 'User'}],

@@ -4,7 +4,6 @@ const User = require('./user.js')
 const Schema = mongoose.Schema;
 
 const friendRequestSchema = new Schema({
-    _id: Schema.Types.ObjectId,
     fromUser: {type: Schema.Types.ObjectId, ref: 'User'},
     toUser: {type: Schema.Types.ObjectId, ref: 'User'},
     date: Date

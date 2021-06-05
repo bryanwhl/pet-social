@@ -16,7 +16,6 @@ const Settings = new Schema({
 })
 
 const userSchema = new Schema({
-  // _id: Schema.Types.ObjectId,
   username: String,
   password: String,
   email: String,
@@ -28,7 +27,7 @@ const userSchema = new Schema({
   posts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   savedPosts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   friends: [{type: Schema.Types.ObjectId, ref: 'User'}],
-  blockedUser: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  blockedUsers: [{type: Schema.Types.ObjectId, ref: 'User'}],
   chats: [{type: Schema.Types.ObjectId, ref: 'Chat'}],
   notifications: [{type: Schema.Types.ObjectId, ref: 'Notification'}],
   online: Boolean,
