@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
+const Comment = require('./models/comment.js')
 require('dotenv').config({path: `${__dirname}/.env`});
 
 const {

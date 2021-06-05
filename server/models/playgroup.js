@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
-const User = require('./user.js')
 const Schema = mongoose.Schema;
 
 const playgroupSchema = new Schema({

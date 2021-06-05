@@ -2,19 +2,6 @@ const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 const Schema = mongoose.Schema;
 
-const Name = new Schema({
-  givenName: String,
-  familyName: String,
-})
-
-const Settings = new Schema({
-  familyNameFirst: Boolean,
-  defaultPrivacy: String,
-  likeNotification: Boolean,
-  commentNotification: Boolean,
-  shareNotification: Boolean,
-})
-
 const userSchema = new Schema({
   username: String,
   password: String,
