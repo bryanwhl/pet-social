@@ -15,7 +15,6 @@ import {
     ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
-import "./Playgroups.css";
 import DirectionsIcon from '@material-ui/icons/Directions';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from '@material-ui/core/TextField';
@@ -140,7 +139,7 @@ const Playgroups = () => {
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
       loadScript(
-        'https://maps.googleapis.com/maps/api/js?key=AIzaSyCHlYq9n9KGqp8r7vxfaUBdhqjdROcsgTM&libraries=places',
+        'https://maps.googleapis.com/maps/api/js?key=' + process.env.REACT_APP_KEY + '&libraries=places',
         document.querySelector('head'),
         'google-maps',
       );
