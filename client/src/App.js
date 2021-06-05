@@ -76,6 +76,7 @@ function App() {
   const client = useApolloClient()
 
   useEffect(() => {
+    console.log(allUsers)
     if (allUsers.data) {
       console.log(allUsers.data)
       setUsers(allUsers.data.allUsers)

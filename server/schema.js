@@ -2,6 +2,7 @@ const { ApolloServer, gql } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
 const User = require('./models/user.js')
+require('dotenv').config({path: `${__dirname}/.env`});
 
 const {
     GraphQLSchema,
@@ -61,7 +62,7 @@ let users = [
       savedPosts: [],
       friends: ["3"],
       blockedUsers: ["2"],
-      chat: [],
+      chats: [],
       notifications: [],
       online: false,
       registeredDate: "Some Date",
@@ -88,7 +89,7 @@ let users = [
       savedPosts: [],
       friends: [],
       blockedUsers: [],
-      chat: [],
+      chats: [],
       notifications: [],
       online: false,
       registeredDate: "Some Date",
@@ -115,7 +116,7 @@ let users = [
       savedPosts: [],
       friends: [],
       blockedUsers: [],
-      chat: [],
+      chats: [],
       notifications: [],
       online: false,
       registeredDate: "Some Date",
@@ -142,7 +143,7 @@ let users = [
         savedPosts: [],
         friends: [],
         blockedUsers: [],
-        chat: [],
+        chats: [],
         notifications: [],
         online: false,
         registeredDate: "Some Date",
@@ -160,15 +161,16 @@ let users = [
 let posts = [
     {
         id: "1",
-        user: {
-            id: "4",
-            username: "matthewtan",
-            accountType: "Personal",
-            givenName: "Matthew",
-            familyName: "Tan",
-            avatarPath: 'http://localhost:4000/images/coco.png',
-            familyNameFirst: false,
-        },
+        user: "4",
+        // user: {
+        //     id: "4",
+        //     username: "matthewtan",
+        //     accountType: "Personal",
+        //     givenName: "Matthew",
+        //     familyName: "Tan",
+        //     avatarPath: 'http://localhost:4000/images/coco.png',
+        //     familyNameFirst: false,
+        // },
         date: dateScalar.parseValue("22 May 2021"),
         postType: "Image",
         privacy: "Public",
@@ -176,30 +178,31 @@ let posts = [
         videoFilePath: "",
         location: "",
         text: "Here's coco sunbathing at the balcony. Good way to spend her time during the lockdown!",
-        comments: [
-        {
-            user: {
-                givenName: "Ethan",
-                familyName: "Lee",
-                familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/husky.jpg",
-            },
-            text: "SO CUTEEEE",
-            isEdited: false,
-        }],
+        comments: ["1"],
+        // {
+        //     user: {
+        //         givenName: "Ethan",
+        //         familyName: "Lee",
+        //         familyNameFirst: false,
+        //         avatarPath: "http://localhost:4000/images/husky.jpg",
+        //     },
+        //     text: "SO CUTEEEE",
+        //     isEdited: false,
+        // }],
         isEdited: false
     },
     {
         id: "2",
-        user: {
-            id: "3",
-            username: "bryanwhl",
-            accountType: "Personal",
-            givenName: "Bryan",
-            familyName: "Wong",
-            avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
-            familyNameFirst: false,
-        },
+        user: "3",
+        // user: {
+        //     id: "3",
+        //     username: "bryanwhl",
+        //     accountType: "Personal",
+        //     givenName: "Bryan",
+        //     familyName: "Wong",
+        //     avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+        //     familyNameFirst: false,
+        // },
         date: dateScalar.parseValue("21 May 2021"),
         postType: "Image",
         privacy: "Public",
@@ -207,30 +210,31 @@ let posts = [
         videoFilePath: "",
         location: "",
         text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment",
-        comments: [
-        {
-            user: {
-                givenName: "Anderson",
-                familyName: "Tang",
-                familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
-            },
-            text: "Let's go together some day with my Corgi!",
-            isEdited: false,
-        }],
+        comments: ["2"],
+        // {
+        //     user: {
+        //         givenName: "Anderson",
+        //         familyName: "Tang",
+        //         familyNameFirst: false,
+        //         avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+        //     },
+        //     text: "Let's go together some day with my Corgi!",
+        //     isEdited: false,
+        // }],
         isEdited: false
     },
     {
         id: "3",
-        user: {
-            id: "3",
-            username: "bryanwhl",
-            accountType: "Personal",
-            givenName: "Bryan",
-            familyName: "Wong",
-            avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
-            familyNameFirst: false,
-        },
+        user: "3",
+        // user: {
+        //     id: "3",
+        //     username: "bryanwhl",
+        //     accountType: "Personal",
+        //     givenName: "Bryan",
+        //     familyName: "Wong",
+        //     avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+        //     familyNameFirst: false,
+        // },
         date: dateScalar.parseValue("21 May 2021"),
         postType: "Image",
         privacy: "Public",
@@ -238,38 +242,71 @@ let posts = [
         videoFilePath: "",
         location: "",
         text: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
-        comments: [
-          {
-            user: {
-                givenName: "Gregg",
-                familyName: "Tang",
-                familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/bulldog.jpg",
-            },
-            text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
-            isEdited: false
-          },
-          {
-            user: {
-                givenName: "Patrick",
-                familyName: "Wong",
-                familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/cutie.jpg",
-            },
-            text: "Your dogs seem to enjoy the sea breeze hahaha",
-            isEdited: false
-          },
-          {
-            user: {
-                givenName: "Brendan",
-                familyName: "Lim",
-                familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/pug.jpg",
-            },
-            text: "Awww did you really get a stroller for them too?",
-            isEdited: false
-          }],
+        comments: ["3", "4", "5"],
+        //   {
+        //     user: {
+        //         givenName: "Gregg",
+        //         familyName: "Tang",
+        //         familyNameFirst: false,
+        //         avatarPath: "http://localhost:4000/images/bulldog.jpg",
+        //     },
+        //     text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
+        //     isEdited: false
+        //   },
+        //   {
+        //     user: {
+        //         givenName: "Patrick",
+        //         familyName: "Wong",
+        //         familyNameFirst: false,
+        //         avatarPath: "http://localhost:4000/images/cutie.jpg",
+        //     },
+        //     text: "Your dogs seem to enjoy the sea breeze hahaha",
+        //     isEdited: false
+        //   },
+        //   {
+        //     user: {
+        //         givenName: "Brendan",
+        //         familyName: "Lim",
+        //         familyNameFirst: false,
+        //         avatarPath: "http://localhost:4000/images/pug.jpg",
+        //     },
+        //     text: "Awww did you really get a stroller for them too?",
+        //     isEdited: false
+        //   }],
         isEdited: false,
+    }
+]
+
+let comments = [
+    {
+        id: "1",
+        user: "1",
+        text: "SO CUTEEEE",
+        isEdited: false,
+    },
+    {
+        id: "2",
+        user: "4",
+        text: "Let's go together some day with my Corgi!",
+        isEdited: false,
+    },
+    {
+        id: "3",
+        user: "3",
+        text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
+        isEdited: false
+        },
+    {
+        id: "4",
+        user: "4",
+        text: "Your dogs seem to enjoy the sea breeze hahaha",
+        isEdited: false
+        },
+    {
+        id: "5",
+        user: "3",
+        text: "Awww did you really get a stroller for them too?",
+        isEdited: false
     }
 ]
 
@@ -298,17 +335,14 @@ const typeDefs = gql`
         pets: [Pet]!
         settings: Settings!
     }
-
     type Name {
         givenName: String!
         familyName: String!
     }
-
     type NameInput {
         givenName: String!
         familyName: String!
     }
-
     type Settings {
         familyNameFirst: Boolean!
         defaultPrivacy: String!
@@ -316,7 +350,6 @@ const typeDefs = gql`
         commentNotification: Boolean!
         shareNotification: Boolean!
     }
-
     type Post {
         id: ID!
         user: User!
@@ -332,7 +365,6 @@ const typeDefs = gql`
         comments: [Comment]!
         isEdited: Boolean!
     }
-
     type Comment {
         id: ID!
         user: User!
@@ -342,7 +374,6 @@ const typeDefs = gql`
         isEdited: Boolean!
         replies: [Comment]
     }
-
     type Notification {
         id: ID!
         fromUser: User!
@@ -352,13 +383,11 @@ const typeDefs = gql`
         friendRequest: FriendRequest
         comment: Comment
     }
-
     type Chat {
         id: ID!
         users: [User!]!
         messages: [Message]!
     }
-
     type Message {
         id: ID!
         user: User!
@@ -366,7 +395,6 @@ const typeDefs = gql`
         isEdited: Boolean!
         isSeen: Boolean!
     }
-
     type Pet {
         id: ID!
         name: String!
@@ -376,7 +404,6 @@ const typeDefs = gql`
         breed: String!
         picturePath: String
     }
-
     type Playgroup {
         id: ID!
         name: String!
@@ -384,24 +411,21 @@ const typeDefs = gql`
         playgroupAdmin: [User!]!
         members: [User!]!
         meetingDates: [Date]!
-        meetingLocation: String!
+        meetingLocation: [Float]!
         dateCreated: Date!
         playgroupChat: Chat!
     }
-
     type FriendRequest {
         id: ID!
         fromUser: User!
         toUser: User!
         date: Date!
     }
-
     type Query {
         allUsers: [User]!
         findUser(id: ID): User
         getPosts: [Post]!
     }
-
     type Mutation {
         addUser(
             username: String!
@@ -437,6 +461,9 @@ const typeDefs = gql`
     }
 
 `
+
+
+
 const resolvers = {
     Date: dateScalar,
     User: {
@@ -455,18 +482,43 @@ const resolvers = {
                 shareNotification: root.shareNotification
             }
         }
+        // posts:
+    },
+    Comment: {
+        user: (comment, args, context, info) => {
+            return users.find(user => user.id === comment.user)
+        },
+    },
+    Post: {
+        user: (post, args, context, info) => {
+            return users.find(user => user.id === post.user)
+        },
+        comments: (post, args, context, info) => {
+            let commentArray = []
+            post.comments.forEach((commentID) => {
+                comments.forEach(comment => {
+                    if (comment.id === commentID) {
+                        console.log(true);
+                        commentArray.push(comment);
+                    }
+                })
+            })
+            return commentArray;
+        } 
     },
     Query: {
-        allUsers: () => users,
+        allUsers: () => {
+            console.log(User.find({}))
+            return User.find({})
+        },
         getPosts: () => posts,
         findUser: (root, args) =>
             users.find(user => user.id === args.id)
     },
     Mutation: {
         addUser: (root, args) => {
-            const newUser = {
+            const user = new User({
                 ...args,
-                id: String(users.length + 1),
                 avatarPath: "",
                 profilePicturePath: "",
                 posts: [],
@@ -476,7 +528,7 @@ const resolvers = {
                 chats: [],
                 notifications: [],
                 online: false,
-                registeredDate: "Current Date", //Need Change
+                registeredDate: Date(),
                 profileBio: "",
                 playgroups: [],
                 pets: [],
@@ -485,9 +537,30 @@ const resolvers = {
                 likeNotification: true,
                 commentNotification: true,
                 shareNotification: true
-            }
-            users = users.concat(newUser)
-            return newUser
+            })
+            return user.save()
+            // const newUser = {
+            //     ...args,
+            //     id: String(users.length + 1),
+            //     avatarPath: "",
+            //     profilePicturePath: "",
+            //     posts: [],
+            //     savedPosts: [],
+            //     friends: [],
+            //     blockedUsers: [],
+            //     chats: [],
+            //     notifications: [],
+            //     online: false,
+            //     registeredDate: "Current Date", //Need Change
+            //     profileBio: "",
+            //     playgroups: [],
+            //     pets: [],
+            //     familyNameFirst: false, 
+            //     defaultPrivacy: "Hello",
+            //     likeNotification: true,
+            //     commentNotification: true,
+            //     shareNotification: true
+//             }
         },
         // addPost: (root, args) => {
         //     const newPost = {
@@ -520,14 +593,16 @@ const resolvers = {
             users = users.filter(user => user.id !== args.id)
             return userToDelete
         },
-        editPassword: (root, args) => {
-            const userToUpdate = users.find(user => user.id === args.id)
+        editPassword: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
                 return null
             }
-            const updatedUser = { ...userToUpdate, password: args.password }
-            users = users.map(user => user.id === args.id ? updatedUser: user)
-            return updatedUser
+            userToUpdate.password = args.password
+            await userToUpdate.save();
+            // const updatedUser = { ...userToUpdate, password: args.password }
+            // users = users.map(user => user.id === args.id ? updatedUser: user)
+            // return updatedUser
         },
         editFamilyNameFirst: (root, args) => { //Maybe can simplify all settings edits to one function that takes in parameter of which field to edit
             const userToUpdate = users.find(user => user.id === args.id)

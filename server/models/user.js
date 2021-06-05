@@ -16,12 +16,13 @@ const Settings = new Schema({
 })
 
 const userSchema = new Schema({
-  _id: Schema.Types.ObjectId,
+  // _id: Schema.Types.ObjectId,
   username: String,
   password: String,
   email: String,
   accountType: String,
-  name: Name,
+  givenName: String,
+  familyName: String,
   avatarPath: String,
   profilePicturePath: String,
   posts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
@@ -35,7 +36,11 @@ const userSchema = new Schema({
   profileBio: String,
   playgroups: [{type: Schema.Types.ObjectId, ref: 'Playgroup'}],
   pets: [{type: Schema.Types.ObjectId, ref: 'Pet'}],
-  settings: Settings,
+  familyNameFirst: Boolean,
+  defaultPrivacy: String,
+  likeNotification: Boolean,
+  commentNotification: Boolean,
+  shareNotification: Boolean
 })
 
 userSchema.plugin(uniqueValidator)

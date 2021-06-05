@@ -10,7 +10,7 @@ const playgroupSchema = new Schema({
     playgroupAdmin: [{type: Schema.Types.ObjectId, ref: 'User'}],
     members: [{type: Schema.Types.ObjectId, ref: 'User'}],
     meetingDates: [Date],
-    meetingLocation: String,
+    meetingLocation: [Number],
     dateCreated: Date,
     playgroupChat: {type: Schema.Types.ObjectId, ref: 'Chat'}
   })
