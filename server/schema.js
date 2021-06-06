@@ -2,17 +2,11 @@ const { ApolloServer, gql } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
 const User = require('./models/user.js')
+const Post = require('./models/post.js')
+const Comment = require('./models/comment.js')
 require('dotenv').config({path: `${__dirname}/.env`});
 
 const {
-    GraphQLSchema,
-    GraphQLObjectType,
-    GraphQLString,
-    GraphQLBoolean,
-    GraphQLID,
-    GraphQLList,
-    GraphQLNonNull,
-    GraphQLInputObjectType,
     GraphQLScalarType,
     Kind
   } = require('graphql')
@@ -46,270 +40,6 @@ const dateScalar = new GraphQLScalarType({
     },
 });
 
-// Temporary Database
-let users = [
-    {
-      id: "1",
-      username: "admin",
-      password: "admin123",
-      email: "admin@gmail.com",
-      accountType: "Personal",
-      givenName: "Ad",
-      familyName: "Min",
-      avatarPath: 'http://localhost:4000/images/nerddog.jpg',
-      profilePicturePath: "",
-      posts: ["1"],
-      savedPosts: [],
-      friends: ["3"],
-      blockedUsers: ["2"],
-      chats: [],
-      notifications: [],
-      online: false,
-      registeredDate: "Some Date",
-      profileBio: "I am the admin",
-      playgrouops: [],
-      pets: [],
-      familyNameFirst: false,
-      defaultPrivacy: true,
-      likeNotification: true,
-      commentNotification: true,
-      shareNotification: true
-    },
-    {
-      id: "2",
-      username: "Pet Social",
-      password: "admin123",
-      accountType: "Business",
-      email: "petsocial@gmail.com",
-      givenName: "Pet",
-      familyName: "Social",
-      avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
-      profilePicturePath: "",
-      posts: [],
-      savedPosts: [],
-      friends: [],
-      blockedUsers: [],
-      chats: [],
-      notifications: [],
-      online: false,
-      registeredDate: "Some Date",
-      profileBio: "Profile Bio",
-      playgrouops: [],
-      pets: [],
-      familyNameFirst: false,
-      defaultPrivacy: true,
-      likeNotification: true,
-      commentNotification: true,
-      shareNotification: true
-    },
-    {
-      id: "3",
-      username: "bryanwhl",
-      password: "admin123",
-      accountType: "Personal",
-      email: "bryanwhl@gmail.com",
-      givenName: "Bryan",
-      familyName: "Wong",
-      avatarPath: 'http://localhost:4000/images/jaryl.jpg',
-      profilePicturePath: "",
-      posts: [],
-      savedPosts: [],
-      friends: [],
-      blockedUsers: [],
-      chats: [],
-      notifications: [],
-      online: false,
-      registeredDate: "Some Date",
-      profileBio: "Profile Bio",
-      playgrouops: [],
-      pets: [],
-      familyNameFirst: false,
-      defaultPrivacy: true,
-      likeNotification: true,
-      commentNotification: true,
-      shareNotification: true
-    },
-    {
-        id: "4",
-        username: "matthewtan",
-        password: "admin123",
-        accountType: "Personal",
-        givenName: "Matthew",
-        familyName: "Tan",
-        email: "matthewtan@gmail.com",
-        avatarPath: 'http://localhost:4000/images/coco.png',
-        profilePicturePath: "",
-        posts: [],
-        savedPosts: [],
-        friends: [],
-        blockedUsers: [],
-        chats: [],
-        notifications: [],
-        online: false,
-        registeredDate: "Some Date",
-        profileBio: "Profile Bio",
-        playgrouops: [],
-        pets: [],
-        familyNameFirst: false,
-        defaultPrivacy: true,
-        likeNotification: true,
-        commentNotification: true,
-        shareNotification: true
-    },
-]
-
-let posts = [
-    {
-        id: "1",
-        user: "4",
-        // user: {
-        //     id: "4",
-        //     username: "matthewtan",
-        //     accountType: "Personal",
-        //     givenName: "Matthew",
-        //     familyName: "Tan",
-        //     avatarPath: 'http://localhost:4000/images/coco.png',
-        //     familyNameFirst: false,
-        // },
-        date: dateScalar.parseValue("22 May 2021"),
-        postType: "Image",
-        privacy: "Public",
-        imageFilePath: "http://localhost:4000/images/coco2.jpg",
-        videoFilePath: "",
-        location: "",
-        text: "Here's coco sunbathing at the balcony. Good way to spend her time during the lockdown!",
-        comments: ["1"],
-        // {
-        //     user: {
-        //         givenName: "Ethan",
-        //         familyName: "Lee",
-        //         familyNameFirst: false,
-        //         avatarPath: "http://localhost:4000/images/husky.jpg",
-        //     },
-        //     text: "SO CUTEEEE",
-        //     isEdited: false,
-        // }],
-        isEdited: false
-    },
-    {
-        id: "2",
-        user: "3",
-        // user: {
-        //     id: "3",
-        //     username: "bryanwhl",
-        //     accountType: "Personal",
-        //     givenName: "Bryan",
-        //     familyName: "Wong",
-        //     avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
-        //     familyNameFirst: false,
-        // },
-        date: dateScalar.parseValue("21 May 2021"),
-        postType: "Image",
-        privacy: "Public",
-        imageFilePath: "http://localhost:4000/images/jaryl.jpg",
-        videoFilePath: "",
-        location: "",
-        text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment",
-        comments: ["2"],
-        // {
-        //     user: {
-        //         givenName: "Anderson",
-        //         familyName: "Tang",
-        //         familyNameFirst: false,
-        //         avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
-        //     },
-        //     text: "Let's go together some day with my Corgi!",
-        //     isEdited: false,
-        // }],
-        isEdited: false
-    },
-    {
-        id: "3",
-        user: "3",
-        // user: {
-        //     id: "3",
-        //     username: "bryanwhl",
-        //     accountType: "Personal",
-        //     givenName: "Bryan",
-        //     familyName: "Wong",
-        //     avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
-        //     familyNameFirst: false,
-        // },
-        date: dateScalar.parseValue("21 May 2021"),
-        postType: "Image",
-        privacy: "Public",
-        imageFilePath: "http://localhost:4000/images/eastcoast.jpg",
-        videoFilePath: "",
-        location: "",
-        text: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
-        comments: ["3", "4", "5"],
-        //   {
-        //     user: {
-        //         givenName: "Gregg",
-        //         familyName: "Tang",
-        //         familyNameFirst: false,
-        //         avatarPath: "http://localhost:4000/images/bulldog.jpg",
-        //     },
-        //     text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
-        //     isEdited: false
-        //   },
-        //   {
-        //     user: {
-        //         givenName: "Patrick",
-        //         familyName: "Wong",
-        //         familyNameFirst: false,
-        //         avatarPath: "http://localhost:4000/images/cutie.jpg",
-        //     },
-        //     text: "Your dogs seem to enjoy the sea breeze hahaha",
-        //     isEdited: false
-        //   },
-        //   {
-        //     user: {
-        //         givenName: "Brendan",
-        //         familyName: "Lim",
-        //         familyNameFirst: false,
-        //         avatarPath: "http://localhost:4000/images/pug.jpg",
-        //     },
-        //     text: "Awww did you really get a stroller for them too?",
-        //     isEdited: false
-        //   }],
-        isEdited: false,
-    }
-]
-
-let comments = [
-    {
-        id: "1",
-        user: "1",
-        text: "SO CUTEEEE",
-        isEdited: false,
-    },
-    {
-        id: "2",
-        user: "4",
-        text: "Let's go together some day with my Corgi!",
-        isEdited: false,
-    },
-    {
-        id: "3",
-        user: "3",
-        text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
-        isEdited: false
-        },
-    {
-        id: "4",
-        user: "4",
-        text: "Your dogs seem to enjoy the sea breeze hahaha",
-        isEdited: false
-        },
-    {
-        id: "5",
-        user: "3",
-        text: "Awww did you really get a stroller for them too?",
-        isEdited: false
-    }
-]
-
 const typeDefs = gql`
     scalar Date
 
@@ -325,7 +55,7 @@ const typeDefs = gql`
         posts: [Post]!
         savedPosts: [Post]!
         friends: [User]!
-        blockedUser: [User]!
+        blockedUsers: [User]!
         chats: [Chat]!
         notifications: [Notification]!
         online: Boolean!
@@ -462,8 +192,6 @@ const typeDefs = gql`
 
 `
 
-
-
 const resolvers = {
     Date: dateScalar,
     User: {
@@ -481,39 +209,61 @@ const resolvers = {
                 commentNotification: root.commentNotification,
                 shareNotification: root.shareNotification
             }
+        },
+        posts: async (root) => {
+            return (await root.populate('posts').execPopulate()).posts
+        },
+        savedPosts: async (root) => {
+            return (await root.populate('savedPosts').execPopulate()).savedPosts
+        },
+        friends: async (root) => {
+            return (await root.populate('friends').execPopulate()).friends
+        },
+        blockedUsers: async (root) => {
+            return (await root.populate('blockedUsers').execPopulate()).blockedUsers
+        },
+        chats: async (root) => {
+            return (await root.populate('chats').execPopulate()).chats
+        },
+        notifications: async (root) => {
+            return (await root.populate('notifications').execPopulate()).notifications
+        },
+        playgroups: async (root) => {
+            return (await root.populate('playgroups').execPopulate()).playgroups
+        },
+        pets: async (root) => {
+            return (await root.populate('pets').execPopulate()).pets
         }
-        // posts:
     },
     Comment: {
-        user: (comment, args, context, info) => {
-            return users.find(user => user.id === comment.user)
+        user: (root) => {
+            return User.findById(root.user)
         },
+        likedBy: async (root) => {
+            return (await root.populate('likedBy').execPopulate()).likedBy
+        },
+        replies: async (root) => {
+            return (await root.populate('replies').execPopulate()).replies
+        }
     },
     Post: {
-        user: (post, args, context, info) => {
-            return users.find(user => user.id === post.user)
+        user: (root) => {
+            return User.findById(root.user)
         },
-        comments: (post, args, context, info) => {
-            let commentArray = []
-            post.comments.forEach((commentID) => {
-                comments.forEach(comment => {
-                    if (comment.id === commentID) {
-                        console.log(true);
-                        commentArray.push(comment);
-                    }
-                })
-            })
-            return commentArray;
-        } 
+        comments: async (root) => {
+            return (await root.populate('comments').execPopulate()).comments
+        },
+        likedBy: async (root) => {
+            return (await root.populate('likedBy').execPopulate()).likedBy
+        },
+        tagged: async (root) => {
+            return (await root.populate('tagged').execPopulate()).tagged
+        },
     },
     Query: {
-        allUsers: () => {
-            console.log(User.find({}))
-            return User.find({})
-        },
-        getPosts: () => posts,
-        findUser: (root, args) =>
-            users.find(user => user.id === args.id)
+        allUsers: () => User.find({}),
+        getPosts: () => Post.find({}),
+        findUser: (root, args) => User.findById(args.id)
     },
     Mutation: {
         addUser: (root, args) => {
@@ -533,34 +283,12 @@ const resolvers = {
                 playgroups: [],
                 pets: [],
                 familyNameFirst: false, 
-                defaultPrivacy: "Hello",
+                defaultPrivacy: true,
                 likeNotification: true,
                 commentNotification: true,
                 shareNotification: true
             })
             return user.save()
-            // const newUser = {
-            //     ...args,
-            //     id: String(users.length + 1),
-            //     avatarPath: "",
-            //     profilePicturePath: "",
-            //     posts: [],
-            //     savedPosts: [],
-            //     friends: [],
-            //     blockedUsers: [],
-            //     chats: [],
-            //     notifications: [],
-            //     online: false,
-            //     registeredDate: "Current Date", //Need Change
-            //     profileBio: "",
-            //     playgroups: [],
-            //     pets: [],
-            //     familyNameFirst: false, 
-            //     defaultPrivacy: "Hello",
-            //     likeNotification: true,
-            //     commentNotification: true,
-            //     shareNotification: true
-//             }
         },
         // addPost: (root, args) => {
         //     const newPost = {
@@ -586,12 +314,14 @@ const resolvers = {
         //     return newPost
         // },
         deleteUser: (root, args) => {
-            const userToDelete = users.find(user => user.id === args.id)
-            if (!userToDelete) {
-                return null
-            }
-            users = users.filter(user => user.id !== args.id)
-            return userToDelete
+            User.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
         },
         editPassword: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change
@@ -600,45 +330,38 @@ const resolvers = {
             }
             userToUpdate.password = args.password
             await userToUpdate.save();
-            // const updatedUser = { ...userToUpdate, password: args.password }
-            // users = users.map(user => user.id === args.id ? updatedUser: user)
-            // return updatedUser
         },
-        editFamilyNameFirst: (root, args) => { //Maybe can simplify all settings edits to one function that takes in parameter of which field to edit
-            const userToUpdate = users.find(user => user.id === args.id)
+        editFamilyNameFirst: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
                 return null
             }
-            const updatedUser = { ...userToUpdate, familyNameFirst: args.familyNameFirst }
-            users = users.map(user => user.id === args.id ? updatedUser: user)
-            return updatedUser
+            userToUpdate.familyNameFirst = args.familyNameFirst
+            await userToUpdate.save();
         },
-        editLikeNotification: (root, args) => {
-            const userToUpdate = users.find(user => user.id === args.id)
+        editLikeNotification: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
                 return null
             }
-            const updatedUser = { ...userToUpdate, likeNotification: args.likeNotification }
-            users = users.map(user => user.id === args.id ? updatedUser: user)
-            return updatedUser
+            userToUpdate.likeNotification = args.likeNotification
+            await userToUpdate.save();
         },
-        editCommentNotification: (root, args) => {
-            const userToUpdate = users.find(user => user.id === args.id)
+        editCommentNotification: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
                 return null
             }
-            const updatedUser = { ...userToUpdate, commentNotification: args.commentNotification }
-            users = users.map(user => user.id === args.id ? updatedUser: user)
-            return updatedUser
+            userToUpdate.commentNotification = args.commentNotification
+            await userToUpdate.save();
         },
-        editShareNotification: (root, args) => {
-            const userToUpdate = users.find(user => user.id === args.id)
+        editShareNotification: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
                 return null
             }
-            const updatedUser = { ...userToUpdate, shareNotification: args.shareNotification }
-            users = users.map(user => user.id === args.id ? updatedUser: user)
-            return updatedUser
+            userToUpdate.shareNotification = args.shareNotification
+            await userToUpdate.save();
         }
     }
 }
