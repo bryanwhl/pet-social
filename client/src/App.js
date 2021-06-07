@@ -11,10 +11,11 @@ import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import PostsContainer from './components/posts/PostsContainer.js';
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, editLikeNotificationQuery,
-  editCommentNotificationQuery, editShareNotificationQuery, deleteUserQuery } from './queries.js'
-import { useApolloClient } from '@apollo/client';
+  editCommentNotificationQuery, editShareNotificationQuery, deleteUserQuery, currentUserQuery, loginQuery } from './queries.js'
+
+const jwt = require('jsonwebtoken')
 
 const customTheme = createMuiTheme({
   palette: {
@@ -53,9 +54,14 @@ const customTheme = createMuiTheme({
   },
 })
 
-function App() {
+window.onunload = function () {
+	sessionStorage.clear();
+}
+
+function App({ client }) {
   // All user data can be centralized here
   const allUsers = useQuery(allUsersQuery)
+  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery)
   const [ createUser ] = useMutation(addUserQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editPassword ] = useMutation(editPasswordQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editFamilyNameFirst ] = useMutation(editFamilyNameFirstQuery, {refetchQueries: [{query: allUsersQuery}]})
@@ -63,17 +69,22 @@ function App() {
   const [ editCommentNotification ] = useMutation(editCommentNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editShareNotification ] = useMutation(editShareNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ deleteUser ] = useMutation(deleteUserQuery, {refetchQueries: [{query: allUsersQuery}]})
+  const [ loginValidation, loginResult ] = useMutation(loginQuery, {
+    onError: (error) => {
+      console.log(error.graphQLErrors[0].message)
+      setError(error.graphQLErrors[0].message)
+    },
+  })
 
   const [users, setUsers] = useState(null);
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null)
   const [error, setError] = useState(null);
   const [appState, setAppState] = useState("Signin");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
   const [rememberMeQueryCount, setRememberMeQueryCount] = useState(0);
-
-  const client = useApolloClient()
 
   useEffect(() => {
     console.log(allUsers)
@@ -82,7 +93,20 @@ function App() {
       setUsers(allUsers.data.allUsers)
     }
   }, [allUsers])
-
+  
+  useEffect(() => {
+    console.log("get current user 2")
+    if (currentUser.data) {
+      console.log("Current User: ", currentUser.data)
+      if (currentUser.data.me !== null) {
+        console.log("Valid token")
+        setUser(currentUser.data.me)
+      } else {
+        console.log("Invalid token")
+      }
+    }
+  }, [currentUser.data])
+  
   useEffect(() => {
     if (user) {
       const updatedUser = users.find(u => u.id === user.id)
@@ -94,47 +118,77 @@ function App() {
     }
   }, [users])
 
-  // Might be better to query server for user
+  useEffect(() => {
+    if ( loginResult.data ) {
+      const token = loginResult.data.login.value
+      console.log(token)
+      setToken(token)
+      setError(null)
+      if (localStorage.getItem("rememberMe") === "Yes") {
+        localStorage.setItem("rememberMe", token)
+      }
+      sessionStorage.setItem('user-token', token)
+      if (token) {
+        console.log("get current user")
+        getCurrentUser()
+      }
+    }
+  }, [loginResult.data])
+
   const login = details => {
     console.log(users)
     console.log("Login ", details);
-    if (details.username === "") {
-      setError("Username empty")
-      return;
-    } else if (details.password === "") {
-      setError("Password empty")
-      return;
+    const username = details.username
+    const password = details.password
+    loginValidation({ variables: {username, password} })
+    if (details.remember) { //Token is not saved for now
+      const userId = users.find(user => user.username === details.username).id
+      localStorage.setItem("rememberMe", userId)
+    } else {
+      localStorage.clear()
     }
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].username === details.username){
-        if (users[i].password !== details.password) {
-          setError("Password")
-          return
-        }
-        console.log("Logged in to account");
-        setUser(users[i]);
-        console.log(users[i])
-        if (details.remember) {
-          localStorage.setItem("rememberMe", users[i].id)
-        } else {
-          localStorage.clear()
-        }
-        setError(null)
-        switchToHome();
-        return
-      }
-    }
+    switchToHome()
+    // Old login function for reference
+    // if (details.username === "") {
+    //   setError("Username empty")
+    //   return;
+    // } else if (details.password === "") {
+    //   setError("Password empty")
+    //   return;
+    // }
+    // for (var i = 0; i < users.length; i++) {
+    //   if (users[i].username === details.username){
+    //     if (users[i].password !== details.password) {
+    //       // setError("Password")
+    //       return
+    //     }
+    //     console.log("Logged in to account");
+    //     // setUser(users[i]);
+    //     // console.log(users[i])
+    //     if (details.remember) {
+    //       localStorage.setItem("rememberMe", )
+    //     } else {
+    //       localStorage.clear()
+    //     }
+    //     setError(null)
+    //     switchToHome();
+    //     return
+    //   }
+    // }
 
-      console.log("Username does not exist")
-      setError("Username")
+      // console.log("Username does not exist")
+      // setError("Username")
   }
 
   const logout = () => {
     console.log("Logout ", user.username);
     setUser(null);
+    setToken(null);
     setError(null)
     localStorage.clear()
-    client.resetStore()
+    sessionStorage.clear()
+    client.clearStore()
+    //client.resetStore()
     setRememberMeQueryCount(0)
     setAppState("Signin")
   }
@@ -244,20 +298,24 @@ function App() {
   console.log("Remember Me ", rememberMe)
 
 
-  if (rememberMe) {
+  if (rememberMe && rememberMe !== "Yes") {
     if (users !== null){
+      //Get the decoded token
       setUser(users.find(u => u.id === rememberMe));
-      while (!user) { //When user is deleted from server
+      while (!user) { //When user is deleted from DB
         if (rememberMeQueryCount === 2) {
           setRememberMe(false)
           localStorage.clear()
-          client.resetStore()
+          sessionStorage.clear()
+          client.clearStore()
           setUser(null)
           return
         }
         setRememberMeQueryCount(rememberMeQueryCount + 1)
         return
       }
+      // setToken(rememberMe)
+      // sessionStorage.setItem('user-token', rememberMe)
       switchToHome();
       setRememberMe(false)
     }

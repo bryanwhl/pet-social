@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import logo from "../static/images/pet-social-logo.jpg";
+import { useMutation } from '@apollo/client'
+import { loginQuery, currentUserQuery } from '../../queries.js'
 
 function Copyright() {
     return (
@@ -50,9 +52,34 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
 
     const [details, setDetails] = useState({username:"", password:"", remember:false});
 
+    // const [ login, loginResult ] = useMutation(loginQuery, {
+    //   onError: (error) => {
+    //     console.log(error.graphQLErrors[0].message)
+    //     setError(error.graphQLErrors[0].message)
+    //   },
+    // }, {refetchQueries: [{query: currentUserQuery}]})
+
+    // useEffect(() => {
+    //   if ( loginResult.data ) {
+    //     const token = loginResult.data.login.value
+    //     console.log(token)
+    //     setToken(token)
+    //     setError(null)
+    //     if (details.remember) {
+    //       localStorage.setItem("rememberMe", [details.username])
+    //     } else {
+    //       localStorage.clear()
+    //     }
+    //     sessionStorage.setItem('user-token', token)
+    //   }
+    // }, [loginResult.data])
+
     const handleSubmit = event => {
         event.preventDefault();
-        login(details);
+        // const username = details.username
+        // const password = details.password
+        // login({variables: { username, password }});
+        login(details)
     }
 
     const handleChange = (prop) => (event) => {
@@ -66,9 +93,8 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
             <img src={logo} alt="Pet Social" className={classes.logo} />
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
-                error={["Username", "Username empty"].includes(error)}
-                helperText={(error === "Username") ? "Username does not exist"
-                  : (error === "Username empty") ? "Username cannot be empty" : ""}
+                error={["Username cannot be empty", "Username does not exist"].includes(error)}
+                helperText={["Username cannot be empty", "Username does not exist"].includes(error) ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -81,9 +107,8 @@ const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
                 onChange={handleChange('username')}
               />
               <TextField
-                error={["Password", "Password empty"].includes(error)}
-                helperText={(error === "Password") ? "Password is incorrect"
-                  : (error === "Password empty") ? "Password cannot be empty" : ""}
+                error={["Password cannot be empty", "Password is incorrect"].includes(error)}
+                helperText={["Password cannot be empty", "Password is incorrect"].includes(error) ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
