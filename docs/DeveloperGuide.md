@@ -37,7 +37,8 @@ information.
   - [Database](#database)
   - [Hosting](#hosting)
 - [Implementation](#implementation)
-
+  - [Token Authentication](#token-authentication)
+  - [Arrange Playgroup Meetup](#arrange-playgroup-meetup)
 - [Product scope](#product-scope)
   - [Target user profile](#target-user-profile)
   - [Value proposition](#value-proposition)
@@ -129,7 +130,11 @@ Pet Social is being hosted on Amazon Web Services. It is hosted on an EC2 instan
 
 ## Implementation
 
-This subsection provides activity diagrams detailing the workflows for more complicated processes in Pet Social.
+This subsection provides sequence and activity diagrams detailing the workflows for more complicated processes in Pet Social.
+
+### Token Authentication
+
+[Token Authentication]
 
 ### Arrange Playgroup Meetup
 
