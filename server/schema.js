@@ -1,4 +1,4 @@
-const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError } = require('apollo-server-express')
+const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError, AuthenticationError } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')

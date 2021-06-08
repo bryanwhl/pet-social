@@ -13,7 +13,7 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import PostsContainer from './components/posts/PostsContainer.js';
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, editLikeNotificationQuery,
-  editCommentNotificationQuery, editShareNotificationQuery, deleteUserQuery, currentUserQuery, loginQuery } from './queries.js'
+  editCommentNotificationQuery, editShareNotificationQuery, deleteUserQuery, currentUserQuery } from './queries.js'
 
 const customTheme = createMuiTheme({
   palette: {
@@ -52,10 +52,6 @@ const customTheme = createMuiTheme({
   },
 })
 
-window.onunload = function () {
-	sessionStorage.clear();
-}
-
 function App({ client }) {
   // All user data can be centralized here
   const allUsers = useQuery(allUsersQuery)
@@ -67,12 +63,6 @@ function App({ client }) {
   const [ editCommentNotification ] = useMutation(editCommentNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editShareNotification ] = useMutation(editShareNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ deleteUser ] = useMutation(deleteUserQuery, {refetchQueries: [{query: allUsersQuery}]})
-  const [ loginValidation, loginResult ] = useMutation(loginQuery, {
-    onError: (error) => {
-      console.log(error.graphQLErrors[0].message)
-      setError(error.graphQLErrors[0].message)
-    },
-  })
 
   const [users, setUsers] = useState(null);
   const [user, setUser] = useState(null);
@@ -81,8 +71,11 @@ function App({ client }) {
   const [appState, setAppState] = useState("Signin");
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
-  const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
-  const [rememberMeQueryCount, setRememberMeQueryCount] = useState(0);
+
+  window.onunload = function () {
+    sessionStorage.clear();
+    client.clearStore();
+  }
 
   useEffect(() => {
     console.log(allUsers)
@@ -101,54 +94,12 @@ function App({ client }) {
         console.log(user)
       } else {
         console.log("Invalid token")
+        logout()
       }
     }
   }, [currentUser.data])
-  
-  // useEffect(() => {
-  //   if (user) {
-  //     const updatedUser = users.find(u => u.id === user.id)
-  //     if (updatedUser) {
-  //       setUser(updatedUser)
-  //     } else {
-  //       setUser(null)
-  //     }
-  //   }
-  // }, [users])
-
-  useEffect(() => {
-    if ( loginResult.data ) {
-      const token = loginResult.data.login.value
-      console.log(token)
-      setToken(token)
-      setError(null)
-      if (localStorage.getItem("rememberMe") === "Yes") {
-        localStorage.setItem("rememberMe", token)
-      }
-      sessionStorage.setItem('user-token', token)
-      if (token) {
-        getCurrentUser()
-        switchToHome()
-      }
-    }
-  }, [loginResult.data])
-
-  const login = details => {
-    console.log(users)
-    console.log("Login ", details);
-    const username = details.username
-    const password = details.password
-    loginValidation({ variables: {username, password} })
-    if (details.remember) { //Token is not saved for now
-      const userId = users.find(user => user.username === details.username).id
-      localStorage.setItem("rememberMe", userId)
-    } else {
-      localStorage.clear()
-    }
-  }
 
   const logout = () => {
-    console.log("Logout ", user.username);
     setUser(null);
     setToken(null);
     setError(null)
@@ -156,7 +107,6 @@ function App({ client }) {
     sessionStorage.clear()
     client.clearStore()
     //client.resetStore() //This causes cache problems
-    setRememberMeQueryCount(0)
     setAppState("Signin")
   }
 
@@ -262,32 +212,6 @@ function App({ client }) {
     setAppState("Home")
   }
 
-  console.log("Remember Me ", rememberMe)
-
-
-  if (rememberMe && rememberMe !== "Yes") {
-    if (users !== null){
-      //Get the decoded token
-      setUser(users.find(u => u.id === rememberMe));
-      while (!user) { //When user is deleted from DB
-        if (rememberMeQueryCount === 2) {
-          setRememberMe(false)
-          localStorage.clear()
-          sessionStorage.clear()
-          client.clearStore()
-          setUser(null)
-          return
-        }
-        setRememberMeQueryCount(rememberMeQueryCount + 1)
-        return
-      }
-      // setToken(rememberMe)
-      // sessionStorage.setItem('user-token', rememberMe)
-      switchToHome();
-      setRememberMe(false)
-    }
-  }
-
   return (
     <div className="App">
       <ThemeProvider theme = {customTheme}>
@@ -305,7 +229,7 @@ function App({ client }) {
           ) : (
             <div className="loggedOut">
               {appState === "Signin"
-                && <Login login={login} switchToSignup={switchToSignup} switchToResetPassword={switchToResetPassword} error={error}/>}
+                && <Login switchToHome={switchToHome} switchToSignup={switchToSignup} switchToResetPassword={switchToResetPassword} getCurrentUser={getCurrentUser} setToken={setToken}/>}
               {appState === "Signup"
                 && <Signup signup={signup} switchToSignin={switchToSignin} success={signupSuccess} error={error}/>}
               {appState === "Reset Password"

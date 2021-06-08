@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import logo from "../static/images/pet-social-logo.jpg";
 import { useMutation } from '@apollo/client'
-import { loginQuery, currentUserQuery } from '../../queries.js'
+import { loginQuery } from '../../queries.js'
 
 function Copyright() {
     return (
@@ -47,44 +47,58 @@ function Copyright() {
     },
   }));
 
-const Login = ({ login, switchToSignup, switchToResetPassword, error }) => {
+const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrentUser, setToken }) => {
     const classes = useStyles();
 
+    const [error, setError] = useState(null);
+    const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
     const [details, setDetails] = useState({username:"", password:"", remember:false});
 
-    // const [ login, loginResult ] = useMutation(loginQuery, {
-    //   onError: (error) => {
-    //     console.log(error.graphQLErrors[0].message)
-    //     setError(error.graphQLErrors[0].message)
-    //   },
-    // }, {refetchQueries: [{query: currentUserQuery}]})
+    const [ login, loginResult ] = useMutation(loginQuery, {
+      onError: (error) => {
+        console.log(error.graphQLErrors[0].message)
+        setError(error.graphQLErrors[0].message)
+      },
+    })
 
-    // useEffect(() => {
-    //   if ( loginResult.data ) {
-    //     const token = loginResult.data.login.value
-    //     console.log(token)
-    //     setToken(token)
-    //     setError(null)
-    //     if (details.remember) {
-    //       localStorage.setItem("rememberMe", [details.username])
-    //     } else {
-    //       localStorage.clear()
-    //     }
-    //     sessionStorage.setItem('user-token', token)
-    //   }
-    // }, [loginResult.data])
+    useEffect(() => {
+      if ( loginResult.data ) {
+        const token = loginResult.data.login.value
+        console.log(token)
+        setToken(token)
+        setError(null)
+        sessionStorage.setItem('user-token', token)
+        if (token) {
+          getCurrentUser()
+          switchToHome()
+          if (details.remember) {
+            localStorage.setItem("rememberMe", token)
+          } else {
+            localStorage.clear()
+          }
+        }
+      }
+    }, [loginResult.data])
 
     const handleSubmit = event => {
         event.preventDefault();
-        // const username = details.username
-        // const password = details.password
-        // login({variables: { username, password }});
-        login(details)
+        const username = details.username
+        const password = details.password
+        login({variables: { username, password }});
     }
 
     const handleChange = (prop) => (event) => {
         setDetails({ ...details, [prop]: event.target.value });
     };
+
+    if (rememberMe) {
+      console.log("Remember Me")
+      setToken(rememberMe)
+      sessionStorage.setItem('user-token', rememberMe)
+      getCurrentUser()
+      switchToHome();
+      setRememberMe(false)
+    }
 
     return (
         <Container component="main" maxWidth="xs">
