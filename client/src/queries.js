@@ -26,6 +26,31 @@ export const allUsersQuery=gql`
   }
 `
 
+export const currentUserQuery=gql`
+ query {
+   me {
+    id
+    username
+    password
+    email
+    profileBio
+    name {
+        givenName
+        familyName
+    }
+    accountType
+    avatarPath
+    settings {
+        familyNameFirst
+        defaultPrivacy
+        likeNotification
+        commentNotification
+        shareNotification
+    }
+   }
+ }
+`
+
 export const addUserQuery=gql`
   mutation ($username: String!, $password: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
     addUser(
@@ -47,6 +72,14 @@ export const deleteUserQuery=gql`
       id: $id,
     ) {
       id
+    }
+  }
+`
+
+export const loginQuery = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
     }
   }
 `

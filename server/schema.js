@@ -1,6 +1,8 @@
-const { ApolloServer, gql } = require('apollo-server-express')
+const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError, AuthenticationError } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
@@ -151,9 +153,13 @@ const typeDefs = gql`
         toUser: User!
         date: Date!
     }
+    type Token {
+        value: String!
+    }
     type Query {
         allUsers: [User]!
         findUser(id: ID): User
+        me: User
         getPosts: [Post]!
     }
     type Mutation {
@@ -168,6 +174,10 @@ const typeDefs = gql`
         deleteUser(
             id: ID!
         ): User
+        login(
+            username: String!
+            password: String!
+        ): Token
         editPassword(
             id: ID!
             password: String!
@@ -263,12 +273,15 @@ const resolvers = {
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
+        me: (root, args, context) => {return context.currentUser},
         findUser: (root, args) => User.findById(args.id)
     },
     Mutation: {
-        addUser: (root, args) => {
+        addUser: async (root, args) => {
+            const saltRounds = 10
             const user = new User({
                 ...args,
+                password: await bcrypt.hash(args.password, saltRounds),
                 avatarPath: "",
                 profilePicturePath: "",
                 posts: [],
@@ -323,6 +336,32 @@ const resolvers = {
                 }
             })
         },
+        login: async (root, args) => {
+            if ( args.username === "" ) {
+                throw new UserInputError("Username cannot be empty")
+            } else if ( args.password === "" ) {
+                throw new UserInputError("Password cannot be empty")
+            }
+
+            const user = await User.findOne({ username: args.username })
+            
+            if ( !user ) {
+                throw new UserInputError("Username does not exist")
+            }
+            
+            const passwordCorrect = await bcrypt.compare(args.password, user.password)
+
+            if ( !passwordCorrect ) {
+                throw new UserInputError("Password is incorrect")
+            }
+
+            const userForToken = {
+                username: user.username,
+                id: user._id,
+            }
+
+            return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+        },
         editPassword: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
@@ -371,6 +410,16 @@ const app = express()
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: async ({ req }) => {
+        const auth = req ? req.headers.authorization : null
+        if (auth && auth.toLowerCase().startsWith('bearer ')) {
+          const decodedToken = jwt.verify(
+            auth.substring(7), process.env.JWT_SECRET
+          )
+          const currentUser = await User.findById(decodedToken.id)
+          return { currentUser }
+        }
+    }
 })
 
 server.applyMiddleware({app})

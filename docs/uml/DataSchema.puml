@@ -33,6 +33,9 @@ class Name {
 class Settings {
     familyNameFirst: Boolean!
     defaultPrivacy: String!
+    likeNotification: Boolean!
+    commentNotification: Boolean!
+    shareNotification: Boolean!
 }
 
 class Post {
