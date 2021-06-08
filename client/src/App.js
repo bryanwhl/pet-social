@@ -95,6 +95,7 @@ function App({ client }) {
       } else {
         console.log("Invalid token")
         logout()
+        alert("Token is invalid. It may have expired or user was deleted.")
       }
     }
   }, [currentUser.data])
