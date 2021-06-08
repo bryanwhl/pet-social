@@ -15,8 +15,6 @@ import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { allUsersQuery, addUserQuery, editPasswordQuery, editFamilyNameFirstQuery, editLikeNotificationQuery,
   editCommentNotificationQuery, editShareNotificationQuery, deleteUserQuery, currentUserQuery, loginQuery } from './queries.js'
 
-const jwt = require('jsonwebtoken')
-
 const customTheme = createMuiTheme({
   palette: {
     primary: {
@@ -95,28 +93,28 @@ function App({ client }) {
   }, [allUsers])
   
   useEffect(() => {
-    console.log("get current user 2")
     if (currentUser.data) {
       console.log("Current User: ", currentUser.data)
       if (currentUser.data.me !== null) {
         console.log("Valid token")
         setUser(currentUser.data.me)
+        console.log(user)
       } else {
         console.log("Invalid token")
       }
     }
   }, [currentUser.data])
   
-  useEffect(() => {
-    if (user) {
-      const updatedUser = users.find(u => u.id === user.id)
-      if (updatedUser) {
-        setUser(updatedUser)
-      } else {
-        setUser(null)
-      }
-    }
-  }, [users])
+  // useEffect(() => {
+  //   if (user) {
+  //     const updatedUser = users.find(u => u.id === user.id)
+  //     if (updatedUser) {
+  //       setUser(updatedUser)
+  //     } else {
+  //       setUser(null)
+  //     }
+  //   }
+  // }, [users])
 
   useEffect(() => {
     if ( loginResult.data ) {
@@ -129,8 +127,8 @@ function App({ client }) {
       }
       sessionStorage.setItem('user-token', token)
       if (token) {
-        console.log("get current user")
         getCurrentUser()
+        switchToHome()
       }
     }
   }, [loginResult.data])
@@ -147,37 +145,6 @@ function App({ client }) {
     } else {
       localStorage.clear()
     }
-    switchToHome()
-    // Old login function for reference
-    // if (details.username === "") {
-    //   setError("Username empty")
-    //   return;
-    // } else if (details.password === "") {
-    //   setError("Password empty")
-    //   return;
-    // }
-    // for (var i = 0; i < users.length; i++) {
-    //   if (users[i].username === details.username){
-    //     if (users[i].password !== details.password) {
-    //       // setError("Password")
-    //       return
-    //     }
-    //     console.log("Logged in to account");
-    //     // setUser(users[i]);
-    //     // console.log(users[i])
-    //     if (details.remember) {
-    //       localStorage.setItem("rememberMe", )
-    //     } else {
-    //       localStorage.clear()
-    //     }
-    //     setError(null)
-    //     switchToHome();
-    //     return
-    //   }
-    // }
-
-      // console.log("Username does not exist")
-      // setError("Username")
   }
 
   const logout = () => {
@@ -188,7 +155,7 @@ function App({ client }) {
     localStorage.clear()
     sessionStorage.clear()
     client.clearStore()
-    //client.resetStore()
+    //client.resetStore() //This causes cache problems
     setRememberMeQueryCount(0)
     setAppState("Signin")
   }
