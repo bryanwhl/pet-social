@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, ListItemSecondaryAction, FormControl, ListSubheader, Button, Divider, List, ListItem, ListItemText, Drawer, Toolbar, Paper, IconButton, ListItemIcon } from '@material-ui/core';
+import { makeStyles, ListItemSecondaryAction, FormControl, ListSubheader, Button, Divider, List, ListItem, ListItemText, Drawer, Toolbar, ListItemIcon } from '@material-ui/core';
 import { GoogleMap, useLoadScript, InfoWindow, Marker } from "@react-google-maps/api";
 import { v4 as uuidv4 } from 'uuid';
 import "@reach/combobox/styles.css";
@@ -242,7 +242,7 @@ const Playgroups = () => {
                   <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItem className={classes.nested}>
-                        <ListItemText primary="Click this marker and select the desired location for your Playgroup:" />
+                        <ListItemText primary="Click this marker and select your desired Playgroup location:" />
                         <ListItemSecondaryAction>
                           <ToggleButton edge="end" selected={newPlaygroup} onClick={handleNewPlaygroup}>
                             <LocationOnIcon color="secondary"/>
