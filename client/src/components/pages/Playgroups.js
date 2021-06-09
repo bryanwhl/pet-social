@@ -310,6 +310,7 @@ const Playgroups = () => {
                 center={center}
                 onClick={newPlaygroup ? onMapClick : () => {}}
                 onLoad={onMapLoad}
+                clickableIcons={false}
             >
                 {markers.map(marker =>
                     <Marker 
