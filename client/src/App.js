@@ -58,10 +58,6 @@ function App({ client }) {
   const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery)
   const [ createUser ] = useMutation(addUserQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ editPassword ] = useMutation(editPasswordQuery, {refetchQueries: [{query: allUsersQuery}]})
-  const [ editFamilyNameFirst ] = useMutation(editFamilyNameFirstQuery, {refetchQueries: [{query: allUsersQuery}]})
-  const [ editLikeNotification ] = useMutation(editLikeNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
-  const [ editCommentNotification ] = useMutation(editCommentNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
-  const [ editShareNotification ] = useMutation(editShareNotificationQuery, {refetchQueries: [{query: allUsersQuery}]})
   const [ deleteUser ] = useMutation(deleteUserQuery, {refetchQueries: [{query: allUsersQuery}]})
 
   const [users, setUsers] = useState(null);
@@ -222,8 +218,7 @@ function App({ client }) {
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer user={user}/>}
               {appState === "Profile" && <ProfilePage user={user}/>}
-              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst}
-              editLikeNotification={editLikeNotification} editCommentNotification={editCommentNotification} editShareNotification={editShareNotification}/>}
+              {appState === "Settings" && <SettingsPage user={user} deleteAccount={deleteAccount} logout={logout}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}
             </div>
