@@ -92,6 +92,7 @@ function App() {
         setUser(null)
       }
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users])
 
   // Might be better to query server for user
