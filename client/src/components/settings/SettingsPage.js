@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
     drawerPaper: {
       width: drawerWidth,
       marginTop: -4,
-      background: 'lightGrey',
     },
     drawerContainer: {
       overflow: 'auto',
@@ -44,8 +43,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const SettingsPage = ({ user, deleteAccount, editFamilyNameFirst, editLikeNotification,
-  editCommentNotification, editShareNotification }) => {
+const SettingsPage = ({ user, deleteAccount, logout }) => {
     
     const classes = useStyles();
     const [settingsState, setSettingsState] = useState("Account");
@@ -119,9 +117,8 @@ const SettingsPage = ({ user, deleteAccount, editFamilyNameFirst, editLikeNotifi
         </Drawer>
         <main className={classes.content}>
           <Toolbar />
-          {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount} editFamilyNameFirst={editFamilyNameFirst}/>}
-          {settingsState === "Notifications" && <NotificationsSettings user={user} editLikeNotification={editLikeNotification}
-          editCommentNotification={editCommentNotification} editShareNotification={editShareNotification}/>}
+          {settingsState === "Account" && <AccountSettings user={user} deleteAccount={deleteAccount} logout={logout}/>}
+          {settingsState === "Notifications" && <NotificationsSettings user={user}/>}
           {settingsState === "Privacy" && <PrivacySettings user={user} />}
         </main>
       </div>

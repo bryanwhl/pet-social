@@ -160,6 +160,7 @@ const typeDefs = gql`
         allUsers: [User]!
         findUser(id: ID): User
         me: User
+        findPost(id :ID): Post
         getPosts: [Post]!
     }
     type Mutation {
@@ -173,14 +174,20 @@ const typeDefs = gql`
         ): User
         deleteUser(
             id: ID!
+            password: String!
         ): User
         login(
             username: String!
             password: String!
         ): Token
+        editEmail(
+            id: ID!
+            email: String!
+        ): User
         editPassword(
             id: ID!
             password: String!
+            newPassword: String!
         ): User
         editFamilyNameFirst(
             id: ID!
@@ -197,6 +204,10 @@ const typeDefs = gql`
         editShareNotification(
             id: ID!
             shareNotification: Boolean!
+        ): User
+        editProfileBio(
+            id: ID!
+            profileBio: String!
         ): User
     }
 
@@ -274,7 +285,8 @@ const resolvers = {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
         me: (root, args, context) => {return context.currentUser},
-        findUser: (root, args) => User.findById(args.id)
+        findUser: (root, args) => User.findById(args.id),
+        findPost: (root, args) => Post.findById(args.id)
     },
     Mutation: {
         addUser: async (root, args) => {
@@ -326,7 +338,18 @@ const resolvers = {
         //     posts = posts.concat(newPost)
         //     return newPost
         // },
-        deleteUser: (root, args) => {
+        deleteUser: async (root, args) => {
+            const user = await User.findById( args.id ).exec();
+            if (!user) {
+                return null
+            }
+
+            const passwordCorrect = await bcrypt.compare(args.password, user.password)
+
+            if ( !passwordCorrect ) {
+                throw new UserInputError("Password is incorrect")
+            }
+
             User.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
                     console.log(err)
@@ -363,11 +386,26 @@ const resolvers = {
             return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
         },
         editPassword: async (root, args) => {
-            const userToUpdate = await User.findById( args.id ).exec(); //must change
+            const userToUpdate = await User.findById( args.id ).exec(); //must change to use context for authentication
             if (!userToUpdate) {
                 return null
             }
-            userToUpdate.password = args.password
+
+            const passwordCorrect = await bcrypt.compare(args.password, userToUpdate.password)
+
+            if ( !passwordCorrect ) {
+                throw new UserInputError("Password is incorrect")
+            }
+
+            userToUpdate.password = await bcrypt.hash(args.newPassword, 10)
+            await userToUpdate.save();
+        },
+        editEmail: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change to use context for authentication
+            if (!userToUpdate) {
+                return null
+            }
+            userToUpdate.email = args.email
             await userToUpdate.save();
         },
         editFamilyNameFirst: async (root, args) => {
@@ -401,7 +439,15 @@ const resolvers = {
             }
             userToUpdate.shareNotification = args.shareNotification
             await userToUpdate.save();
-        }
+        },
+        editProfileBio: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
+            if (!userToUpdate) {
+                return null
+            }
+            userToUpdate.profileBio = args.profileBio
+            await userToUpdate.save();
+        },
     }
 }
 
