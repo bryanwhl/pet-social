@@ -14,6 +14,9 @@ import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
 import AddIcon from '@material-ui/icons/Add';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import Geocode from "react-geocode";
+
+Geocode.setApiKey(process.env.REACT_APP_KEY);
 
 const drawerWidth = 320;
 
@@ -110,6 +113,16 @@ const Playgroups = () => {
     const [markers, setMarkers] = React.useState([]);
     const [selected, setSelected] = React.useState(null);
     const [newPlaygroup, setNewPlaygroup] = React.useState(false);
+
+    const mapRef = React.useRef();
+    const onMapLoad = React.useCallback((map) => {
+      mapRef.current = map;
+    }, []);
+
+    const panTo = React.useCallback(({ lat, lng }) => {
+      mapRef.current.panTo({ lat, lng });
+      mapRef.current.setZoom(15);
+    }, []);
   
     const handleNewPlaygroup = () => {
       setNewPlaygroup(!newPlaygroup);
@@ -204,12 +217,6 @@ const Playgroups = () => {
     };
   }, [value, inputValue, fetch]);
 
-    const mapRef = React.useRef();
-
-    const onMapLoad = React.useCallback((map) => {
-        mapRef.current = map;
-    }, [])
-
     if (loadError) return "Error loading maps";
     if (!isLoaded) return "Loading Maps...";
 
@@ -261,7 +268,20 @@ const Playgroups = () => {
                     onChange={(event, newValue) => {
                       setOptions(newValue ? [newValue, ...options] : options);
                       setValue(newValue);
-                      console.log(event);
+                      if (newValue === null) {
+                        return;
+                      }
+                      Geocode.fromAddress(newValue.description).then(
+                        (response) => {
+                          const { lat, lng } = response.results[0].geometry.location;
+                          panTo({lat: lat, lng: lng});
+                          console.log(lat);
+                          console.log(lng);
+                        },
+                        (error) => {
+                          console.error(error);
+                        }
+                      );
                     }}
                     onInputChange={(event, newInputValue) => {
                       setInputValue(newInputValue);
@@ -302,8 +322,6 @@ const Playgroups = () => {
               </div>
             </Drawer>
             </div>
-            {/* <Locate panTo={panTo} />
-            <Search panTo={panTo} /> */}
             <GoogleMap
                 mapContainerStyle={mapStyle}
                 zoom={12}
