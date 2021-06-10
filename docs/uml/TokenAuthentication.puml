@@ -1,0 +1,122 @@
+@startuml
+
+hide footbox
+
+actor "User" as User
+participant "Browser" as Browser
+participant "Apollo Client" as Client
+participant "Server" as Server
+database "Database" as Database
+
+User->Browser : Sign In button pressed
+note left
+User fills in Sign In form
+with username and password
+end note
+activate Browser
+
+Browser->Server : HTTP Post loginQuery { username, password }
+activate Server
+
+Server->Database : User.findOne({ username })
+activate Database
+
+Database-->Server : user
+deactivate Database
+
+Server->Server: bcrypt.compare(password, user.password)
+activate Server
+note left
+Raw password is matched against
+encrypted user.password hash
+end note
+
+Server-->Server: passwordCorrect
+deactivate Server
+
+Server->Server: jwt.sign(userForToken, KEY)
+activate Server
+note left
+JSON web token generates a token 
+with username and id embedded
+end note
+
+Server-->Server: token
+deactivate Server
+
+Server-->Browser: token
+deactivate Server
+
+Browser->Browser: setToken(token)
+
+Browser->Browser: sessionStorage.setItem('user-token', token)
+note left: Browser saves token
+
+Browser->Client
+activate Client
+
+Client->Client: setContext((_, { headers })
+activate Client
+
+Client->Browser: sessionStorage.getItem('user-token')
+activate Browser
+
+Browser-->Client: token
+deactivate Browser
+
+Client-->Client: authLink
+deactivate Client
+note left
+Token is attached to
+authentication header
+end note
+
+Client->Client: authLink.concat(httpLink)
+
+Client-->Browser
+deactivate Client
+
+Browser->Server : HTTP Post getCurrentUserQuery {}
+activate Server
+
+Server->Client : req.headers.authorization
+activate Client
+note right
+Server retrieves authentication
+header from client
+end note
+
+Client-->Server : auth
+deactivate Client
+
+Server->Server: jwt.verify(auth.substring(7), KEY)
+activate Server
+note left
+Parse the token from authentication header
+JSON Web Token verifies validity of token
+end note
+
+Server-->Server: decodedToken
+deactivate Server
+
+Server->Database : User.findById({ decodedToken.id })
+activate Database
+
+Database-->Server : user
+deactivate Database
+
+Server-->Browser : user
+deactivate Server
+
+Browser->Browser : setUser(user)
+Browser->Browser : switchToHome()
+note left
+App State switches to home
+and returns control to user
+end note
+
+Browser-->User
+deactivate Browser
+
+
+@enduml

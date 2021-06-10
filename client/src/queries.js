@@ -26,6 +26,92 @@ export const allUsersQuery=gql`
   }
 `
 
+export const currentUserQuery=gql`
+ query {
+   me {
+    id
+    username
+    password
+    email
+    profileBio
+    name {
+        givenName
+        familyName
+    }
+    friends {
+      username
+    }
+    blockedUsers {
+      username
+    }
+    posts {
+      id
+      postType
+      imageFilePath
+      videoFilePath
+    }
+    savedPosts {
+      id
+      postType
+      imageFilePath
+      videoFilePath
+    }
+    registeredDate
+    accountType
+    avatarPath
+    settings {
+        familyNameFirst
+        defaultPrivacy
+        likeNotification
+        commentNotification
+        shareNotification
+    }
+   }
+ }
+`
+
+export const getPostByIdQuery=gql`
+  query ($id: ID!) {
+    findPost(id: $id) {
+      id
+      user {
+        id
+        username
+        accountType
+        name {
+          givenName
+          familyName
+        }
+        avatarPath
+        settings {
+          familyNameFirst
+        }
+      }
+      date
+      postType
+      privacy
+      imageFilePath
+      videoFilePath
+      location
+      text
+      comments {
+        user {
+          name {
+            givenName
+            familyName
+          }
+          settings {
+            familyNameFirst
+          }
+          avatarPath
+        }
+        text
+      }
+      isEdited
+    }
+  }
+`
+
 export const addUserQuery=gql`
   mutation ($username: String!, $password: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
     addUser(
@@ -42,9 +128,29 @@ export const addUserQuery=gql`
 `
 
 export const deleteUserQuery=gql`
-  mutation ($id: ID!) {
+  mutation ($id: ID!, $password: String!) {
     deleteUser(
       id: $id,
+      password: $password
+    ) {
+      id
+    }
+  }
+`
+
+export const loginQuery = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      value
+    }
+  }
+`
+
+export const editEmailQuery=gql`
+  mutation ($id: ID!, $email: String!) {
+    editEmail(
+      id: $id,
+      email: $email
     ) {
       id
     }
@@ -52,10 +158,11 @@ export const deleteUserQuery=gql`
 `
 
 export const editPasswordQuery=gql`
-  mutation ($id: ID!, $password: String!) {
+  mutation ($id: ID!, $password: String! $newPassword: String!) {
     editPassword(
       id: $id,
       password: $password
+      newPassword: $newPassword
     ) {
       id
     }
@@ -100,6 +207,17 @@ export const editShareNotificationQuery=gql`
     editShareNotification(
       id: $id,
       shareNotification: $shareNotification
+    ) {
+      id
+    }
+  }
+`
+
+export const editProfileBioQuery=gql`
+  mutation ($id: ID!, $profileBio: String!) {
+    editProfileBio(
+      id: $id,
+      profileBio: $profileBio
     ) {
       id
     }

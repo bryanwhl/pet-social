@@ -13,7 +13,7 @@ const PrivacySettings = ( {user} ) => {
                 Manage your privacy settings
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Blocked Users: 
+                Blocked Users: {user.blockedUsers.length}
             </Typography>
             <Typography variant="body1" gutterBottom>
                 Current Privacy Setting: {user.settings.defaultPrivacy}

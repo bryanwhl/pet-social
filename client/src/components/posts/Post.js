@@ -16,7 +16,7 @@ import { red, blue } from '@material-ui/core/colors';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
-import { displayName } from '../../utility.js'
+import { displayName, convertDate } from '../../utility.js'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -84,11 +84,6 @@ const Post = ({user, post}) => {
             path: "/"
         }
     ]
-
-    const convertDate = (unixDate) => {
-        const normalDate = new Date(unixDate).toLocaleDateString("en-uk");
-        return normalDate;
-    }
 
     const handleExpandClick = () => {
       setExpanded(!expanded);

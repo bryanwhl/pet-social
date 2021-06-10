@@ -3,11 +3,17 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid'
 import Switch from '@material-ui/core/Switch';
+import { useMutation } from '@apollo/client'
+import { editLikeNotificationQuery, editCommentNotificationQuery, currentUserQuery, editShareNotificationQuery } from '../../queries.js'
 
-const NotificationsSettings = ( {user, editLikeNotification, editCommentNotification, editShareNotification} ) => {
+const NotificationsSettings = ( {user} ) => {
     const [likeNotificationState, setLikeNotificationState] = useState(user.settings.likeNotification);
     const [commentNoficiationState, setCommentNoficiationState] = useState(user.settings.commentNotification);
     const [shareNotificationState, setShareNotificationState] = useState(user.settings.shareNotification);
+
+    const [ editLikeNotification ] = useMutation(editLikeNotificationQuery, {refetchQueries: [{query: currentUserQuery}]})
+    const [ editCommentNotification ] = useMutation(editCommentNotificationQuery, {refetchQueries: [{query: currentUserQuery}]})
+    const [ editShareNotification ] = useMutation(editShareNotificationQuery, {refetchQueries: [{query: currentUserQuery}]})
 
     const handleLikeNotification = (event) => {
         setLikeNotificationState(event.target.checked);

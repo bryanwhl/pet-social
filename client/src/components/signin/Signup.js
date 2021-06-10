@@ -6,21 +6,27 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import logo from "../static/images/pet-social-logo.jpg";
 
 function Copyright() {
-    return (
-      <Typography variant="body2" color="textSecondary" align="center">
-        {'Pet Social @ '}
-        <Link color="inherit" href="https://orbital.comp.nus.edu.sg/">
-          {"Orbital 2021"}
-        </Link>
-      </Typography>
-    );
-  }
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Pet Social @ '}
+      <Link color="inherit" href="https://orbital.comp.nus.edu.sg/">
+        {"Orbital 2021"}
+      </Link>
+    </Typography>
+  );
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
   const useStyles = makeStyles((theme) => ({
     paper: {
@@ -47,8 +53,18 @@ function Copyright() {
 const Signup = ({ signup, switchToSignin, success, error }) => {
     const classes = useStyles();
 
+    const [openSnackbar, setOpenSnackbar] = useState(null)
     const [details, setDetails] = useState({givenName:"", familyName:"", username:"", password:"", confirmPassword:"", accountType:"", email:""});
     const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
+
+    const handleCloseSnackbar = () => {
+      setOpenSnackbar(null)
+    }
+
+    const handleOpenSnackbar = (input) => {
+      console.log(input)
+      setOpenSnackbar(input)
+    }
 
     const handleSubmit = event => {
         event.preventDefault();

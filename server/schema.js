@@ -1,6 +1,8 @@
-const { ApolloServer, gql } = require('apollo-server-express')
+const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError, AuthenticationError } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
@@ -151,9 +153,14 @@ const typeDefs = gql`
         toUser: User!
         date: Date!
     }
+    type Token {
+        value: String!
+    }
     type Query {
         allUsers: [User]!
         findUser(id: ID): User
+        me: User
+        findPost(id :ID): Post
         getPosts: [Post]!
     }
     type Mutation {
@@ -167,10 +174,20 @@ const typeDefs = gql`
         ): User
         deleteUser(
             id: ID!
+            password: String!
+        ): User
+        login(
+            username: String!
+            password: String!
+        ): Token
+        editEmail(
+            id: ID!
+            email: String!
         ): User
         editPassword(
             id: ID!
             password: String!
+            newPassword: String!
         ): User
         editFamilyNameFirst(
             id: ID!
@@ -187,6 +204,10 @@ const typeDefs = gql`
         editShareNotification(
             id: ID!
             shareNotification: Boolean!
+        ): User
+        editProfileBio(
+            id: ID!
+            profileBio: String!
         ): User
     }
 
@@ -263,12 +284,16 @@ const resolvers = {
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
-        findUser: (root, args) => User.findById(args.id)
+        me: (root, args, context) => {return context.currentUser},
+        findUser: (root, args) => User.findById(args.id),
+        findPost: (root, args) => Post.findById(args.id)
     },
     Mutation: {
-        addUser: (root, args) => {
+        addUser: async (root, args) => {
+            const saltRounds = 10
             const user = new User({
                 ...args,
+                password: await bcrypt.hash(args.password, saltRounds),
                 avatarPath: "",
                 profilePicturePath: "",
                 posts: [],
@@ -313,7 +338,18 @@ const resolvers = {
         //     posts = posts.concat(newPost)
         //     return newPost
         // },
-        deleteUser: (root, args) => {
+        deleteUser: async (root, args) => {
+            const user = await User.findById( args.id ).exec();
+            if (!user) {
+                return null
+            }
+
+            const passwordCorrect = await bcrypt.compare(args.password, user.password)
+
+            if ( !passwordCorrect ) {
+                throw new UserInputError("Password is incorrect")
+            }
+
             User.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
                     console.log(err)
@@ -323,12 +359,53 @@ const resolvers = {
                 }
             })
         },
+        login: async (root, args) => {
+            if ( args.username === "" ) {
+                throw new UserInputError("Username cannot be empty")
+            } else if ( args.password === "" ) {
+                throw new UserInputError("Password cannot be empty")
+            }
+
+            const user = await User.findOne({ username: args.username })
+            
+            if ( !user ) {
+                throw new UserInputError("Username does not exist")
+            }
+            
+            const passwordCorrect = await bcrypt.compare(args.password, user.password)
+
+            if ( !passwordCorrect ) {
+                throw new UserInputError("Password is incorrect")
+            }
+
+            const userForToken = {
+                username: user.username,
+                id: user._id,
+            }
+
+            return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+        },
         editPassword: async (root, args) => {
-            const userToUpdate = await User.findById( args.id ).exec(); //must change
+            const userToUpdate = await User.findById( args.id ).exec(); //must change to use context for authentication
             if (!userToUpdate) {
                 return null
             }
-            userToUpdate.password = args.password
+
+            const passwordCorrect = await bcrypt.compare(args.password, userToUpdate.password)
+
+            if ( !passwordCorrect ) {
+                throw new UserInputError("Password is incorrect")
+            }
+
+            userToUpdate.password = await bcrypt.hash(args.newPassword, 10)
+            await userToUpdate.save();
+        },
+        editEmail: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change to use context for authentication
+            if (!userToUpdate) {
+                return null
+            }
+            userToUpdate.email = args.email
             await userToUpdate.save();
         },
         editFamilyNameFirst: async (root, args) => {
@@ -362,7 +439,15 @@ const resolvers = {
             }
             userToUpdate.shareNotification = args.shareNotification
             await userToUpdate.save();
-        }
+        },
+        editProfileBio: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
+            if (!userToUpdate) {
+                return null
+            }
+            userToUpdate.profileBio = args.profileBio
+            await userToUpdate.save();
+        },
     }
 }
 
@@ -371,6 +456,16 @@ const app = express()
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: async ({ req }) => {
+        const auth = req ? req.headers.authorization : null
+        if (auth && auth.toLowerCase().startsWith('bearer ')) {
+          const decodedToken = jwt.verify(
+            auth.substring(7), process.env.JWT_SECRET
+          )
+          const currentUser = await User.findById(decodedToken.id)
+          return { currentUser }
+        }
+    }
 })
 
 server.applyMiddleware({app})
