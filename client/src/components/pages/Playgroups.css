@@ -1,16 +1,11 @@
-.search {
-  position: absolute;
-  padding-top: 74px;
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 400px;
-  z-index: 10;
-}
-
-.search input {
-  padding: 0.5rem;
-  font-size: 1.5rem;
-  width: 100%;
+.marker-cursor {
+  z-index: 1000;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  border: 1px solid black;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  position: fixed;
 }

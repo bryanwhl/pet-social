@@ -1,29 +1,22 @@
 import React from 'react'
-import { makeStyles, FormControl, InputLabel, Input, FormHelperText, Button, Divider, List, ListItem, ListItemText, Drawer, Toolbar, Paper, IconButton,
-InputBase } from '@material-ui/core';
+import { makeStyles, ListItemSecondaryAction, FormControl, ListSubheader, Button, Divider, List, ListItem, ListItemText, Drawer, Toolbar, ListItemIcon } from '@material-ui/core';
 import { GoogleMap, useLoadScript, InfoWindow, Marker } from "@react-google-maps/api";
 import { v4 as uuidv4 } from 'uuid';
-import usePlacesAutocomplete, {
-    getGeocode,
-    getLatLng,
-} from "use-places-autocomplete";
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxPopover,
-    ComboboxList,
-    ComboboxOption,
-} from "@reach/combobox";
 import "@reach/combobox/styles.css";
-import DirectionsIcon from '@material-ui/icons/Directions';
-import SearchIcon from '@material-ui/icons/Search';
+import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import TextField from '@material-ui/core/TextField';
+import Collapse from '@material-ui/core/Collapse';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
+import AddIcon from '@material-ui/icons/Add';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import Geocode from "react-geocode";
+
+Geocode.setApiKey(process.env.REACT_APP_KEY);
 
 const drawerWidth = 320;
 
@@ -61,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
     drawerPaper: {
       width: drawerWidth,
       marginTop: -4,
-      background: 'lightGrey',
     },
     searchBarRoot: {
       padding: '2px 4px',
@@ -83,6 +75,12 @@ const useStyles = makeStyles((theme) => ({
     icon: {
       color: theme.palette.text.secondary,
       marginRight: theme.spacing(2),
+    },
+    nested: {
+      paddingLeft: theme.spacing(4),
+      '& span, & svg': {
+        fontSize: '0.82rem'
+      }
     },
 }));
 
@@ -114,6 +112,32 @@ const Playgroups = () => {
 
     const [markers, setMarkers] = React.useState([]);
     const [selected, setSelected] = React.useState(null);
+    const [newPlaygroup, setNewPlaygroup] = React.useState(false);
+
+    const mapRef = React.useRef();
+    const onMapLoad = React.useCallback((map) => {
+      mapRef.current = map;
+    }, []);
+
+    const panTo = React.useCallback(({ lat, lng }) => {
+      mapRef.current.panTo({ lat, lng });
+      mapRef.current.setZoom(15);
+    }, []);
+  
+    const handleNewPlaygroup = () => {
+      setNewPlaygroup(!newPlaygroup);
+    }
+
+    const handleStopNewPlaygroup = () => {
+      setNewPlaygroup(false);
+    }
+
+    // code for state of side bar
+    const [open, setOpen] = React.useState(false);
+
+    const handleClick = () => {
+      setOpen(!open);
+    };
 
     const onMapClick = React.useCallback((e) => {
         setMarkers((current) => [
@@ -124,12 +148,13 @@ const Playgroups = () => {
                 id: generateNewID(),
             },
         ]);
+        handleStopNewPlaygroup();
+        setSelected({
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng()
+        })
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // const panTo = React.useCallback(({ lat, lng }) => {
-    //     mapRef.current.panTo({ lat, lng });
-    //     mapRef.current.setZoom(16);
-    //   }, []);
 
   const [value, setValue] = React.useState(null);
   const [inputValue, setInputValue] = React.useState('');
@@ -192,12 +217,6 @@ const Playgroups = () => {
     };
   }, [value, inputValue, fetch]);
 
-    const mapRef = React.useRef();
-
-    const onMapLoad = React.useCallback((map) => {
-        mapRef.current = map;
-    }, [])
-
     if (loadError) return "Error loading maps";
     if (!isLoaded) return "Loading Maps...";
 
@@ -214,6 +233,27 @@ const Playgroups = () => {
               <Toolbar />
               <div className={classes.drawerContainer}>
                 <List>
+                  <ListItem button onClick={handleClick}>
+                    <ListItemIcon>
+                      <AddIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Add a Playgroup" />
+                  </ListItem>
+                  <Collapse in={open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <ListItem className={classes.nested}>
+                        <ListItemText primary="Click this marker and select your desired Playgroup location:" />
+                        <ListItemSecondaryAction>
+                          <ToggleButton edge="end" selected={newPlaygroup} onClick={handleNewPlaygroup}>
+                            <LocationOnIcon color="secondary"/>
+                          </ToggleButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    </List>
+                  </Collapse>
+                </List>
+                <Divider />
+                <List>
                   <ListItem>
                   <Autocomplete
                     id="google-map-demo"
@@ -228,28 +268,27 @@ const Playgroups = () => {
                     onChange={(event, newValue) => {
                       setOptions(newValue ? [newValue, ...options] : options);
                       setValue(newValue);
-                      console.log(event);
+                      if (newValue === null) {
+                        return;
+                      }
+                      Geocode.fromAddress(newValue.description).then(
+                        (response) => {
+                          const { lat, lng } = response.results[0].geometry.location;
+                          panTo({lat: lat, lng: lng});
+                          console.log(lat);
+                          console.log(lng);
+                        },
+                        (error) => {
+                          console.error(error);
+                        }
+                      );
                     }}
                     onInputChange={(event, newInputValue) => {
                       setInputValue(newInputValue);
                     }}
-                    popupIcon={<SearchIcon />}
+                    popupIcon={<LocationSearchingIcon />}
                     renderInput={(params) => (
                       <TextField {...params} label="Search Map" variant="outlined" fullWidth />
-                      // <Paper component="form" className={classes.searchBarRoot}>
-                      //   <InputBase
-                      //     className={classes.input}
-                      //     placeholder="Search Google Maps"
-                      //     inputProps={{ 'aria-label': 'search google maps' }}
-                      //   />
-                      //   <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                      //     <SearchIcon />
-                      //   </IconButton>
-                      //   <Divider className={classes.divider} orientation="vertical" />
-                      //   <IconButton color="primary" className={classes.iconButton} aria-label="directions">
-                      //     <DirectionsIcon />
-                      //   </IconButton>
-                      // </Paper>
                     )}
                     renderOption={(option) => {
                       const matches = option.structured_formatting.main_text_matched_substrings;
@@ -283,14 +322,13 @@ const Playgroups = () => {
               </div>
             </Drawer>
             </div>
-            {/* <Locate panTo={panTo} />
-            <Search panTo={panTo} /> */}
             <GoogleMap
                 mapContainerStyle={mapStyle}
                 zoom={12}
                 center={center}
-                onClick={onMapClick}
+                onClick={newPlaygroup ? onMapClick : () => {}}
                 onLoad={onMapLoad}
+                clickableIcons={false}
             >
                 {markers.map(marker =>
                     <Marker 
@@ -311,106 +349,33 @@ const Playgroups = () => {
                 }}>
                     <div>
                         <FormControl>
-                            <List>
+                            <List subheader={
+                              <ListSubheader component="div" id="nested-list-subheader">
+                                Create a Playgroup!
+                              </ListSubheader>
+                            }>
                                 <ListItem>
-                                    <FormHelperText id="create-playgroup"><h2>Create a Playgroup!</h2></FormHelperText>
+                                    <TextField id="name-of-playgroup" label="Name Of Playgroup" variant="outlined" />
                                 </ListItem>
                                 <ListItem>
-                                    <InputLabel htmlFor="name-of-playgroup">Name Of Playgroup</InputLabel>
-                                    <Input id="name-of-playgroup" aria-describedby="my-helper-text" />
+                                    <TextField id="date-of-meeting" label="Date Of Meeting" variant="outlined" />
                                 </ListItem>
                                 <ListItem>
-                                    <InputLabel htmlFor="date-of-meeting">Date Of Meeting</InputLabel>
-                                    <Input id="date-of-meeting" aria-describedby="my-helper-text" />
+                                    <TextField id="details" label="Details" variant="outlined" />
                                 </ListItem>
-                                <ListItem>
+                                <ListItem style={{display:'flex', justifyContent:'flex-end'}}>
                                     <Button variant="contained" color="primary">
                                         Submit
                                     </Button>
                                 </ListItem>
                             </List>
                         </FormControl>
+  
                     </div>
                 </InfoWindow>) : null}
             </GoogleMap>
         </div>
     );
 }
-
-// function Locate({ panTo }) {
-//     return (
-//       <button
-//         className="locate"
-//         onClick={() => {
-//           navigator.geolocation.getCurrentPosition(
-//             (position) => {
-//               panTo({
-//                 lat: position.coords.latitude,
-//                 lng: position.coords.longitude,
-//               });
-//             },
-//             () => null
-//           );
-//         }}
-//       >
-//         <img src="/compass.svg" alt="compass" />
-//       </button>
-//     );
-//   }
-  
-//   function Search({ panTo }) {
-//     const {
-//       ready,
-//       value,
-//       suggestions: { status, data },
-//       setValue,
-//       clearSuggestions,
-//     } = usePlacesAutocomplete({
-//       requestOptions: {
-//         location: { lat: () => 1.3314930427408092, lng: () => 103.80778265368694 },
-//         radius: 2 * 1000,
-//       },
-//     });
-
-//     // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompletionRequest
-  
-//     const handleInput = (e) => {
-//       setValue(e.target.value);
-//     };
-  
-//     const handleSelect = async (address) => {
-//       setValue(address, false);
-//       clearSuggestions();
-  
-//       try {
-//         const results = await getGeocode({ address });
-//         const { lat, lng } = await getLatLng(results[0]);
-//         panTo({ lat, lng });
-//       } catch (error) {
-//         console.log("😱 Error: ", error);
-//       }
-//     };
-  
-//     return (
-//       <div className="search">
-//         <Combobox onSelect={handleSelect}>
-//           <ComboboxInput
-//             value={value}
-//             onChange={handleInput}
-//             disabled={!ready}
-//             placeholder="Search your location"
-//           />
-//           <ComboboxPopover>
-//             <ComboboxList>
-//               {status === "OK" &&
-//                 data.map(({ id, description }) => (
-//                   <ComboboxOption key={id} value={description} />
-//                 ))}
-//             </ComboboxList>
-//           </ComboboxPopover>
-//         </Combobox>
-//       </div>
-//     );
-//   }
 
 export default Playgroups
