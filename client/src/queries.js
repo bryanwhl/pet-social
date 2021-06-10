@@ -113,10 +113,11 @@ export const getPostByIdQuery=gql`
 `
 
 export const addUserQuery=gql`
-  mutation ($username: String!, $password: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
+  mutation ($username: String!, $password: String!, $confirmPassword: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
     addUser(
       username: $username,
       password: $password,
+      confirmPassword: $confirmPassword,
       email: $email,
       accountType: $accountType,
       givenName: $givenName,
@@ -151,6 +152,18 @@ export const editEmailQuery=gql`
     editEmail(
       id: $id,
       email: $email
+    ) {
+      id
+    }
+  }
+`
+
+export const resetPasswordQuery=gql`
+  mutation ($email: String!, $password: String! $confirmPassword: String!) {
+    resetPassword(
+      email: $email,
+      password: $password
+      confirmPassword: $confirmPassword
     ) {
       id
     }

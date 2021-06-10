@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -12,6 +12,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import logo from "../static/images/pet-social-logo.jpg";
+import { useMutation } from '@apollo/client'
+import { addUserQuery } from '../../queries.js'
 
 function Copyright() {
   return (
@@ -50,25 +52,41 @@ function Alert(props) {
     },
   }));
 
-const Signup = ({ signup, switchToSignin, success, error }) => {
+const Signup = ({ switchToSignin }) => {
     const classes = useStyles();
 
     const [openSnackbar, setOpenSnackbar] = useState(null)
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(null);
     const [details, setDetails] = useState({givenName:"", familyName:"", username:"", password:"", confirmPassword:"", accountType:"", email:""});
-    const buttonText = (success) ? "Account created | Back to Sign In" : "Sign up"
+    const buttonText = (success) ? "Back to Sign In" : "Sign up"
+
+    const [ createUser, createUserResponse ] = useMutation(addUserQuery, {
+      onError: (error) => {
+        setError(error.graphQLErrors[0].message)
+      }})
+
+    useEffect(() => {
+      if ( createUserResponse.data ) {
+          if (!error) {
+              setSuccess(true)
+              handleOpenSnackbar("Account Created")
+          }
+      }
+    }, [createUserResponse.data])
 
     const handleCloseSnackbar = () => {
       setOpenSnackbar(null)
     }
 
     const handleOpenSnackbar = (input) => {
-      console.log(input)
       setOpenSnackbar(input)
     }
 
     const handleSubmit = event => {
         event.preventDefault();
-        signup(details);
+        createUser({ variables: { username: details.username, password: details.password, confirmPassword: details.confirmPassword, email: details.email, accountType: details.accountType, givenName: details.givenName, familyName: details.familyName } })
+        setError(null)
     }
 
     const handleChange = (prop) => (event) => {
@@ -113,9 +131,8 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 disabled={success}
               />
               <TextField
-                error={["Email", "Email empty"].includes(error)}
-                helperText={(error === "Email") ? "Invalid Email"
-                  : (error === "Email empty") ? "Email cannot be empty" : ""}
+                error={["Invalid Email", "Email already exists"].includes(error)}
+                helperText={["Invalid Email", "Email already exists"].includes(error) ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -129,9 +146,8 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 disabled={success}
               />
               <TextField
-                error={["Username", "Username empty"].includes(error)}
-                helperText={(error === "Username") ? "Username already exists"
-                  : (error === "Username empty") ? "Username cannot be empty" : ""}
+                error={["Username already exists"].includes(error)}
+                helperText={(error === "Username already exists") ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -145,9 +161,8 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 disabled={success}
               />
               <TextField
-                error={["Password", "Password empty"].includes(error)}
-                helperText={(error === "Password") ? "Passwords do not match"
-                  : (error === "Password empty") ? "Password cannot be empty" : ""}
+                error={error==="Passwords do not match"}
+                helperText={(error === "Passwords do not match") ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -160,9 +175,8 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 disabled={success}
               />
               <TextField
-                error={["Password", "Confirm Password empty"].includes(error)}
-                helperText={(error === "Password") ? "Passwords do not match"
-                  : (error === "Confirm Password empty") ? "Password cannot be empty" : ""}
+                error={["Passwords do not match", "Confirm Password empty"].includes(error)}
+                helperText={(error === "Passwords do not match") ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
@@ -201,6 +215,7 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                disabled={[details.familyName, details.givenName, details.email, details.username, details.password, details.confirmPassword, details.accountType].includes("")}
               >
                 {buttonText}
               </Button>
@@ -216,6 +231,11 @@ const Signup = ({ signup, switchToSignin, success, error }) => {
           <Box mt={8}>
             <Copyright />
           </Box>
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+            <Alert onClose={handleCloseSnackbar} severity="success">
+                {openSnackbar}
+            </Alert>
+        </Snackbar>
         </Container>
       );
 }

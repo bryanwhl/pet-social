@@ -36,20 +36,50 @@ const AccountSettings = ({ user, logout }) => {
     const [openPassword, setOpenPassword] = useState(false);
     const [passwordDetails, setPasswordDetails] = useState({oldPassword: "", newPassword: "", confirmPassword: ""})
 
-    const [ editFamilyNameFirst ] = useMutation(editFamilyNameFirstQuery, {refetchQueries: [{query: currentUserQuery}]})
-    const [ editEmail ] = useMutation(editEmailQuery, {refetchQueries: [{query: currentUserQuery}]})
+    const [ editFamilyNameFirst, editFamilyNameFirstResponse ] = useMutation(editFamilyNameFirstQuery, {
+        onError: (error) => {
+            console.log(error.graphQLErrors[0])
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
+    const [ editEmail, editEmailResponse ] = useMutation(editEmailQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
     const [ editPassword, editPasswordResponse ] = useMutation(editPasswordQuery, {
         onError: (error) => {
-          console.log(error.graphQLErrors[0].message)
           setError(error.graphQLErrors[0].message)
          }, refetchQueries: [{query: currentUserQuery}]
     })
     const [ deleteUser, deleteUserResponse ] = useMutation(deleteUserQuery, {
         onError: (error) => {
-          console.log(error.graphQLErrors[0].message)
           setError(error.graphQLErrors[0].message)
          }
     })
+
+    if (error === "Invalid token") {
+        logout()
+        alert("Token is invalid. It may have expired or user was deleted.")
+    }
+
+    useEffect(() => {
+        if ( editFamilyNameFirstResponse.data ) {
+            if (!error) {
+                setNameOrderState(!nameOrderState);
+            }
+        }
+      }, [editFamilyNameFirstResponse.data])
+
+    useEffect(() => {
+        if ( editEmailResponse.data ) {
+            if (!error) {
+                setEmail(edittedEmail)
+                handleCloseEmail();
+                handleOpenSnackbar("Email Changed")
+            }
+        }
+      }, [editEmailResponse.data])
 
     useEffect(() => {
         if ( editPasswordResponse.data ) {
@@ -78,11 +108,10 @@ const AccountSettings = ({ user, logout }) => {
         setOpenSnackbar(input)
     }
 
-    //)
-
     const handleConfirmDelete = () => {
         console.log(confirmPassword)
         console.log("Confirm delete")
+        setError(null)
         deleteUser({variables: {id: user.id, password: confirmPassword}});
     }
 
@@ -106,10 +135,8 @@ const AccountSettings = ({ user, logout }) => {
 
     const handleConfirmEmail = () => {
         const id = user.id
+        setError(null)
         editEmail({variables: {id: id, email: edittedEmail}});
-        setEmail(edittedEmail)
-        handleCloseEmail();
-        handleOpenSnackbar("Email Changed")
     }
 
     const handleCloseEmail = () => {
@@ -151,7 +178,7 @@ const AccountSettings = ({ user, logout }) => {
     };
 
     const handleNameOrder = (event) => {
-        setNameOrderState(event.target.checked);
+        setError(null)
         editFamilyNameFirst({ variables: { id: user.id, familyNameFirst: event.target.checked } } )
       };
 
@@ -251,6 +278,8 @@ const AccountSettings = ({ user, logout }) => {
                     Please enter your new email address
                 </DialogContentText>
                 <TextField
+                    error={["Invalid Email", "Email already exists"].includes(error)}
+                    helperText={["Invalid Email", "Email already exists"].includes(error) ? error : ""}
                     autoFocus
                     margin='dense'
                     label="New Email"

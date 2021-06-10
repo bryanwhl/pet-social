@@ -47,7 +47,7 @@ function Copyright() {
     },
   }));
 
-const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrentUser, setToken }) => {
+const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrentUser }) => {
     const classes = useStyles();
 
     const [error, setError] = useState(null);
@@ -65,7 +65,6 @@ const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrent
       if ( loginResult.data ) {
         const token = loginResult.data.login.value
         console.log(token)
-        setToken(token)
         setError(null)
         sessionStorage.setItem('user-token', token)
         if (token) {
@@ -93,7 +92,6 @@ const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrent
 
     if (rememberMe) {
       console.log("Remember Me")
-      setToken(rememberMe)
       sessionStorage.setItem('user-token', rememberMe)
       getCurrentUser()
       switchToHome();
