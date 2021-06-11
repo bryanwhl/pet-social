@@ -117,6 +117,22 @@ export const getPostByIdQuery=gql`
   }
 `
 
+export const getPetByIdQuery=gql`
+  query ($id: ID!) {
+    findPet(id: $id) {
+      id
+      name
+      owners {
+        id
+      }
+      dateOfBirth
+      gender
+      breed
+      picturePath
+    }
+  }
+`
+
 export const addUserQuery=gql`
   mutation ($username: String!, $password: String!, $confirmPassword: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
     addUser(

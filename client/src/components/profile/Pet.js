@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { useLazyQuery } from '@apollo/client'
+import { getPetByIdQuery } from '../../queries.js'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,8 +25,28 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const Pet = ({ user, pet, isAddPet }) => {
+const Pet = ({ user, petId, isAddPet }) => {
   const classes=useStyles();
+
+  const [pet, setPet] = useState(null)
+  const [getPet, getPetResponse] = useLazyQuery(getPetByIdQuery, {
+    fetchPolicy: "no-cache"
+  })
+
+  useEffect(() => {
+    if (getPetResponse.data) {
+      console.log("Pet, ", getPetResponse.data)
+      setPet(getPetResponse.data.findPet)
+    }
+  }, [getPetResponse.data])
+
+  useEffect(() => {
+    if (petId) {
+      console.log(petId)
+      getPet({variables: {id: petId}})
+    }
+  }, [petId])
+
     return (
         <div>
             <CssBaseline>

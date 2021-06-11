@@ -163,6 +163,8 @@ const typeDefs = gql`
         me: User
         findPost(id :ID): Post
         getPosts: [Post]!
+        findComment(id: ID!): Comment
+        findPet(id: ID!): Pet
     }
     type Mutation {
         addUser(
@@ -288,12 +290,19 @@ const resolvers = {
             return (await root.populate('tagged').execPopulate()).tagged
         },
     },
+    Pet: {
+        owners: async (root) => {
+            return (await root.populate('owners').execPopulate()).owners
+        }
+    },
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
         me: (root, args, context) => {return context.currentUser},
         findUser: (root, args) => User.findById(args.id),
-        findPost: (root, args) => Post.findById(args.id)
+        findPost: (root, args) => Post.findById(args.id),
+        findComment: (root, args) => Comment.findById(args.id),
+        findPet: (root, args) => Pet.findById(args.id)
     },
     Mutation: {
         addUser: async (root, args) => {

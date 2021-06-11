@@ -208,7 +208,7 @@ const ProfilePage = ({ user }) => {
           </Box>
           <Box width={1} marginLeft={'5vw'}>
             {(petMode===null) && <ProfileTabs user={user} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
-            {(petMode!==null) && <Pet user={user} pet={pet} isAddPet={petMode} />}
+            {(petMode!==null) && <Pet user={user} petId={pet} isAddPet={petMode} />}
           </Box>
           <Dialog onClose={handleCloseBio} open={bioOpen} fullWidth>
             <DialogTitle>Edit your profile bio</DialogTitle>
