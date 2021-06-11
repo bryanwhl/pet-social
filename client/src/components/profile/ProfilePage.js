@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react'
+import { makeStyles } from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
@@ -9,15 +8,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Divider from'@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -29,35 +24,10 @@ import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Post from '../posts/Post.js'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import { getPostByIdQuery, editProfileBioQuery, currentUserQuery } from '../../queries.js'
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
+import Pet from './Pet.js'
+import ProfileTabs from './ProfileTabs.js'
+import { useMutation } from '@apollo/client'
+import { editProfileBioQuery, currentUserQuery } from '../../queries.js'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -97,42 +67,34 @@ const useStyles = makeStyles((theme) => ({
 const ProfilePage = ({ user }) => {
     const classes=useStyles();
     const [petOpen, setPetOpen] = useState(false);
+    const [petMode, setPetMode] = useState(null);
+    const [pet, setPet] = useState(null)
     const [profileTab, setProfileTab] = useState(0);
     const [profileBadge, setProfileBadge] = useState(true);
-    const [postOpen, setPostOpen] = useState(false);
     const [bioOpen, setBioOpen] = useState(false);
-    const [backdropPost, setBackdropPost] = useState(null);
     const [profileBio, setProfileBio] = useState(user.profileBio);
     const [edittedBio, setEdittedBio] = useState(user.profileBio);
 
-    const [getQueryPost, queryPost] = useLazyQuery(getPostByIdQuery, {
-      fetchPolicy: "no-cache"
-    })
     const [ editProfileBio ] = useMutation(editProfileBioQuery, {refetchQueries: [{query: currentUserQuery}]})
 
-    useEffect(() => {
-      if (queryPost.data) {
-        setBackdropPost(queryPost.data.findPost)
-      }
-    }, [queryPost.data])
-
     const handleProfileTabChange = (event, newValue) => {
+      setPet(null)
+      setPetMode(null)
       setProfileTab(newValue);
     };
 
     const handlePetClick = () => {
       setPetOpen(!petOpen);
     };
-
-    const handleOpenPost = (item) => {
-      setPostOpen(true);
-      const id = item.id
-      getQueryPost({variables: {id}})
+   
+    const handlePet = (item) => () => {
+      setPet(item.id)
+      setPetMode(false);
     };
-
-    const handleClosePost = () => {
-      setPostOpen(false);
-      setBackdropPost(null)
+    
+    const handleAddPet = () => {
+      setPetMode(true);
+      setPet(null)
     };
 
     const handleOpenBio = () => {
@@ -196,7 +158,11 @@ const ProfilePage = ({ user }) => {
               </Tooltip>
               <Divider/>
               <Box display="flex" marginTop={2} marginBottom={2}>
-                <Box width={1} onClick={() => setProfileTab(0)} style={{cursor: "pointer"}}>
+                <Box width={1} onClick={() => {
+                  setPet(null)
+                  setPetMode(null)
+                  setProfileTab(0)}}
+                  style={{cursor: "pointer"}}>
                   <Typography variant="h6" align="center" >
                     {user.posts.length}
                   </Typography>
@@ -225,13 +191,14 @@ const ProfilePage = ({ user }) => {
                         <ListItem
                             button
                             key={item.id}
-                            onClick={item.onClick}
+                            selected={pet===item.id}
+                            onClick={handlePet(item)}
                         >
                             <ListItemIcon><Avatar alt="Pet Avatar" src={item.picturePath} /></ListItemIcon>
                             <ListItemText primary={item.name}></ListItemText>
                         </ListItem>
                     ))}
-                    <ListItem button>
+                    <ListItem button onClick={handleAddPet} selected={petMode===true}>
                       <ListItemIcon><AddIcon/></ListItemIcon>
                       <ListItemText primary="Add Pet"></ListItemText>
                     </ListItem>
@@ -240,55 +207,9 @@ const ProfilePage = ({ user }) => {
             </Grid>
           </Box>
           <Box width={1} marginLeft={'5vw'}>
-            <Tabs
-              value={profileTab}
-              onChange={handleProfileTabChange}
-              indicatorColor="primary"
-              textColor="primary"
-              centered
-            >
-              <Tab label="Posts" />
-              <Tab label="Tagged" />
-              <Tab label="Saved" />
-            </Tabs>
-            <TabPanel value={profileTab} index={0}>
-              <Grid container spacing={2} justify="center">
-                {user.posts.map(item => (
-                    <Grid item style={{cursor: "pointer"}} onClick={() => handleOpenPost(item)}>
-                      <Card className={classes.card}>
-                        <CardMedia className={classes.media} image={item.imageFilePath} title="Post"/>
-                      </Card>
-                    </Grid>
-                ))}
-              </Grid>
-            </TabPanel>
-            <TabPanel value={profileTab} index={1}>
-              <Grid container spacing={2} justify="center">
-                Tagged Posts Coming Soon
-              </Grid>
-            </TabPanel>
-            <TabPanel value={profileTab} index={2}>
-              <Grid container spacing={2} justify="center">
-                {user.savedPosts.map(item => (
-                    <Grid item style={{cursor: "pointer"}} onClick={() => handleOpenPost(item)}>
-                      <Card className={classes.card}>
-                        <CardMedia className={classes.media} image={item.imageFilePath} title="Post"/>
-                      </Card>
-                    </Grid>
-                ))}
-              </Grid>
-            </TabPanel>
+            {(petMode===null) && <ProfileTabs user={user} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
+            {(petMode!==null) && <Pet user={user} pet={pet} isAddPet={petMode} />}
           </Box>
-          <Dialog onClose={handleClosePost} open={postOpen} scroll={"body"} fullWidth
-          PaperProps={{
-            style: {
-              backgroundColor: 'transparent',
-              boxShadow: 'none',
-              maxWidth: "75vmin"
-            },
-          }}>
-            {backdropPost && <Post user={user} post={backdropPost}/>}
-          </Dialog>
           <Dialog onClose={handleCloseBio} open={bioOpen} fullWidth>
             <DialogTitle>Edit your profile bio</DialogTitle>
             <DialogContent>

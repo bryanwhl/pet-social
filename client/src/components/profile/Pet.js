@@ -21,11 +21,6 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
       padding: theme.spacing(3),
     },
-    avatar: {
-      backgroundColor: red[500],
-      width: theme.spacing(20),
-      height: theme.spacing(20),
-    },
   }));
 
 const Pet = ({ user, pet, isAddPet }) => {
