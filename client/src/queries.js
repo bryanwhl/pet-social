@@ -59,6 +59,11 @@ export const currentUserQuery=gql`
     registeredDate
     accountType
     avatarPath
+    pets {
+      id
+      name
+      picturePath
+    }
     settings {
         familyNameFirst
         defaultPrivacy

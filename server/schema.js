@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
+const Pet = require('./models/pet.js')
 require('dotenv').config({path: `${__dirname}/.env`});
 
 const {

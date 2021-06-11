@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,10 +21,14 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Divider from'@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import Badge from '@material-ui/core/Badge';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
+import AddIcon from '@material-ui/icons/Add';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Post from '../posts/Post.js'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { getPostByIdQuery, editProfileBioQuery, currentUserQuery } from '../../queries.js'
@@ -91,6 +96,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfilePage = ({ user }) => {
     const classes=useStyles();
+    const [petOpen, setPetOpen] = useState(false);
     const [profileTab, setProfileTab] = useState(0);
     const [profileBadge, setProfileBadge] = useState(true);
     const [postOpen, setPostOpen] = useState(false);
@@ -112,6 +118,10 @@ const ProfilePage = ({ user }) => {
 
     const handleProfileTabChange = (event, newValue) => {
       setProfileTab(newValue);
+    };
+
+    const handlePetClick = () => {
+      setPetOpen(!petOpen);
     };
 
     const handleOpenPost = (item) => {
@@ -146,7 +156,7 @@ const ProfilePage = ({ user }) => {
     }
 
     return (
-        <CssBaseline>
+      <CssBaseline>
         <Toolbar />
         <div className={classes.root}>
           <Box width={0.3} bgcolor="grey" boxShadow={2}>
@@ -203,6 +213,30 @@ const ProfilePage = ({ user }) => {
                   </Typography>
                 </Box>
               </Box>
+              <List>
+                <ListItem button onClick={handlePetClick}>
+                    <ListItemIcon>{petOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}</ListItemIcon>
+                    <ListItemText primary="Your Pets"/>
+                </ListItem>
+              </List>
+              <Collapse in={petOpen} timeout="auto" unmountOnExit>
+                <List>
+                    {user.pets.map(item => (
+                        <ListItem
+                            button
+                            key={item.id}
+                            onClick={item.onClick}
+                        >
+                            <ListItemIcon><Avatar alt="Pet Avatar" src={item.picturePath} /></ListItemIcon>
+                            <ListItemText primary={item.name}></ListItemText>
+                        </ListItem>
+                    ))}
+                    <ListItem button>
+                      <ListItemIcon><AddIcon/></ListItemIcon>
+                      <ListItemText primary="Add Pet"></ListItemText>
+                    </ListItem>
+                </List>           
+              </Collapse>
             </Grid>
           </Box>
           <Box width={1} marginLeft={'5vw'}>
@@ -277,7 +311,7 @@ const ProfilePage = ({ user }) => {
             </DialogActions>
           </Dialog>
         </div>
-        </CssBaseline>
+      </CssBaseline>
     )
 }
 
