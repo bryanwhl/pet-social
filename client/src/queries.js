@@ -157,6 +157,17 @@ export const addUserQuery=gql`
   }
 `
 
+export const addPetOwnerQuery=gql`
+  mutation ($id: ID!, $username: String!) {
+    addPetOwner(
+      id: $id,
+      username: $username
+    ) {
+      id
+    }
+  }
+`
+
 export const deleteUserQuery=gql`
   mutation ($id: ID!, $password: String!) {
     deleteUser(

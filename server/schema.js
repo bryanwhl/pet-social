@@ -184,6 +184,10 @@ const typeDefs = gql`
             breed: String!
             picturePath: String
         ): Pet
+        addPetOwner(
+            id: ID!
+            username: String!
+        ): User
         deleteUser(
             id: ID!
             password: String!
@@ -389,6 +393,25 @@ const resolvers = {
         //     posts = posts.concat(newPost)
         //     return newPost
         // },
+        addPetOwner: async (root, args) => {
+            const user = await User.findOne({ username: args.username })
+            
+            if ( !user ) {
+                throw new UserInputError("User does not exist")
+            }
+
+            const pet = await Pet.findById( args.id ).exec()
+
+            if (pet.owners.includes(user.id)) {
+                throw new UserInputError("User is already an owner")
+            }
+
+            pet.owners = pet.owners.concat(user.id)
+            user.pets = user.pets.concat(args.id)
+
+            await user.save()
+            await pet.save()
+        },
         deleteUser: async (root, args) => {
             const user = await User.findById( args.id ).exec();
             if (!user) {
