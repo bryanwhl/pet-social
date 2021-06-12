@@ -124,6 +124,14 @@ export const getPetByIdQuery=gql`
       name
       owners {
         id
+        avatarPath
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
       }
       dateOfBirth
       gender

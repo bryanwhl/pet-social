@@ -176,6 +176,14 @@ const typeDefs = gql`
             givenName: String!
             familyName: String!
         ): User
+        addPet(
+            name: String!
+            owners: [ID!]!
+            dateOfBirth: Date!
+            gender: String!
+            breed: String!
+            picturePath: String
+        ): Pet
         deleteUser(
             id: ID!
             password: String!
@@ -351,6 +359,12 @@ const resolvers = {
             })
             delete newUser.confirmPassword
             return newUser.save()
+        },
+        addPet: async (root, args) => {
+            const newPet = new Pet({
+                ...args,
+            })
+            return newPet.save()
         },
         // addPost: (root, args) => {
         //     const newPost = {
