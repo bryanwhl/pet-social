@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
       marginRight: theme.spacing(2),
     },
     nested: {
-      paddingLeft: theme.spacing(4),
+      paddingLeft: theme.spacing(5),
       '& span, & svg': {
         fontSize: '0.82rem'
       }

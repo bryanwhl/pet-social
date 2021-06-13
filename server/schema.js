@@ -9,7 +9,7 @@ const Comment = require('./models/comment.js')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
-//const { GraphQLUpload, graphqlUploadExpress } = require('graphql-upload');
+const Pet = require('./models/pet.js')
 require('dotenv').config({path: `${__dirname}/.env`});
 
 const {
@@ -180,11 +180,14 @@ const typeDefs = gql`
         me: User
         findPost(id :ID): Post
         getPosts: [Post]!
+        findComment(id: ID!): Comment
+        findPet(id: ID!): Pet
     }
     type Mutation {
         addUser(
             username: String!
             password: String!
+            confirmPassword: String!
             email: String!
             accountType: String!
             givenName: String!
@@ -197,6 +200,18 @@ const typeDefs = gql`
             postType: String!
             privacy: String!
         ): Post
+        addPet(
+            name: String!
+            owners: [ID!]!
+            dateOfBirth: Date!
+            gender: String!
+            breed: String!
+            picturePath: String
+        ): Pet
+        addPetOwner(
+            id: ID!
+            username: String!
+        ): User
         deleteUser(
             id: ID!
             password: String!
@@ -205,6 +220,11 @@ const typeDefs = gql`
             username: String!
             password: String!
         ): Token
+        resetPassword(
+            email: String!
+            password: String!
+            confirmPassword: String!
+        ): User
         editEmail(
             id: ID!
             email: String!
@@ -310,17 +330,44 @@ const resolvers = {
             return (await root.populate('tagged').execPopulate()).tagged
         },
     },
+    Pet: {
+        owners: async (root) => {
+            return (await root.populate('owners').execPopulate()).owners
+        }
+    },
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
         me: (root, args, context) => {return context.currentUser},
         findUser: (root, args) => User.findById(args.id),
         findPost: (root, args) => Post.findById(args.id),
+        findComment: (root, args) => Comment.findById(args.id),
+        findPet: (root, args) => Pet.findById(args.id)
     },
     Mutation: {
         addUser: async (root, args) => {
+            if ( args.username === "" ) {
+                throw new UserInputError("Username cannot be empty")
+            } else if ( args.password !== args.confirmPassword ) {
+                throw new UserInputError("Passwords do not match")
+            } else if (!args.email.includes('@') || !args.email.includes('.')) {
+                throw new UserInputError("Invalid Email")
+            }
+
+            const checkEmail = await User.findOne({ email: args.email })
+
+            if ( checkEmail ) {
+                throw new UserInputError("Email already exists")
+            }
+
+            const user = await User.findOne({ username: args.username })
+            
+            if ( user ) {
+                throw new UserInputError("Username already exists")
+            }
+
             const saltRounds = 10
-            const user = new User({
+            const newUser = new User({
                 ...args,
                 password: await bcrypt.hash(args.password, saltRounds),
                 avatarPath: "",
@@ -342,7 +389,14 @@ const resolvers = {
                 commentNotification: true,
                 shareNotification: true
             })
-            return user.save()
+            delete newUser.confirmPassword
+            return newUser.save()
+        },
+        addPet: async (root, args) => {
+            const newPet = new Pet({
+                ...args,
+            })
+            return newPet.save()
         },
         uploadFile: async (parent, {file}) => {
             console.log("reached");
@@ -398,6 +452,25 @@ const resolvers = {
             console.log(user.posts);
             return savePost;
         },
+        addPetOwner: async (root, args) => {
+            const user = await User.findOne({ username: args.username })
+            
+            if ( !user ) {
+                throw new UserInputError("User does not exist")
+            }
+
+            const pet = await Pet.findById( args.id ).exec()
+
+            if (pet.owners.includes(user.id)) {
+                throw new UserInputError("User is already an owner")
+            }
+
+            pet.owners = pet.owners.concat(user.id)
+            user.pets = user.pets.concat(args.id)
+
+            await user.save()
+            await pet.save()
+        },
         deleteUser: async (root, args) => {
             const user = await User.findById( args.id ).exec();
             if (!user) {
@@ -445,6 +518,28 @@ const resolvers = {
 
             return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
         },
+        resetPassword: async (root, args) => {
+            if (!args.email.includes('@') || !args.email.includes('.')) {
+                throw new UserInputError("Invalid Email")
+            } else if (args.password !== args.confirmPassword) {
+                throw new UserInputError("Passwords do not match")
+            }
+
+            const user = await User.findOne({ email: args.email })
+            
+            if ( !user ) {
+                throw new UserInputError("Email does not exist")
+            }
+
+            const passwordMatch = await bcrypt.compare(args.password, user.password)
+
+            if ( passwordMatch ) {
+                throw new UserInputError("Password same")
+            }
+            
+            user.password = await bcrypt.hash(args.password, 10)
+            await user.save();
+        },
         editPassword: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change to use context for authentication
             if (!userToUpdate) {
@@ -461,6 +556,16 @@ const resolvers = {
             await userToUpdate.save();
         },
         editEmail: async (root, args) => {
+            if (!args.email.includes('@') || !args.email.includes('.')) {
+                throw new UserInputError("Invalid Email")
+            }
+
+            const checkEmail = await User.findOne({ email: args.email })
+
+            if ( checkEmail ) {
+                throw new UserInputError("Email already exists")
+            }
+
             const userToUpdate = await User.findById( args.id ).exec(); //must change to use context for authentication
             if (!userToUpdate) {
                 return null
@@ -468,8 +573,12 @@ const resolvers = {
             userToUpdate.email = args.email
             await userToUpdate.save();
         },
-        editFamilyNameFirst: async (root, args) => {
-            const userToUpdate = await User.findById( args.id ).exec(); //must change
+        editFamilyNameFirst: async (root, args, context) => {
+            const user = context.currentUser
+            if (!user) {
+                throw new AuthenticationError("Invalid token")
+            }
+            const userToUpdate = await User.findById( args.id ).exec();
             if (!userToUpdate) {
                 return null
             }

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -9,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import logo from "../static/images/pet-social-logo.jpg";
+import { useMutation } from '@apollo/client'
+import { resetPasswordQuery } from '../../queries.js'
 
 function Copyright() {
     return (
@@ -19,6 +23,10 @@ function Copyright() {
         </Link>
       </Typography>
     );
+  }
+
+  function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
 
   const useStyles = makeStyles((theme) => ({
@@ -43,15 +51,43 @@ function Copyright() {
     },
   }));
 
-const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
+const ResetPassword = ({ switchToSignin }) => {
     const classes = useStyles();
 
-    const [details, setDetails] = useState({username:"", password:"", confirmPassword:""});
-    const buttonText = (success) ? "Password reset | Back to Sign In" : "Reset Password"
+    const [openSnackbar, setOpenSnackbar] = useState(null)
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(null);
+    const [details, setDetails] = useState({email:"", password:"", confirmPassword:""});
+    const buttonText = (success) ? "Back to Sign In" : "Reset Password"
+
+    const [ resetPassword, resetPasswordResponse ] = useMutation(resetPasswordQuery, {
+      onError: (error) => {
+        console.log(error)
+        console.log(error.graphQLErrors[0].message)
+        setError(error.graphQLErrors[0].message)
+      }})
+
+    useEffect(() => {
+      if ( resetPasswordResponse.data ) {
+          if (!error) {
+              setSuccess(true)
+              handleOpenSnackbar("Password Reset")
+          }
+      }
+    }, [resetPasswordResponse.data])
+
+    const handleCloseSnackbar = () => {
+      setOpenSnackbar(null)
+    }
+
+    const handleOpenSnackbar = (input) => {
+      setOpenSnackbar(input)
+    }
 
     const handleSubmit = event => {
         event.preventDefault();
-        resetPassword(details);
+        resetPassword({variables: {email: details.email, password: details.password, confirmPassword: details.confirmPassword}})
+        setError(null)
     }
 
     const handleChange = (prop) => (event) => {
@@ -65,25 +101,23 @@ const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
             <img src={logo} alt="Pet Social" className={classes.logo} />
             <form className={classes.form} noValidate onSubmit={success ? switchToSignin : handleSubmit}>
               <TextField
-                error={["Username", "Username empty"].includes(error)}
-                helperText={(error === "Username") ? "Username does not exist"
-                  : (error === "Username empty") ? "Username cannot be empty" : ""}
+                error={["Invalid Email", "Email does not exist"].includes(error)}
+                helperText={["Invalid Email", "Email does not exist"].includes(error) ? error : ""}
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
                 autoFocus
-                onChange={handleChange('username')}
+                onChange={handleChange('email')}
                 disabled={success}
               />
               <TextField
-                error={["Password", "Password empty", "Password same"].includes(error)}
-                helperText={(error === "Password") ? "Passwords do not match"
-                  : (error === "Password empty") ? "Password cannot be empty"
+                error={["Passwords do not match", "Password same"].includes(error)}
+                helperText={(error === "Passwords do not match") ? error
                   : (error === "Password same") ? "New password cannot be the same as previous" : ""}
                 variant="outlined"
                 margin="normal"
@@ -97,9 +131,8 @@ const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
                 disabled={success}
               />
               <TextField
-                error={["Password", "Confirm Password empty", "Password same"].includes(error)}
-                helperText={(error === "Password") ? "Passwords do not match"
-                  : (error === "Confirm Password empty") ? "Password cannot be empty"
+                error={["Passwords do not match", "Password same"].includes(error)}
+                helperText={(error === "Passwords do not match") ? error
                   : (error === "Password same") ? "New password cannot be the same as previous" : ""}
                 variant="outlined"
                 margin="normal"
@@ -118,6 +151,7 @@ const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                disabled={[details.email, details.password, details.confirmPassword].includes("")}
               >
                 {buttonText}
               </Button>
@@ -133,6 +167,11 @@ const ResetPassword = ({ resetPassword, switchToSignin, success, error }) => {
           <Box mt={8}>
             <Copyright />
           </Box>
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity="success">
+              {openSnackbar}
+          </Alert>
+        </Snackbar>
         </Container>
       );
 }
