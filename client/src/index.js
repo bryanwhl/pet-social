@@ -3,8 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client'
+import { from, ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client'
 import { setContext } from 'apollo-link-context'
+import { createUploadLink } from 'apollo-upload-client'
+import { RetryLink } from 'apollo-link-retry';
+import { getMainDefinition } from 'apollo-utilities';
+import { extractFiles } from 'extract-files';
+import { ApolloLink } from 'apollo-link';
+
 
 const authLink = setContext((_, { headers }) => {
   const token = sessionStorage.getItem('user-token')
@@ -18,10 +24,20 @@ const authLink = setContext((_, { headers }) => {
 
 const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' }) //Rmb to change
 
+const uploadLink = createUploadLink({
+  uri: 'http://localhost:4000/graphql'
+})
+
+const uploadAndBatchHTTPLink = opts => ApolloLink.split(
+  operation => extractFiles(operation).files.size > 0,
+  uploadLink,
+  authLink.concat(httpLink)
+);
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: authLink.concat(httpLink),
-  })
+  link: uploadAndBatchHTTPLink()
+})
 
 ReactDOM.render(
   <React.StrictMode>

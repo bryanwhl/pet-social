@@ -6,6 +6,10 @@ const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
+const path = require('path')
+const fs = require('fs')
+const cors = require('cors')
+//const { GraphQLUpload, graphqlUploadExpress } = require('graphql-upload');
 require('dotenv').config({path: `${__dirname}/.env`});
 
 const {
@@ -42,8 +46,42 @@ const dateScalar = new GraphQLScalarType({
     },
 });
 
+function generateRandomString(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+const storeUpload = async ({ stream, filename, mimetype, encoding }) => {
+        
+    const path = `public/images/${randomName}`
+
+    return new Promise((resolve, reject) =>
+    stream
+        .pipe(fs.createWriteStream(path))
+        .on("finish", () => resolve({ 
+        category: "profilePic",
+        url: `http://localhost:5000/images/${randomName}`, 
+        path, 
+        filename: randomName, 
+        mimetype,
+        encoding,
+        createdAt: new Date().toISOString(),
+        commentsCount: 0,
+        likesCount: 0,
+        sharesCount: 0
+        }))
+        .on("error", reject)
+    );
+};
+
 const typeDefs = gql`
     scalar Date
+    # scalar Upload
 
     type User {
         id: ID!
@@ -156,6 +194,9 @@ const typeDefs = gql`
     type Token {
         value: String!
     }
+    type File {
+        url: String
+    }
     type Query {
         allUsers: [User]!
         findUser(id: ID): User
@@ -209,12 +250,16 @@ const typeDefs = gql`
             id: ID!
             profileBio: String!
         ): User
+        uploadFile(
+            file: Upload!
+        ): File!
     }
 
 `
 
 const resolvers = {
     Date: dateScalar,
+//    Upload: GraphQLUpload,
     User: {
         name: (root) => {
             return {
@@ -286,7 +331,7 @@ const resolvers = {
         getPosts: () => Post.find({}),
         me: (root, args, context) => {return context.currentUser},
         findUser: (root, args) => User.findById(args.id),
-        findPost: (root, args) => Post.findById(args.id)
+        findPost: (root, args) => Post.findById(args.id),
     },
     Mutation: {
         addUser: async (root, args) => {
@@ -314,6 +359,31 @@ const resolvers = {
                 shareNotification: true
             })
             return user.save()
+        },
+        uploadFile: async (parent, {file}) => {
+            console.log("reached");
+            const { createReadStream, filename } = await file;
+
+            console.log(filename);
+            console.log("here")
+            const { ext } = path.parse(filename)
+            const randomName = generateRandomString(12) + ext
+            console.log(randomName);
+            const pathName = path.join(__dirname, `/public/images/${randomName}`)
+
+            const storeUpload = async ({ stream }) => {
+                return new Promise(() =>
+                    stream.pipe(fs.createWriteStream(pathName))
+                );
+            };
+
+            const stream = createReadStream()
+
+            await storeUpload({stream});
+
+            return {
+                url: `http://localhost:4000/images/${randomName}`,
+            }
         },
         // addPost: (root, args) => {
         //     const newPost = {
@@ -454,8 +524,10 @@ const resolvers = {
 const app = express()
 
 const server = new ApolloServer({
+    //uploads: false,
     typeDefs,
     resolvers,
+    
     context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null
         if (auth && auth.toLowerCase().startsWith('bearer ')) {
@@ -471,6 +543,8 @@ const server = new ApolloServer({
 server.applyMiddleware({app})
 
 app.use(express.static('server/public'))
+app.use(cors())
+//app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
 
 app.listen({port: 4000}, () => {
     console.log(`Server ready at http://localhost:4000`)
