@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
+const path = require('path')
+const fs = require('fs')
+const cors = require('cors')
 const Pet = require('./models/pet.js')
 require('dotenv').config({path: `${__dirname}/.env`});
 
@@ -43,8 +46,19 @@ const dateScalar = new GraphQLScalarType({
     },
 });
 
+function generateRandomString(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 const typeDefs = gql`
     scalar Date
+    # scalar Upload
 
     type User {
         id: ID!
@@ -157,6 +171,9 @@ const typeDefs = gql`
     type Token {
         value: String!
     }
+    type File {
+        url: String
+    }
     type Query {
         allUsers: [User]!
         findUser(id: ID): User
@@ -176,6 +193,13 @@ const typeDefs = gql`
             givenName: String!
             familyName: String!
         ): User
+        addPost (
+            user: ID!
+            imageFilePath: String
+            text: String!
+            postType: String!
+            privacy: String!
+        ): Post
         addPet(
             name: String!
             owners: [ID!]!
@@ -230,12 +254,16 @@ const typeDefs = gql`
             id: ID!
             profileBio: String!
         ): User
+        uploadFile(
+            file: Upload!
+        ): File!
     }
 
 `
 
 const resolvers = {
     Date: dateScalar,
+//    Upload: GraphQLUpload,
     User: {
         name: (root) => {
             return {
@@ -370,29 +398,60 @@ const resolvers = {
             })
             return newPet.save()
         },
-        // addPost: (root, args) => {
-        //     const newPost = {
-        //         ...args,
-        //         id: String(users.length + 1),
-        //         avatarPath: "",
-        //         profilePicturePath: "",
-        //         posts: [],
-        //         savedPosts: [],
-        //         friends: [],
-        //         blockedUsers: [],
-        //         chats: [],
-        //         notifications: [],
-        //         online: false,
-        //         registeredDate: "Current Date", //Need Change
-        //         profileBio: "",
-        //         playgroups: [],
-        //         pets: [],
-        //         familyNameFirst: false, 
-        //         defaultPrivacy: "Hello"
-        //     }
-        //     posts = posts.concat(newPost)
-        //     return newPost
-        // },
+        uploadFile: async (parent, {file}) => {
+            console.log("reached");
+            const { createReadStream, filename } = await file;
+
+            console.log(filename);
+            console.log("here")
+            const { ext } = path.parse(filename)
+            const randomName = generateRandomString(12) + ext
+            console.log(randomName);
+            const pathName = path.join(__dirname, `/public/images/${randomName}`)
+
+            const storeUpload = async ({ stream }) => {
+                return new Promise( (resolve, reject) =>
+                    stream.pipe(fs.createWriteStream(pathName)).on('finish', () => {
+                        resolve();
+                    })
+                );
+            };
+
+            const stream = createReadStream()
+
+            await storeUpload({stream});
+
+            console.log(`http://localhost:4000/images/${randomName}`)
+
+            return {
+                url: `http://localhost:4000/images/${randomName}`,
+            }
+        },
+        addPost: async (root, args) => {
+            console.log(args.imageFilePath);
+            console.log("reached here")
+            const newPost = new Post ({
+                ...args,
+                videoFilePath: "",
+                tagged: [],
+                likedBy: [],
+                comments: [],
+                isEdited: false,
+                date: Date(),
+                location: "",
+            })
+            const user = await User.findById( args.user ).exec();
+            if (!user) {
+                return null
+            }
+            console.log(user.id);
+            const savePost = await newPost.save();
+            console.log(savePost);
+            user.posts = user.posts.concat(savePost.id);
+            user.save();
+            console.log(user.posts);
+            return savePost;
+        },
         addPetOwner: async (root, args) => {
             const user = await User.findOne({ username: args.username })
             
@@ -564,8 +623,10 @@ const resolvers = {
 const app = express()
 
 const server = new ApolloServer({
+    //uploads: false,
     typeDefs,
     resolvers,
+    
     context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null
         if (auth && auth.toLowerCase().startsWith('bearer ')) {
@@ -581,6 +642,7 @@ const server = new ApolloServer({
 server.applyMiddleware({app})
 
 app.use(express.static('server/public'))
+app.use(cors())
 
 app.listen({port: 4000}, () => {
     console.log(`Server ready at http://localhost:4000`)
