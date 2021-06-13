@@ -59,6 +59,11 @@ export const currentUserQuery=gql`
     registeredDate
     accountType
     avatarPath
+    pets {
+      id
+      name
+      picturePath
+    }
     settings {
         familyNameFirst
         defaultPrivacy
@@ -112,15 +117,51 @@ export const getPostByIdQuery=gql`
   }
 `
 
+export const getPetByIdQuery=gql`
+  query ($id: ID!) {
+    findPet(id: $id) {
+      id
+      name
+      owners {
+        id
+        avatarPath
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+      }
+      dateOfBirth
+      gender
+      breed
+      picturePath
+    }
+  }
+`
+
 export const addUserQuery=gql`
-  mutation ($username: String!, $password: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
+  mutation ($username: String!, $password: String!, $confirmPassword: String!, $email: String!, $accountType: String!, $givenName: String!, $familyName: String!) {
     addUser(
       username: $username,
       password: $password,
+      confirmPassword: $confirmPassword,
       email: $email,
       accountType: $accountType,
       givenName: $givenName,
       familyName: $familyName
+    ) {
+      id
+    }
+  }
+`
+
+export const addPetOwnerQuery=gql`
+  mutation ($id: ID!, $username: String!) {
+    addPetOwner(
+      id: $id,
+      username: $username
     ) {
       id
     }
@@ -151,6 +192,18 @@ export const editEmailQuery=gql`
     editEmail(
       id: $id,
       email: $email
+    ) {
+      id
+    }
+  }
+`
+
+export const resetPasswordQuery=gql`
+  mutation ($email: String!, $password: String! $confirmPassword: String!) {
+    resetPassword(
+      email: $email,
+      password: $password
+      confirmPassword: $confirmPassword
     ) {
       id
     }
