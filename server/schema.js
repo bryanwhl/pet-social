@@ -56,29 +56,6 @@ function generateRandomString(length) {
     return result;
 }
 
-const storeUpload = async ({ stream, filename, mimetype, encoding }) => {
-        
-    const path = `public/images/${randomName}`
-
-    return new Promise((resolve, reject) =>
-    stream
-        .pipe(fs.createWriteStream(path))
-        .on("finish", () => resolve({ 
-        category: "profilePic",
-        url: `http://localhost:5000/images/${randomName}`, 
-        path, 
-        filename: randomName, 
-        mimetype,
-        encoding,
-        createdAt: new Date().toISOString(),
-        commentsCount: 0,
-        likesCount: 0,
-        sharesCount: 0
-        }))
-        .on("error", reject)
-    );
-};
-
 const typeDefs = gql`
     scalar Date
     # scalar Upload
@@ -213,6 +190,13 @@ const typeDefs = gql`
             givenName: String!
             familyName: String!
         ): User
+        addPost (
+            user: ID!
+            imageFilePath: String
+            text: String!
+            postType: String!
+            privacy: String!
+        ): Post
         deleteUser(
             id: ID!
             password: String!
@@ -372,8 +356,10 @@ const resolvers = {
             const pathName = path.join(__dirname, `/public/images/${randomName}`)
 
             const storeUpload = async ({ stream }) => {
-                return new Promise(() =>
-                    stream.pipe(fs.createWriteStream(pathName))
+                return new Promise( (resolve, reject) =>
+                    stream.pipe(fs.createWriteStream(pathName)).on('finish', () => {
+                        resolve();
+                    })
                 );
             };
 
@@ -381,33 +367,37 @@ const resolvers = {
 
             await storeUpload({stream});
 
+            console.log(`http://localhost:4000/images/${randomName}`)
+
             return {
                 url: `http://localhost:4000/images/${randomName}`,
             }
         },
-        // addPost: (root, args) => {
-        //     const newPost = {
-        //         ...args,
-        //         id: String(users.length + 1),
-        //         avatarPath: "",
-        //         profilePicturePath: "",
-        //         posts: [],
-        //         savedPosts: [],
-        //         friends: [],
-        //         blockedUsers: [],
-        //         chats: [],
-        //         notifications: [],
-        //         online: false,
-        //         registeredDate: "Current Date", //Need Change
-        //         profileBio: "",
-        //         playgroups: [],
-        //         pets: [],
-        //         familyNameFirst: false, 
-        //         defaultPrivacy: "Hello"
-        //     }
-        //     posts = posts.concat(newPost)
-        //     return newPost
-        // },
+        addPost: async (root, args) => {
+            console.log(args.imageFilePath);
+            console.log("reached here")
+            const newPost = new Post ({
+                ...args,
+                videoFilePath: "",
+                tagged: [],
+                likedBy: [],
+                comments: [],
+                isEdited: false,
+                date: Date(),
+                location: "",
+            })
+            const user = await User.findById( args.user ).exec();
+            if (!user) {
+                return null
+            }
+            console.log(user.id);
+            const savePost = await newPost.save();
+            console.log(savePost);
+            user.posts = user.posts.concat(savePost.id);
+            user.save();
+            console.log(user.posts);
+            return savePost;
+        },
         deleteUser: async (root, args) => {
             const user = await User.findById( args.id ).exec();
             if (!user) {
@@ -544,7 +534,6 @@ server.applyMiddleware({app})
 
 app.use(express.static('server/public'))
 app.use(cors())
-//app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
 
 app.listen({port: 4000}, () => {
     console.log(`Server ready at http://localhost:4000`)

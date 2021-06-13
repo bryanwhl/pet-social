@@ -225,22 +225,25 @@ export const editProfileBioQuery=gql`
 `
 
 export const submitPostQuery=gql`
-  mutation ($user: User!, $date: Date!, $postType: String!, $privacy: String!, $imageFilePath: String, $videoFilePath: String, $tagged: [Pet]!, $location: String, $text: String!, $likedBy: [User]!, $comments: [Comment]!, $isEdited: Boolean!) {
+  mutation ($user: ID!, $postType: String!, $privacy: String!, $imageFilePath: String!, $text: String!) {
     addPost(
-      user: $id,
-      date: $date,
+      user: $user,
       postType: $postType,
       privacy: $privacy,
       imageFilePath: $imageFilePath,
-      videoFilePath: $videoFilePath,
-      tagged: $tagged,
-      location: $location,
       text: $text,
-      likedBy: $likedBy,
-      comments: $comments,
-      isEdited: $isEdited
     ) {
       id
+    }
+  }
+`
+
+export const UPLOAD_FILE=gql`
+  mutation uploadFile($file: Upload!) {
+    uploadFile (
+      file: $file
+    ) {
+      url
     }
   }
 `
