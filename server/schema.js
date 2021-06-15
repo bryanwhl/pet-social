@@ -107,7 +107,7 @@ const typeDefs = gql`
         tagged: [Pet]
         location: String
         text: String!
-        likedBy: [User]
+        likedBy: [User]!
         comments: [Comment]!
         isEdited: Boolean!
     }
@@ -267,6 +267,10 @@ const typeDefs = gql`
         uploadFile(
             file: Upload!
         ): File!
+        editPostLike(
+            id: ID!,
+            userID: ID!
+        ): Post
     }
 
 `
@@ -680,7 +684,7 @@ const resolvers = {
         editProfileBio: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
-                return null
+                return null;
             }
             userToUpdate.profileBio = args.profileBio
             await userToUpdate.save();
@@ -692,6 +696,20 @@ const resolvers = {
             }
             userToUpdate.avatarPath = args.avatarPath
             await userToUpdate.save();
+         },
+        editPostLike: async (root, args) => {
+            const postToUpdate = await Post.findById( args.id ).exec(); //must change to use context for authentication
+            if (!postToUpdate) {
+                return null;
+            }
+            if (postToUpdate.likedBy.includes(args.userID)) {
+                postToUpdate.likedBy = postToUpdate.likedBy.filter((item) => {
+                    item !== args.userID;
+                });
+            } else {
+                postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
+            }
+            await postToUpdate.save();
         },
     }
 }

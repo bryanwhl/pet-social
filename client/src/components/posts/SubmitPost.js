@@ -4,7 +4,7 @@ import { Avatar, Card, IconButton, CardContent, CardHeader, Button, makeStyles,
 import { red } from '@material-ui/core/colors';
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import VideocamIcon from '@material-ui/icons/Videocam';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { submitPostQuery, getPostsQuery, UPLOAD_FILE } from '../../queries.js';
 
 const useStyles = makeStyles((theme) => ({
