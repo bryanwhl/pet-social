@@ -156,6 +156,20 @@ export const addUserQuery=gql`
     }
   }
 `
+export const addPetQuery=gql`
+  mutation ($name: String!, $owner: ID!, $dateOfBirth: Date!, $gender: String!, $breed: String!, $picturePath: String!) {
+    addPet(
+      name: $name,
+      owner: $owner,
+      dateOfBirth: $dateOfBirth,
+      gender: $gender,
+      breed: $breed,
+      picturePath: $picturePath,
+    ) {
+      id
+    }
+  }
+`
 
 export const addPetOwnerQuery=gql`
   mutation ($id: ID!, $username: String!) {
@@ -173,6 +187,27 @@ export const deleteUserQuery=gql`
     deleteUser(
       id: $id,
       password: $password
+    ) {
+      id
+    }
+  }
+`
+
+export const deleteOwnerQuery=gql`
+  mutation ($owner: ID!, $pet: ID!) {
+    deleteOwner(
+      owner: $owner,
+      pet: $pet
+    ) {
+      id
+    }
+  }
+`
+
+export const deletePetQuery=gql`
+  mutation ($id: ID!) {
+    deletePet(
+      id: $id
     ) {
       id
     }
@@ -282,6 +317,17 @@ export const editProfileBioQuery=gql`
     editProfileBio(
       id: $id,
       profileBio: $profileBio
+    ) {
+      id
+    }
+  }
+`
+
+export const editAvatarQuery=gql`
+  mutation ($id: ID!, $avatarPath: String!) {
+    editAvatar(
+      id: $id,
+      avatarPath: $avatarPath
     ) {
       id
     }
