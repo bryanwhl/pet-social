@@ -616,7 +616,7 @@ const resolvers = {
         editProfileBio: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change
             if (!userToUpdate) {
-                return null
+                return null;
             }
             userToUpdate.profileBio = args.profileBio
             await userToUpdate.save();
@@ -624,10 +624,15 @@ const resolvers = {
         editPostLike: async (root, args) => {
             const postToUpdate = await Post.findById( args.id ).exec(); //must change to use context for authentication
             if (!postToUpdate) {
-                return null
+                return null;
             }
-
-            postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
+            if (postToUpdate.likedBy.includes(args.userID)) {
+                postToUpdate.likedBy = postToUpdate.likedBy.filter((item) => {
+                    item !== args.userID;
+                });
+            } else {
+                postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
+            }
             await postToUpdate.save();
         },
     }

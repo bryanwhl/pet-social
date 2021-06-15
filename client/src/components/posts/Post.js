@@ -70,6 +70,7 @@ const Post = ({user, post}) => {
     const [expanded, setExpanded] = React.useState(false);
 
     React.useEffect(() => {
+        setLiked(false);
         if (post !== undefined && post.likedBy !== undefined) {
             post.likedBy.forEach((userLiked) => {
                 if (user.id === userLiked.id) {
