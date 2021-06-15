@@ -68,7 +68,6 @@ const typeDefs = gql`
         accountType: String!
         name: Name!
         avatarPath: String!
-        profilePicturePath: String!
         posts: [Post]!
         savedPosts: [Post]!
         friends: [User]!
@@ -202,7 +201,7 @@ const typeDefs = gql`
         ): Post
         addPet(
             name: String!
-            owners: [ID!]!
+            owner: ID!
             dateOfBirth: Date!
             gender: String!
             breed: String!
@@ -216,6 +215,13 @@ const typeDefs = gql`
             id: ID!
             password: String!
         ): User
+        deleteOwner(
+            owner: ID!
+            pet: ID!
+        ): User
+        deletePet(
+            id: ID!
+        ): Pet
         login(
             username: String!
             password: String!
@@ -253,6 +259,10 @@ const typeDefs = gql`
         editProfileBio(
             id: ID!
             profileBio: String!
+        ): User
+        editAvatar(
+            id: ID!
+            avatarPath: String!
         ): User
         uploadFile(
             file: Upload!
@@ -371,7 +381,6 @@ const resolvers = {
                 ...args,
                 password: await bcrypt.hash(args.password, saltRounds),
                 avatarPath: "",
-                profilePicturePath: "",
                 posts: [],
                 savedPosts: [],
                 friends: [],
@@ -393,10 +402,32 @@ const resolvers = {
             return newUser.save()
         },
         addPet: async (root, args) => {
+            if (args.dateOfBirth > Date()) {
+                throw new UserInputError("Date of Birth cannot be after today")
+            }
+
+            console.log("Here")
+
+            const owners = [args.owner]
+            console.log(owners)
             const newPet = new Pet({
                 ...args,
+                owners: owners
             })
-            return newPet.save()
+            delete newPet.owner
+
+            const addedPet = await newPet.save()
+
+            const owner = await User.findById( args.owner ).exec();
+            if (!owner) {
+                return null
+            }
+
+            owner.pets = owner.pets.concat(addedPet._id)
+
+            await owner.save()
+
+            return addedPet
         },
         uploadFile: async (parent, {file}) => {
             console.log("reached");
@@ -491,6 +522,43 @@ const resolvers = {
                     console.log("Deleted : ", docs);
                 }
             })
+        },
+        deleteOwner: async (root, args) => {
+            const owner = await User.findById( args.owner ).exec();
+            if (!owner) {
+                return null
+            }
+            
+            const pet = await Pet.findById( args.pet ).exec();
+            if (!pet) {
+                return null
+            }
+
+            User.updateOne({_id: args.owner}, {$pull: {pets: args.pet}}).exec()
+            Pet.updateOne({_id: args.pet}, {$pull: {owners: args.owner}}).exec()
+            
+
+            return owner
+        },
+        deletePet: async (root, args) => {
+            const pet = await Pet.findById( args.id ).exec();
+            if (!pet) {
+                return null
+            }
+
+
+            User.updateMany({}, {$pull: {pets: args.id}}).exec()
+            
+            Pet.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+
+            return pet
         },
         login: async (root, args) => {
             if ( args.username === "" ) {
@@ -615,6 +683,14 @@ const resolvers = {
                 return null
             }
             userToUpdate.profileBio = args.profileBio
+            await userToUpdate.save();
+        },
+        editAvatar: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
+            if (!userToUpdate) {
+                return null
+            }
+            userToUpdate.avatarPath = args.avatarPath
             await userToUpdate.save();
         },
     }

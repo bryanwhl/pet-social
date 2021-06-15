@@ -10,7 +10,6 @@ const userSchema = new Schema({
   givenName: String,
   familyName: String,
   avatarPath: String,
-  profilePicturePath: String,
   posts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   savedPosts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   friends: [{type: Schema.Types.ObjectId, ref: 'User'}],

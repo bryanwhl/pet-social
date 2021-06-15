@@ -9,7 +9,6 @@ class User {
     email: String!
     accountType: String!
     avatarPath: String!
-    profilePicturePath: String!
     online: Boolean!
     registeredDate: Date!
     profileBio: String

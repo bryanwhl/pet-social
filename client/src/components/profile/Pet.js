@@ -11,6 +11,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import { List, ListItem, ListItemAvatar, ListItemText, ListItemIcon } from '@material-ui/core';
@@ -18,7 +19,7 @@ import { red } from '@material-ui/core/colors';
 import AddIcon from '@material-ui/icons/Add';
 import { displayName, convertDate } from '../../utility.js'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { getPetByIdQuery, addPetOwnerQuery } from '../../queries.js'
+import { getPetByIdQuery, addPetOwnerQuery, deleteOwnerQuery, currentUserQuery, deletePetQuery } from '../../queries.js'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -45,17 +46,22 @@ const useStyles = makeStyles((theme) => ({
       height: theme.spacing(15),
       marginRight: "3vw"
     },
+    button: {
+      marginTop: "1vh"
+    }
   }));
 
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const Pet = ({ user, petId, isAddPet }) => {
+const Pet = ({ user, petId, setPetId, setPetMode }) => {
   const classes=useStyles();
 
   const [addOwner, setAddOwner] = useState("")
   const [openOwner, setOpenOwner] = useState(false)
+  const [openRemoveOwner, setRemoveOwner] = useState(false)
+  const [openDeletePet, setOpenDeletePet] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [error, setError] = useState(null);
   const [pet, setPet] = useState(null)
@@ -67,18 +73,20 @@ const Pet = ({ user, petId, isAddPet }) => {
         console.log(error.graphQLErrors[0])
       setError(error.graphQLErrors[0].message)
      }
-})
+    })
+  const [ deleteOwner ] = useMutation(deleteOwnerQuery, {refetchQueries: [{query: currentUserQuery}]})
+  const [ deletePet ] = useMutation(deletePetQuery, {refetchQueries: [{query: currentUserQuery}]})
 
-useEffect(() => {
-  if ( addPetOwnerResponse.data ) {
-      if (!error) {
-          handleCloseOwner();
-          handleOpenSnackbar("New Owner Added")
-          getPet({variables: {id: pet.id}})
-      }
-  }
-}, [addPetOwnerResponse.data])
-
+  useEffect(() => {
+    if ( addPetOwnerResponse.data ) {
+        if (!error) {
+            handleCloseOwner();
+            handleOpenSnackbar("New Owner Added")
+            getPet({variables: {id: pet.id}})
+        }
+    }
+  }, [addPetOwnerResponse.data])
+  
   useEffect(() => {
     if (getPetResponse.data) {
       console.log("Pet, ", getPetResponse.data)
@@ -121,11 +129,40 @@ const handleCloseOwner = () => {
   setAddOwner("")
 }
 
+const handleOpenRemoveOwner = () => {
+  setRemoveOwner(true)
+}
+
+const handleCloseRemoveOwner = () => {
+  setRemoveOwner(false)
+}
+
+const handleConfirmRemoveOwner = () => {
+  deleteOwner({variables: {owner: user.id, pet: pet.id}})
+  setPetId(null)
+  setPetMode(null)
+  handleCloseRemoveOwner()
+}
+
+const handleOpenDeletePet = () => {
+  setOpenDeletePet(true)
+}
+
+const handleCloseDeletePet = () => {
+  setOpenDeletePet(false)
+}
+
+const handleConfirmDeletePet = () => {
+  deletePet({variables: {id: pet.id}})
+  setPetId(null)
+  setPetMode(null)
+  handleCloseDeletePet()
+}
+
     return (
         <div>
             <CssBaseline>
-                {isAddPet && "Add Pet Screen"}
-                {(!isAddPet && pet) &&
+                {(pet) &&
                   <Grid container className={classes.root}>
                     <Avatar alt="Avatar" src={pet.picturePath} className={classes.avatar}>
                         {pet.name[0]}
@@ -159,6 +196,14 @@ const handleCloseOwner = () => {
                         <ListItemText primary="Add Owner"></ListItemText>
                       </ListItem>
                       </List>
+                      <Tooltip title="Cannot remove only owner. You may want delete the pet instead" disableHoverListener={pet.owners.length!==1} disableTouchListener={pet.owners.length!==1}>
+                        <Grid>
+                          <Button className={classes.button} variant="contained" color="primary" onClick={ handleOpenRemoveOwner } disabled={pet.owners.length===1}>Remove self as owner</Button>
+                        </Grid>
+                      </Tooltip>
+                        <Grid>
+                          <Button className={classes.button} variant="contained" color="primary" onClick={ handleOpenDeletePet }>Delete Pet</Button>
+                        </Grid>
                     </Grid>
                   </Grid>
                 }
@@ -189,6 +234,48 @@ const handleCloseOwner = () => {
                     Add
                 </Button>
                 <Button onClick={handleCloseOwner} color="primary" autoFocus>
+                    Cancel
+                </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={openRemoveOwner}
+                onClose={handleCloseRemoveOwner}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
+                <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to remove yourself as owner?
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleConfirmRemoveOwner} color="primary">
+                    Yes
+                </Button>
+                <Button onClick={handleCloseRemoveOwner} color="primary" autoFocus>
+                    Cancel
+                </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={openDeletePet}
+                onClose={handleCloseDeletePet}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
+                <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to remove {pet && pet.name}? This is irreversible!
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleConfirmDeletePet} color="primary">
+                    Yes
+                </Button>
+                <Button onClick={handleCloseDeletePet} color="primary" autoFocus>
                     Cancel
                 </Button>
                 </DialogActions>

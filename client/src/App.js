@@ -53,7 +53,7 @@ const customTheme = createMuiTheme({
 
 function App({ client }) {
   // All user data can be centralized here
-  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery)
+  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {pollInterval:500})
 
   const [user, setUser] = useState(null);
   const [appState, setAppState] = useState("Signin");
@@ -109,7 +109,7 @@ function App({ client }) {
               <CssBaseline />
               <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
               {appState === "Home" && <PostsContainer user={user}/>}
-              {appState === "Profile" && <ProfilePage user={user}/>}
+              {appState === "Profile" && <ProfilePage user={user} getCurrentUser={getCurrentUser}/>}
               {appState === "Settings" && <SettingsPage user={user} logout={logout}/>}
               {appState === "Playgroups" && <Playgroups />}
               {appState === "Shop" && <Shop />}

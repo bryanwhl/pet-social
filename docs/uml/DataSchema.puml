@@ -10,7 +10,6 @@ class User {
     accountType: String!
     name: Name!
     avatarPath: String!
-    profilePicturePath: String!
     posts: [Post]!
     savedPosts: [Post]!
     friends: [User]!
