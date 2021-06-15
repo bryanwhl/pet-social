@@ -17,7 +17,7 @@ import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
 import { displayName, convertDate } from '../../utility.js';
-import { getPostsQuery, likePostQuery } from '../../queries.js';
+import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 
 
@@ -80,8 +80,23 @@ const Post = ({user, post}) => {
         }
     });
 
+    React.useEffect(() => {
+        setSaved(false);
+        if (user !== undefined && user.savedPosts !== undefined) {
+            user.savedPosts.forEach((savedPost) => {
+                if (savedPost.id === post.id) {
+                    setSaved(true);
+                }
+            })
+        }
+    });
+
     const [ likePost, likePostResult ] = useMutation(likePostQuery, {
         refetchQueries: [{query: getPostsQuery}],
+    })
+
+    const [ savePost, savePostResult ] = useMutation(savePostQuery, {
+        refetchQueries: [{query: currentUserQuery}],
     })
 
     const menuItems = [
@@ -119,12 +134,11 @@ const Post = ({user, post}) => {
     };
 
     const handleLikedToggle = () => {
-      //setLiked((liked) => !liked);
       likePost({variables: {id: post.id, userID: user.id}});
     };
 
     const handleSavedToggle = () => {
-      setSaved((saved) => !saved);
+      savePost({variables: {id: user.id, postID: post.id}});
     };
   
     function handleListKeyDown(event) {
