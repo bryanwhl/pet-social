@@ -198,6 +198,17 @@ export const editEmailQuery=gql`
   }
 `
 
+export const likePostQuery=gql`
+  mutation ($id: ID!, $userID: ID!) {
+    editPostLike(
+      id: $id,
+      userID: $userID
+    ) {
+      id
+    }
+  }
+`
+
 export const resetPasswordQuery=gql`
   mutation ($email: String!, $password: String! $confirmPassword: String!) {
     resetPassword(
@@ -325,6 +336,9 @@ export const getPostsQuery=gql`
       videoFilePath
       location
       text
+      likedBy {
+        id
+      }
       comments {
         user {
           name {

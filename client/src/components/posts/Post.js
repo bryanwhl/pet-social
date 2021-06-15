@@ -16,7 +16,9 @@ import { red, blue } from '@material-ui/core/colors';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
-import { displayName, convertDate } from '../../utility.js'
+import { displayName, convertDate } from '../../utility.js';
+import { getPostsQuery, likePostQuery } from '../../queries.js';
+import { useMutation } from '@apollo/client';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -67,6 +69,20 @@ const Post = ({user, post}) => {
     const [saved, setSaved] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
 
+    React.useEffect(() => {
+        if (post !== undefined && post.likedBy !== undefined) {
+            post.likedBy.forEach((userLiked) => {
+                if (user.id === userLiked.id) {
+                    setLiked(true);
+                }
+            })
+        }
+    });
+
+    const [ likePost, likePostResult ] = useMutation(likePostQuery, {
+        refetchQueries: [{query: getPostsQuery}],
+    })
+
     const menuItems = [
         {
             text: "Receive notifications from this post",
@@ -102,7 +118,8 @@ const Post = ({user, post}) => {
     };
 
     const handleLikedToggle = () => {
-      setLiked((liked) => !liked);
+      //setLiked((liked) => !liked);
+      likePost({variables: {id: post.id, userID: user.id}});
     };
 
     const handleSavedToggle = () => {
