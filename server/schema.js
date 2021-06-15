@@ -271,6 +271,10 @@ const typeDefs = gql`
             id: ID!,
             userID: ID!
         ): Post
+        editPostSave(
+            id: ID!,
+            postID: ID!
+        ): User
     }
 
 `
@@ -710,6 +714,20 @@ const resolvers = {
                 postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
             }
             await postToUpdate.save();
+        },
+        editPostSave: async (root, args) => {
+            const userToUpdate = await User.findById( args.id ).exec(); //must change
+            if (!userToUpdate) {
+                return null;
+            }
+            if (userToUpdate.savedPosts.includes(args.postID)) {
+                userToUpdate.savedPosts = userToUpdate.savedPosts.filter((item) => {
+                    item !== args.postID;
+                });
+            } else {
+                userToUpdate.savedPosts = userToUpdate.savedPosts.concat(args.postID);
+            }
+            await userToUpdate.save();
         },
     }
 }

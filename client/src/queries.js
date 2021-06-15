@@ -244,6 +244,17 @@ export const likePostQuery=gql`
   }
 `
 
+export const savePostQuery=gql`
+  mutation ($id: ID!, $postID: ID!) {
+    editPostSave(
+      id: $id,
+      postID: $postID
+    ) {
+      id
+    }
+  }
+`
+
 export const resetPasswordQuery=gql`
   mutation ($email: String!, $password: String! $confirmPassword: String!) {
     resetPassword(
