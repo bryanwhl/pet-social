@@ -610,6 +610,8 @@ const resolvers = {
             Post.remove({user: args.id}).exec()
             Comment.remove({user: args.id}).exec()
             FriendRequest.remove({fromUser: args.id}).exec()
+            User.updateMany({}, {$pull: {sentFriendRequests: {toUser: args.id}}}).exec()
+            User.updateMany({}, {$pull: {receivedFriendRequests: {fromUser: args.id}}}).exec()
 
             User.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
