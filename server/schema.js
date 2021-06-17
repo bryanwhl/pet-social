@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
+const FriendRequest = require('./models/friendRequest.js')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
@@ -73,6 +74,8 @@ const typeDefs = gql`
         friends: [User]!
         blockedUsers: [User]!
         chats: [Chat]!
+        sentFriendRequests: [FriendRequest]!
+        receivedFriendRequests: [FriendRequest]!
         notifications: [Notification]!
         online: Boolean!
         registeredDate: Date!
@@ -226,6 +229,18 @@ const typeDefs = gql`
             username: String!
             password: String!
         ): Token
+        sendFriendRequest(
+            from: ID!
+            to: ID!
+        ): FriendRequest
+        retractFriendRequest(
+            from: ID!
+            to: ID!
+        ): FriendRequest
+        acceptFriendRequest(
+            from: ID!
+            to: ID!
+        ): FriendRequest
         resetPassword(
             email: String!
             password: String!
@@ -264,6 +279,10 @@ const typeDefs = gql`
             id: ID!
             avatarPath: String!
         ): User
+        editPetPicture(
+            id: ID!
+            picturePath: String!
+        ): Pet
         uploadFile(
             file: Upload!
         ): File!
@@ -313,6 +332,12 @@ const resolvers = {
         chats: async (root) => {
             return (await root.populate('chats').execPopulate()).chats
         },
+        sentFriendRequests: async (root) => {
+            return (await root.populate('sentFriendRequests').execPopulate()).sentFriendRequests
+        },
+        receivedFriendRequests: async (root) => {
+            return (await root.populate('receivedFriendRequests').execPopulate()).receivedFriendRequests
+        },
         notifications: async (root) => {
             return (await root.populate('notifications').execPopulate()).notifications
         },
@@ -325,7 +350,7 @@ const resolvers = {
     },
     Comment: {
         user: (root) => {
-            return User.findById(root.user)
+            return User.findById(root.user).exec()
         },
         likedBy: async (root) => {
             return (await root.populate('likedBy').execPopulate()).likedBy
@@ -352,6 +377,14 @@ const resolvers = {
         owners: async (root) => {
             return (await root.populate('owners').execPopulate()).owners
         }
+    },
+    FriendRequest: {
+        fromUser: async (root) => {
+            return User.findById(root.fromUser).exec()
+        },
+        toUser: async (root) => {
+            return User.findById(root.toUser).exec()
+        },
     },
     Query: {
         allUsers: () => User.find({}),
@@ -394,6 +427,8 @@ const resolvers = {
                 friends: [],
                 blockedUsers: [],
                 chats: [],
+                sentFriendRequests: [],
+                receivedFriendRequests: [],
                 notifications: [],
                 online: false,
                 registeredDate: Date(),
@@ -467,8 +502,6 @@ const resolvers = {
             }
         },
         addPost: async (root, args) => {
-            console.log(args.imageFilePath);
-            console.log("reached here")
             const newPost = new Post ({
                 ...args,
                 videoFilePath: "",
@@ -490,6 +523,57 @@ const resolvers = {
             user.save();
             console.log(user.posts);
             return savePost;
+        },
+        sendFriendRequest: async (root, args) => {
+            const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
+            const existingTo = await FriendRequest.findOne({ fromUser: args.to, toUser: args.from}).exec()
+            if (existingFrom || existingTo) {
+                throw new UserInputError("Friend Request between users already exist")
+            }
+
+            const newFriendRequest = new FriendRequest ({
+                fromUser: args.from,
+                toUser: args.to,
+                date: Date(),
+            })
+            const fromUser = await User.findById( args.from ).exec();
+            if (!fromUser) {
+                return null
+            }
+            const toUser = await User.findById( args.to ).exec();
+            if (!toUser) {
+                return null
+            }
+            const saveFriendRequest = await newFriendRequest.save();
+            fromUser.sentFriendRequests = fromUser.sentFriendRequests.concat(saveFriendRequest.id);
+            await fromUser.save();
+            toUser.receivedFriendRequests = toUser.receivedFriendRequests.concat(saveFriendRequest.id);
+            await toUser.save();
+            return saveFriendRequest;
+        },
+        retractFriendRequest: async (root, args) => {
+            const friendRequest = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
+            if (!friendRequest) {
+                throw new UserInputError("Friend Request already accepted or retracted")
+            }
+
+            User.updateOne({_id: friendRequest.fromUser}, {$pull: {sentFriendRequests: friendRequest.id}}).exec()
+            User.updateOne({_id: friendRequest.toUser}, {$pull: {receivedFriendRequests: friendRequest.id}}).exec()
+            await FriendRequest.deleteOne({_id: friendRequest.id}).exec()
+            return friendRequest;
+        },
+        acceptFriendRequest: async (root, args) => {
+            const friendRequest = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
+            if (!friendRequest) {
+                throw new UserInputError("Friend Request already accepted or retracted")
+            }
+
+            User.updateOne({_id: friendRequest.fromUser}, {$addToSet: {friends: friendRequest.toUser}}).exec()
+            User.updateOne({_id: friendRequest.toUser}, {$addToSet: {friends: friendRequest.fromUser}}).exec()
+            User.updateOne({_id: friendRequest.fromUser}, {$pull: {sentFriendRequests: friendRequest.id}}).exec()
+            User.updateOne({_id: friendRequest.toUser}, {$pull: {receivedFriendRequests: friendRequest.id}}).exec()
+            await FriendRequest.deleteOne({_id: friendRequest.id}).exec()
+            return friendRequest;
         },
         addPetOwner: async (root, args) => {
             const user = await User.findOne({ username: args.username })
@@ -521,6 +605,11 @@ const resolvers = {
             if ( !passwordCorrect ) {
                 throw new UserInputError("Password is incorrect")
             }
+
+            Pet.updateMany({}, {$pull: {owners: args.id}}).exec()
+            Post.remove({user: args.id}).exec()
+            Comment.remove({user: args.id}).exec()
+            FriendRequest.remove({fromUser: args.id}).exec()
 
             User.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
@@ -700,6 +789,14 @@ const resolvers = {
             }
             userToUpdate.avatarPath = args.avatarPath
             await userToUpdate.save();
+         },
+        editPetPicture: async (root, args) => {
+            const pet = await Pet.findById( args.id ).exec();
+            if (!pet) {
+                return null
+            }
+            pet.picturePath = args.picturePath
+            await pet.save();
          },
         editPostLike: async (root, args) => {
             const postToUpdate = await Post.findById( args.id ).exec(); //must change to use context for authentication

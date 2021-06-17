@@ -16,6 +16,8 @@ const userSchema = new Schema({
   blockedUsers: [{type: Schema.Types.ObjectId, ref: 'User'}],
   chats: [{type: Schema.Types.ObjectId, ref: 'Chat'}],
   notifications: [{type: Schema.Types.ObjectId, ref: 'Notification'}],
+  sentFriendRequests: [{type: Schema.Types.ObjectId, ref: 'FriendRequest'}],
+  receivedFriendRequests: [{type: Schema.Types.ObjectId, ref: 'FriendRequest'}],
   online: Boolean,
   registeredDate: Date,
   profileBio: String,
