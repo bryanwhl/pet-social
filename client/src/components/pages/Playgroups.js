@@ -14,6 +14,7 @@ import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
 import AddIcon from '@material-ui/icons/Add';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import PlaygroupForm from './PlaygroupForm.js';
 import Geocode from "react-geocode";
 
 Geocode.setApiKey(process.env.REACT_APP_KEY);
@@ -101,7 +102,7 @@ const generateNewID = () => {
 
 const libraries = ["places"];
 
-const Playgroups = () => {
+const Playgroups = ({ user }) => {
 
     const classes = useStyles();
 
@@ -348,29 +349,7 @@ const Playgroups = () => {
                     setSelected(null);
                 }}>
                     <div>
-                        <FormControl>
-                            <List subheader={
-                              <ListSubheader component="div" id="nested-list-subheader">
-                                Create a Playgroup!
-                              </ListSubheader>
-                            }>
-                                <ListItem>
-                                    <TextField id="name-of-playgroup" label="Name Of Playgroup" variant="outlined" />
-                                </ListItem>
-                                <ListItem>
-                                    <TextField id="date-of-meeting" label="Date Of Meeting" variant="outlined" />
-                                </ListItem>
-                                <ListItem>
-                                    <TextField id="details" label="Details" variant="outlined" />
-                                </ListItem>
-                                <ListItem style={{display:'flex', justifyContent:'flex-end'}}>
-                                    <Button variant="contained" color="primary">
-                                        Submit
-                                    </Button>
-                                </ListItem>
-                            </List>
-                        </FormControl>
-  
+                      <PlaygroupForm user={user} meetingLocation={[selected.lat, selected.lng]}/>
                     </div>
                 </InfoWindow>) : null}
             </GoogleMap>

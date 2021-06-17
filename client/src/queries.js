@@ -359,6 +359,21 @@ export const submitPostQuery=gql`
   }
 `
 
+export const submitPlaygroupQuery=gql`
+  mutation ($playgroupAdmin: ID!, $name: String!, $description: String!, $meetingLat: Float!, $meetingLng: Float!, $meetingDate: Date!) {
+    addPlaygroup(
+      playgroupAdmin: $playgroupAdmin,
+      name: $name,
+      description: $description,
+      meetingLat: $meetingLat,
+      meetingLng: $meetingLng,
+      meetingDate: $meetingDate,
+    ) {
+      id
+    }
+  }
+`
+
 export const UPLOAD_FILE=gql`
   mutation uploadFile($file: Upload!) {
     uploadFile (

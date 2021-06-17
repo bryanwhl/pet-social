@@ -11,8 +11,9 @@ import { red } from '@material-ui/core/colors'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import PostsContainer from './components/posts/PostsContainer.js';
-import { useLazyQuery} from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { currentUserQuery } from './queries.js'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 const customTheme = createMuiTheme({
   palette: {
@@ -53,7 +54,7 @@ const customTheme = createMuiTheme({
 
 function App({ client }) {
   // All user data can be centralized here
-  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {pollInterval:500})
+  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery)
 
   const [user, setUser] = useState(null);
   const [appState, setAppState] = useState("Signin");
@@ -102,30 +103,32 @@ function App({ client }) {
   }
 
   return (
-    <div className="App">
-      <ThemeProvider theme = {customTheme}>
-          {(user !== null) ? (
-            <div className="loggedIn">
-              <CssBaseline />
-              <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
-              {appState === "Home" && <PostsContainer user={user}/>}
-              {appState === "Profile" && <ProfilePage user={user} getCurrentUser={getCurrentUser}/>}
-              {appState === "Settings" && <SettingsPage user={user} logout={logout}/>}
-              {appState === "Playgroups" && <Playgroups />}
-              {appState === "Shop" && <Shop />}
-            </div>
-          ) : (
-            <div className="loggedOut">
-              {appState === "Signin"
-                && <Login switchToHome={switchToHome} switchToSignup={switchToSignup} switchToResetPassword={switchToResetPassword} getCurrentUser={getCurrentUser}/>}
-              {appState === "Signup"
-                && <Signup switchToSignin={switchToSignin}/>}
-              {appState === "Reset Password"
-                && <ResetPassword switchToSignin={switchToSignin}/>}
-            </div>
-          )}
-      </ThemeProvider>
-    </div>
+    <Router>
+      <div className="App">
+        <ThemeProvider theme = {customTheme}>
+            {(user !== null) ? (
+              <div className="loggedIn">
+                <CssBaseline />
+                <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
+                {appState === "Home" && <PostsContainer user={user}/>}
+                {appState === "Profile" && <ProfilePage user={user}/>}
+                {appState === "Settings" && <SettingsPage user={user} logout={logout}/>}
+                {appState === "Playgroups" && <Playgroups user={user}/>}
+                {appState === "Shop" && <Shop />}
+              </div>
+            ) : (
+              <div className="loggedOut">
+                {appState === "Signin"
+                  && <Login switchToHome={switchToHome} switchToSignup={switchToSignup} switchToResetPassword={switchToResetPassword} getCurrentUser={getCurrentUser}/>}
+                {appState === "Signup"
+                  && <Signup switchToSignin={switchToSignin}/>}
+                {appState === "Reset Password"
+                  && <ResetPassword switchToSignin={switchToSignin}/>}
+              </div>
+            )}
+        </ThemeProvider>
+      </div>
+    </Router>
   );
 }
 

@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
+const Playgroup = require('./models/playgroup.js')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
@@ -153,13 +154,14 @@ const typeDefs = gql`
     type Playgroup {
         id: ID!
         name: String!
-        description: String
-        playgroupAdmin: [User!]!
-        members: [User!]!
-        meetingDates: [Date]!
-        meetingLocation: [Float]!
+        description: String!
+        playgroupAdmin: User!
+        members: [User]
+        meetingDate: Date!
+        meetingLat: Float!
+        meetingLng: Float!
         dateCreated: Date!
-        playgroupChat: Chat!
+        playgroupChat: Chat
     }
     type FriendRequest {
         id: ID!
@@ -199,6 +201,14 @@ const typeDefs = gql`
             postType: String!
             privacy: String!
         ): Post
+        addPlaygroup (
+            playgroupAdmin: ID!
+            name: String!
+            description: String!
+            meetingLat: Float!
+            meetingLng: Float!
+            meetingDate: Date!
+        ): Playgroup
         addPet(
             name: String!
             owner: ID!
@@ -281,7 +291,6 @@ const typeDefs = gql`
 
 const resolvers = {
     Date: dateScalar,
-//    Upload: GraphQLUpload,
     User: {
         name: (root) => {
             return {
@@ -467,8 +476,6 @@ const resolvers = {
             }
         },
         addPost: async (root, args) => {
-            console.log(args.imageFilePath);
-            console.log("reached here")
             const newPost = new Post ({
                 ...args,
                 videoFilePath: "",
@@ -483,13 +490,21 @@ const resolvers = {
             if (!user) {
                 return null
             }
-            console.log(user.id);
             const savePost = await newPost.save();
-            console.log(savePost);
             user.posts = user.posts.concat(savePost.id);
             user.save();
-            console.log(user.posts);
             return savePost;
+        },
+        addPlaygroup: async (root, args) => {
+            console.log(args);
+            const newPlaygroup = new Playgroup ({
+                ...args,
+                members: [],
+                dateCreated: Date(),
+            });
+            const savePlaygroup = newPlaygroup.save();
+            console.log(savePlaygroup);
+            return savePlaygroup;
         },
         addPetOwner: async (root, args) => {
             const user = await User.findOne({ username: args.username })
