@@ -104,13 +104,10 @@ const AccountSettings = ({ user, logout }) => {
     }
 
     const handleOpenSnackbar = (input) => {
-        console.log(input)
         setOpenSnackbar(input)
     }
 
     const handleConfirmDelete = () => {
-        console.log(confirmPassword)
-        console.log("Confirm delete")
         setError(null)
         deleteUser({variables: {id: user.id, password: confirmPassword}});
     }

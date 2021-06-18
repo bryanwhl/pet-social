@@ -94,6 +94,8 @@ User --> "*" User : blockedUser >
 User --> "*" Post : posts >
 User --> "*" Post : savedPosts >
 User -up-> "*" Chat: chats >
+User --> "*" FriendRequest: sentFriendRequests >
+User --> "*" FriendRequest: receivedFriendRequests >
 User --> "*" Notification: notifications >
 User -up-> "*" Playgroup: playgroups >
 User --> "*" Pet: pets >

@@ -53,7 +53,7 @@ const customTheme = createMuiTheme({
 
 function App({ client }) {
   // All user data can be centralized here
-  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {pollInterval:500})
+  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {pollInterval:500, fetchPolicy: "no-cache"})
 
   const [user, setUser] = useState(null);
   const [appState, setAppState] = useState("Signin");

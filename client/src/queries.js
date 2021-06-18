@@ -39,9 +39,19 @@ export const currentUserQuery=gql`
         familyName
     }
     friends {
+      id
       username
+      name {
+        givenName
+        familyName
+      }
+      settings {
+        familyNameFirst
+      }
+      avatarPath
     }
     blockedUsers {
+      id
       username
     }
     posts {
@@ -55,6 +65,18 @@ export const currentUserQuery=gql`
       postType
       imageFilePath
       videoFilePath
+    }
+    sentFriendRequests {
+      id
+      toUser {
+        id
+      }
+    }
+    receivedFriendRequests {
+      id
+      fromUser {
+        id
+      }
     }
     registeredDate
     accountType
@@ -73,6 +95,55 @@ export const currentUserQuery=gql`
     }
    }
  }
+`
+
+export const getUserByIdQuery=gql`
+  query ($id: ID!) {
+    findUser(id: $id) {
+      id
+    email
+    profileBio
+    name {
+        givenName
+        familyName
+    }
+    friends {
+      id
+      username
+      name {
+        givenName
+        familyName
+      }
+      settings {
+        familyNameFirst
+      }
+      avatarPath
+    }
+    posts {
+      id
+      postType
+      imageFilePath
+      videoFilePath
+    }
+    savedPosts {
+      id
+      postType
+      imageFilePath
+      videoFilePath
+    }
+    accountType
+    avatarPath
+    pets {
+      id
+      name
+      picturePath
+    }
+    settings {
+        familyNameFirst
+        defaultPrivacy
+    }
+   }
+  }
 `
 
 export const getPostByIdQuery=gql`
@@ -182,11 +253,55 @@ export const addPetOwnerQuery=gql`
   }
 `
 
+export const sendFriendRequestQuery=gql`
+  mutation ($to: ID!, $from: ID!) {
+    sendFriendRequest(
+      to: $to,
+      from: $from
+    ) {
+      id
+    }
+  }
+`
+
+export const retractFriendRequestQuery=gql`
+  mutation ($to: ID!, $from: ID!) {
+    retractFriendRequest(
+      to: $to,
+      from: $from
+    ) {
+      id
+    }
+  }
+`
+
+export const acceptFriendRequestQuery=gql`
+  mutation ($to: ID!, $from: ID!) {
+    acceptFriendRequest(
+      to: $to,
+      from: $from
+    ) {
+      id
+    }
+  }
+`
+
 export const deleteUserQuery=gql`
   mutation ($id: ID!, $password: String!) {
     deleteUser(
       id: $id,
       password: $password
+    ) {
+      id
+    }
+  }
+`
+
+export const deleteFriendQuery=gql`
+  mutation ($id: ID!, $friend: ID!) {
+    deleteFriend(
+      id: $id,
+      friend: $friend
     ) {
       id
     }
@@ -345,6 +460,17 @@ export const editAvatarQuery=gql`
   }
 `
 
+export const editPetPictureQuery=gql`
+  mutation ($id: ID!, $picturePath: String!) {
+    editPetPicture(
+      id: $id,
+      picturePath: $picturePath
+    ) {
+      id
+    }
+  }
+`
+
 export const submitPostQuery=gql`
   mutation ($user: ID!, $postType: String!, $privacy: String!, $imageFilePath: String!, $text: String!) {
     addPost(
@@ -398,6 +524,7 @@ export const getPostsQuery=gql`
       }
       comments {
         user {
+          id
           name {
             givenName
             familyName

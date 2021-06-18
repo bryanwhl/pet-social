@@ -27,6 +27,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddPet from './AddPet.js'
 import Pet from './Pet.js'
 import ProfileTabs from './ProfileTabs.js'
+import FriendList from './FriendList.js'
 import { useMutation } from '@apollo/client'
 import { editProfileBioQuery, currentUserQuery, UPLOAD_FILE, editAvatarQuery } from '../../queries.js'
 
@@ -69,6 +70,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
     const classes=useStyles();
     const [petOpen, setPetOpen] = useState(false);
     const [petMode, setPetMode] = useState(null);
+    const [friendOpen, setFriendOpen] = useState(false);
     const [pet, setPet] = useState(null)
     const [profileTab, setProfileTab] = useState(0);
     const [profileBadge, setProfileBadge] = useState(true);
@@ -105,11 +107,13 @@ const ProfilePage = ({ user, getCurrentUser }) => {
     const handlePet = (item) => () => {
       setPet(item.id)
       setPetMode(false);
+      setFriendOpen(false)
     };
     
     const handleAddPet = () => {
       setPetMode(true);
       setPet(null)
+      setFriendOpen(false)
     };
 
     const handleOpenBio = () => {
@@ -119,6 +123,12 @@ const ProfilePage = ({ user, getCurrentUser }) => {
     const handleCloseBio = () => {
       setBioOpen(false);
     };
+
+    const handleFriendsClick = () => {
+      setPet(null)
+      setPetMode(null)
+      setFriendOpen(true)
+    }
 
     const handleSubmitBio = (event) => {
       event.preventDefault();
@@ -176,6 +186,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
                 <Box width={1} onClick={() => {
                   setPet(null)
                   setPetMode(null)
+                  setFriendOpen(false)
                   setProfileTab(0)}}
                   style={{cursor: "pointer"}}>
                   <Typography variant="h6" align="center" >
@@ -185,7 +196,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
                     Posts
                   </Typography>
                 </Box>
-                <Box width={1}>
+                <Box width={1} onClick={handleFriendsClick} style={{cursor: "pointer"}}>
                   <Typography variant="h6" align="center" >
                     {user.friends.length}
                   </Typography>
@@ -222,7 +233,8 @@ const ProfilePage = ({ user, getCurrentUser }) => {
             </Grid>
           </Box>
           <Box width={1} marginLeft={'5vw'}>
-            {(petMode===null) && <ProfileTabs user={user} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
+            {(petMode===null && !friendOpen) && <ProfileTabs user={user} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
+            {(petMode===null && friendOpen) && <FriendList user={user} />}
             {(petMode===false) && <Pet user={user} petId={pet} setPetId={setPet} setPetMode={setPetMode}/>}
             {(petMode===true) && <AddPet user={user} setPet={setPet} setPetMode={setPetMode} getCurrentUser={getCurrentUser} />}
           </Box>
