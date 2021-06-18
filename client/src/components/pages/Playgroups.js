@@ -353,7 +353,16 @@ const Playgroups = ({ user }) => {
                             lng: playgroup.meetingLng
                         }}
                         onClick={() => {
-                            setSelected({lat: playgroup.meetingLat, lng: playgroup.meetingLng, name: playgroup.name, description: playgroup.description, date: playgroup.meetingDate, user: playgroup.playgroupAdmin.username, id: playgroup.id });
+                            setSelected({
+                              lat: playgroup.meetingLat, 
+                              lng: playgroup.meetingLng, 
+                              name: playgroup.name, 
+                              description: playgroup.description, 
+                              date: playgroup.meetingDate, 
+                              user: playgroup.playgroupAdmin.username, 
+                              id: playgroup.id,
+                              userID: playgroup.playgroupAdmin.id
+                            });
                         }}
                     />
                 )}
@@ -367,15 +376,19 @@ const Playgroups = ({ user }) => {
                       <PlaygroupForm 
                         user={user} 
                         meetingLocation={[selected.lat, selected.lng]}/> : 
-                      <PlaygroupInfo playgroup={{
+                      <PlaygroupInfo 
+                      playgroup={{
                         lat: selected.lat, 
                         lng: selected.lng, 
                         name: selected.name, 
                         description: selected.description, 
                         date: selected.date,
                         user: selected.user,
-                        id: selected.id
-                      }}/> }
+                        id: selected.id,
+                        userID: selected.userID
+                      }}
+                      user={user}
+                      /> }
                     </div>
                 </InfoWindow>) : null}
             </GoogleMap>

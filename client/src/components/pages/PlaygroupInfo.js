@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PlaygroupInfo = ({ playgroup }) => {
+const PlaygroupInfo = ({ playgroup, user }) => {
     const classes = useStyles();
 
     const [ deletePlaygroup, deletePlaygroupResponse ] = useMutation(deletePlaygroupQuery,{
@@ -55,13 +55,13 @@ const PlaygroupInfo = ({ playgroup }) => {
                         {playgroup.description}
                     </Typography>
                 </CardContent>
-                <CardActions>
+                {user.id === playgroup.userID ? <CardActions>
                     <Button size="small" onClick={handleDelete}>
                         <Typography color="secondary">
                             Delete Playgroup
                         </Typography>
                     </Button>
-                </CardActions>
+                </CardActions> : null}
             </Card>
         </div>
     )
