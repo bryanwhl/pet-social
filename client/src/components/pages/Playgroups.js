@@ -15,6 +15,7 @@ import throttle from 'lodash/throttle';
 import AddIcon from '@material-ui/icons/Add';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import PlaygroupForm from './PlaygroupForm.js';
+import PlaygroupInfo from './PlaygroupInfo.js';
 import Geocode from "react-geocode";
 import { useQuery } from '@apollo/client';
 import { getPlaygroupsQuery } from '../../queries.js';
@@ -115,6 +116,9 @@ const Playgroups = ({ user }) => {
     })
 
     const [allPlaygroups, setAllPlaygroups] = useState([]);
+    const [tempMarker, setTempMarker] = React.useState(null);
+    const [selected, setSelected] = React.useState(null);
+    const [newPlaygroup, setNewPlaygroup] = React.useState(false);
 
     const playgroups = useQuery(getPlaygroupsQuery);
 
@@ -123,21 +127,16 @@ const Playgroups = ({ user }) => {
         console.log(playgroups.data)
         setAllPlaygroups(playgroups.data.getPlaygroup)
       }
+      setSelected(null);
+      setTempMarker(null);
+      setNewPlaygroup(false);
     }, [playgroups])
-
-    const [tempMarker, setTempMarker] = React.useState();
-    const [selected, setSelected] = React.useState(null);
-    const [newPlaygroup, setNewPlaygroup] = React.useState(false);
 
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
       mapRef.current = map;
     }, []);
-
-    // const renderMarkers = (allPlaygroups) => {
-    //   //need to implement 
-    // }
-
+    
     const panTo = React.useCallback(({ lat, lng }) => {
       mapRef.current.panTo({ lat, lng });
       mapRef.current.setZoom(15);
@@ -354,7 +353,7 @@ const Playgroups = ({ user }) => {
                             lng: playgroup.meetingLng
                         }}
                         onClick={() => {
-                            setSelected({lat: playgroup.meetingLat, lng: playgroup.meetingLng });
+                            setSelected({lat: playgroup.meetingLat, lng: playgroup.meetingLng, name: playgroup.name, description: playgroup.description, date: playgroup.meetingDate });
                         }}
                     />
                 )}
@@ -364,7 +363,17 @@ const Playgroups = ({ user }) => {
                     setSelected(null);
                 }}>
                     <div>
-                      <PlaygroupForm user={user} meetingLocation={[selected.lat, selected.lng]}/>
+                      {tempMarker !== null && selected.lat === tempMarker.lat && selected.lng === tempMarker.lng ? 
+                      <PlaygroupForm 
+                        user={user} 
+                        meetingLocation={[selected.lat, selected.lng]}/> : 
+                      <PlaygroupInfo playgroup={{
+                        lat: selected.lat, 
+                        lng: selected.lng, 
+                        name: selected.name, 
+                        description: selected.description, 
+                        date: selected.date ,
+                      }}/> }
                     </div>
                 </InfoWindow>) : null}
             </GoogleMap>

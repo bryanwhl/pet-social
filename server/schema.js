@@ -433,8 +433,6 @@ const resolvers = {
                 throw new UserInputError("Date of Birth cannot be after today")
             }
 
-            console.log("Here")
-
             const owners = [args.owner]
             console.log(owners)
             const newPet = new Pet({

@@ -7,3 +7,8 @@ export const convertDate = (unixDate) => {
   const normalDate = new Date(unixDate).toLocaleDateString("en-uk");
   return normalDate;
 }
+
+export const convertTime = (unixDate) => {
+  const normalDate = new Date(unixDate).toLocaleTimeString("en-uk");
+  return normalDate;
+}

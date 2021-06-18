@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormControl, ListSubheader, Button, List, ListItem, TextField, makeStyles } from '@material-ui/core';
-import { submitPlaygroupQuery } from '../../queries.js';
+import { submitPlaygroupQuery, getPlaygroupsQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +21,7 @@ const PlaygroupForm = ({user, meetingLocation}) => {
     const [playgroup, setPlaygroup] = React.useState({playgroupAdmin: user.id, name:"", description:"", meetingLat: meetingLocation[0], meetingLng: meetingLocation[1], meetingDate:"",});
 
     const [ submitPlaygroup, submitPlaygroupResult ] = useMutation(submitPlaygroupQuery, {
-        // refetchQueries: [{query: getPostsQuery}], Add playgroup query here
+        refetchQueries: [{query: getPlaygroupsQuery}],
     })
 
     console.log(meetingLocation);
