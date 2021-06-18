@@ -213,6 +213,9 @@ const typeDefs = gql`
             meetingLng: Float!
             meetingDate: Date!
         ): Playgroup
+        deletePlaygroup (
+            id: ID!
+        ): Playgroup
         addPet(
             name: String!
             owner: ID!
@@ -552,6 +555,16 @@ const resolvers = {
             const savePlaygroup = await newPlaygroup.save();
             console.log(savePlaygroup);
             return savePlaygroup;
+        },
+        deletePlaygroup: async (root, args) => {
+            Playgroup.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
         },
         sendFriendRequest: async (root, args) => {
             const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()

@@ -500,6 +500,16 @@ export const submitPlaygroupQuery=gql`
   }
 `
 
+export const deletePlaygroupQuery=gql`
+  mutation ($id: ID!) {
+    deletePlaygroup(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
+
 export const UPLOAD_FILE=gql`
   mutation uploadFile($file: Upload!) {
     uploadFile (

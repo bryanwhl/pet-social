@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListSubheader, Divider, Button, CardHeader, Typography, Card, CardContent, CardActions, ListItem, TextField, makeStyles } from '@material-ui/core';
-import { submitPlaygroupQuery } from '../../queries.js';
+import { deletePlaygroupQuery, getPlaygroupsQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 import { convertDate, convertTime } from '../../utility.js';
 
@@ -14,8 +14,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PlaygroupForm = ({ playgroup }) => {
+const PlaygroupInfo = ({ playgroup }) => {
     const classes = useStyles();
+
+    const [ deletePlaygroup, deletePlaygroupResponse ] = useMutation(deletePlaygroupQuery,{
+        refetchQueries: [{query: getPlaygroupsQuery}],
+    })
+
+    const handleDelete = () => {
+        deletePlaygroup({variables: {id: playgroup.id}})
+    }
 
     return (
         <div>
@@ -34,6 +42,9 @@ const PlaygroupForm = ({ playgroup }) => {
                     <Typography color="textSecondary">
                         Time: {convertTime(playgroup.date)}
                     </Typography>
+                    <Typography color="textSecondary">
+                        Creator: @{playgroup.user}
+                    </Typography>
                 </CardContent>
                 <Divider />
                 <CardContent>
@@ -44,9 +55,16 @@ const PlaygroupForm = ({ playgroup }) => {
                         {playgroup.description}
                     </Typography>
                 </CardContent>
+                <CardActions>
+                    <Button size="small" onClick={handleDelete}>
+                        <Typography color="secondary">
+                            Delete Playgroup
+                        </Typography>
+                    </Button>
+                </CardActions>
             </Card>
         </div>
     )
 }
 
-export default PlaygroupForm
+export default PlaygroupInfo

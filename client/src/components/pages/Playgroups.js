@@ -136,7 +136,7 @@ const Playgroups = ({ user }) => {
     const onMapLoad = React.useCallback((map) => {
       mapRef.current = map;
     }, []);
-    
+
     const panTo = React.useCallback(({ lat, lng }) => {
       mapRef.current.panTo({ lat, lng });
       mapRef.current.setZoom(15);
@@ -353,7 +353,7 @@ const Playgroups = ({ user }) => {
                             lng: playgroup.meetingLng
                         }}
                         onClick={() => {
-                            setSelected({lat: playgroup.meetingLat, lng: playgroup.meetingLng, name: playgroup.name, description: playgroup.description, date: playgroup.meetingDate });
+                            setSelected({lat: playgroup.meetingLat, lng: playgroup.meetingLng, name: playgroup.name, description: playgroup.description, date: playgroup.meetingDate, user: playgroup.playgroupAdmin.username, id: playgroup.id });
                         }}
                     />
                 )}
@@ -372,7 +372,9 @@ const Playgroups = ({ user }) => {
                         lng: selected.lng, 
                         name: selected.name, 
                         description: selected.description, 
-                        date: selected.date ,
+                        date: selected.date,
+                        user: selected.user,
+                        id: selected.id
                       }}/> }
                     </div>
                 </InfoWindow>) : null}
