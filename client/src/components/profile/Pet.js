@@ -9,6 +9,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -17,9 +18,11 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { List, ListItem, ListItemAvatar, ListItemText, ListItemIcon } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
+import Badge from '@material-ui/core/Badge';
 import { displayName, convertDate } from '../../utility.js'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { getPetByIdQuery, addPetOwnerQuery, deleteOwnerQuery, currentUserQuery, deletePetQuery } from '../../queries.js'
+import { getPetByIdQuery, addPetOwnerQuery, deleteOwnerQuery, currentUserQuery, deletePetQuery, editPetPictureQuery, UPLOAD_FILE } from '../../queries.js'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -44,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: red[500],
       width: theme.spacing(15),
       height: theme.spacing(15),
-      marginRight: "3vw"
     },
     button: {
       marginTop: "1vh"
@@ -58,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 const Pet = ({ user, petId, setPetId, setPetMode }) => {
   const classes=useStyles();
 
+  const [profileBadge, setProfileBadge] = useState(true);
   const [addOwner, setAddOwner] = useState("")
   const [openOwner, setOpenOwner] = useState(false)
   const [openRemoveOwner, setRemoveOwner] = useState(false)
@@ -76,6 +79,20 @@ const Pet = ({ user, petId, setPetId, setPetMode }) => {
     })
   const [ deleteOwner ] = useMutation(deleteOwnerQuery, {refetchQueries: [{query: currentUserQuery}]})
   const [ deletePet ] = useMutation(deletePetQuery, {refetchQueries: [{query: currentUserQuery}]})
+  const [ editPetPicture, editPetPictureResponse ] = useMutation(editPetPictureQuery)
+  const [ uploadFile, uploadFileResponse ] = useMutation(UPLOAD_FILE)
+
+  useEffect(() => {
+    if ( uploadFileResponse.data ) {
+      editPetPicture({variables: {id: pet.id, picturePath: uploadFileResponse.data.uploadFile.url}})
+    }
+  }, [uploadFileResponse.data])
+
+  useEffect(() => {
+    if ( editPetPictureResponse.data ) {
+      getPet({variables: {id: petId}})
+    }
+  }, [editPetPictureResponse.data])
 
   useEffect(() => {
     if ( addPetOwnerResponse.data ) {
@@ -159,14 +176,35 @@ const handleConfirmDeletePet = () => {
   handleCloseDeletePet()
 }
 
+const handleAvatarChange = (event) => {
+  const file = event.target.files[0]
+  uploadFile({variables: {file}});
+}
+
     return (
         <div>
             <CssBaseline>
                 {(pet) &&
-                  <Grid container className={classes.root}>
-                    <Avatar alt="Avatar" src={pet.picturePath} className={classes.avatar}>
-                        {pet.name[0]}
-                    </Avatar>
+                  <Grid container className={classes.root} spacing={1}>
+                    <Grid>
+                      <input accept="image/*" className={classes.input} id="change-pet-avatar" type="file" onChange={handleAvatarChange} />
+                      <label htmlFor="change-pet-avatar">
+                      <IconButton aria-label="change profile picture" component="span" onMouseEnter={() => setProfileBadge(false)} onMouseLeave={() => setProfileBadge(true)}>
+                      <Badge
+                        invisible={profileBadge}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        badgeContent={<EditIcon/>}
+                      >
+                      <Avatar alt="Avatar" src={pet.picturePath} className={classes.avatar}>
+                          {pet.name[0]}
+                      </Avatar>
+                      </Badge>
+                      </IconButton>
+                      </label>
+                    </Grid>
                     <Grid item xs>
                         <Typography variant="h4" gutterBottom>
                           {pet.name}
@@ -268,7 +306,7 @@ const handleConfirmDeletePet = () => {
                 <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
                 <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to remove {pet && pet.name}? This is irreversible!
+                  Are you sure you want to remove {pet && pet.name}? This removes your pet completely, including from other owners!
                 </DialogContentText>
                 </DialogContent>
                 <DialogActions>

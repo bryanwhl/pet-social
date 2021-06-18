@@ -15,6 +15,8 @@ class User {
     friends: [User]!
     blockedUser: [User]!
     chats: [Chat]!
+    sentFriendRequests: [FriendRequest]!
+    receivedFriendRequests: [FriendRequest]!
     notifications: [Notification]!
     online: Boolean!
     registeredDate: Date!

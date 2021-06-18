@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
 import {Grid, Container, Card, IconButton, 
     CardMedia, CardContent, Typography, 
     CardHeader, makeStyles, CardActions, 
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
-    Divider, List, TextField} from '@material-ui/core';
+    Divider, List, ListItemSecondaryAction, TextField} from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -16,10 +17,17 @@ import { red, blue } from '@material-ui/core/colors';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import PersonIcon from '@material-ui/icons/Person';
+import AddCommentIcon from '@material-ui/icons/AddComment';
+import Snackbar from '@material-ui/core/Snackbar';
 import { displayName, convertDate } from '../../utility.js';
-import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery } from '../../queries.js';
+import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -59,15 +67,26 @@ const useStyles = makeStyles((theme) => ({
         height: 28,
         margin: 4,
     },
+    popper: {
+        zIndex: theme.zIndex.drawer + 1,
+    },
 }));
 
 const Post = ({user, post}) => {
     const classes = useStyles();
+
+    const [openSnackbar, setOpenSnackbar] = useState(null)
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success")
+    const [error, setError] = React.useState(null);
     const [open, setOpen] = React.useState(false);
+    const [openUser, setOpenUser] = React.useState(false);
+    const [openUserPopper, setOpenUserPopper] = React.useState(false);
+    const [friendRequestText, setFriendRequestText] = React.useState(false);
     const anchorOptionsRef = React.useRef(null);
     const [liked, setLiked] = React.useState(false);
     const [saved, setSaved] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
+    const [userAnchor, setUserAnchor] = React.useState(null);
 
     React.useEffect(() => {
         setLiked(false);
@@ -98,6 +117,22 @@ const Post = ({user, post}) => {
     const [ savePost, savePostResult ] = useMutation(savePostQuery, {
         refetchQueries: [{query: currentUserQuery}],
     })
+    
+    const [ sendFriendRequest,  sendFriendRequestResponse ] = useMutation(sendFriendRequestQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
+    const [ retractFriendRequest,  retractFriendRequestResponse ] = useMutation(retractFriendRequestQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
+    const [ acceptFriendRequest,  acceptFriendRequestResponse ] = useMutation(acceptFriendRequestQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
 
     const menuItems = [
         {
@@ -116,6 +151,15 @@ const Post = ({user, post}) => {
             path: "/"
         }
     ]
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(null)
+    }
+
+    const handleOpenSnackbar = (input, severity) => {
+        setOpenSnackbar(input)
+        setSnackbarSeverity(severity)
+    }
 
     const handleExpandClick = () => {
       setExpanded(!expanded);
@@ -147,6 +191,85 @@ const Post = ({user, post}) => {
         setOpen(false);
       }
     }
+
+    const handleUserClick = (targetUser) => (event) => {
+        setOpenUser(targetUser)
+        setError(null)
+        setOpenUserPopper(true);
+        setUserAnchor(event.currentTarget);
+    };
+    
+    const handleUserClose = () => {
+        setUserAnchor(null);
+        setOpenUserPopper(false);
+    };
+
+    const handleFriendRequestClick = () => {
+        if (friendRequestText === "Add as Friend") {
+            sendFriendRequest({variables: {from: user.id, to: openUser}})
+        } else if (friendRequestText === "Retract Friend Request") {
+            retractFriendRequest({variables: {from: user.id, to: openUser}})
+        } else if (friendRequestText === "Accept Friend Request") {
+            acceptFriendRequest({variables: {from: openUser, to: user.id}})
+        }
+
+    }
+
+    useEffect(() => {
+        if (openUser) {
+            if (user.sentFriendRequests.map(request => request.toUser.id).includes(openUser)) {
+                setFriendRequestText("Retract Friend Request")
+            } else if (user.receivedFriendRequests.map(request => request.fromUser.id).includes(openUser)) {
+                setFriendRequestText("Accept Friend Request")
+            } else {
+                setFriendRequestText("Add as Friend")
+            }
+        }
+      }, [openUserPopper])
+    
+      useEffect(() => {
+        if (sendFriendRequestResponse.data) {
+            if (!error) {
+                handleOpenSnackbar("Friend Request Sent", "success")
+                handleUserClose()
+            } else {
+                handleOpenSnackbar(error, "error")
+                handleUserClose()
+            }
+        }
+      }, [sendFriendRequestResponse.data])
+      
+      useEffect(() => {
+        if (retractFriendRequestResponse.data) {
+            if (!error) {
+                handleOpenSnackbar("Friend Request Retracted", "success")
+                handleUserClose()
+            } else {
+                handleOpenSnackbar(error, "error")
+                handleUserClose()
+            }
+        }
+      }, [retractFriendRequestResponse.data])
+      
+      useEffect(() => {
+        if (acceptFriendRequestResponse.data) {
+            if (!error) {
+                handleOpenSnackbar("Friend Request Accepted", "success")
+                handleUserClose()
+            } else {
+                handleOpenSnackbar(error, "error")
+                handleUserClose()
+            }
+        }
+      }, [acceptFriendRequestResponse.data])
+      
+      useEffect(() => {
+        if (error) {
+            handleOpenSnackbar(error, "error")
+            handleUserClose()
+        }
+      }, [error])
+    
   
     // return focus to the button when we transitioned from !open -> open
     const prevOpen = React.useRef(open);
@@ -166,7 +289,7 @@ const Post = ({user, post}) => {
                         <Card className={classes.root}>
                             <CardHeader
                                 avatar={
-                                    <Avatar src={post.user.avatarPath} />
+                                    <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
                                 }
                                 action={
                                     <div>
@@ -245,10 +368,15 @@ const Post = ({user, post}) => {
                                                 button
                                                 divider="true"
                                             >
-                                                <ListItemIcon>
+                                                <ListItemIcon onClick={handleUserClick(item.user.id)}>
                                                     <Avatar src={item.user.avatarPath} />
                                                 </ListItemIcon>
-                                                <ListItemText primary={displayName(item.user)} secondary={item.text}></ListItemText>
+                                                <ListItemText primary={displayName(item.user)} secondary={item.text} onClick={handleUserClick}></ListItemText>
+                                                <ListItemSecondaryAction>
+                                                    <IconButton edge="end" aria-label="comments">
+                                                        <AddCommentIcon />
+                                                    </IconButton>
+                                                </ListItemSecondaryAction>
                                             </ListItem>
                                         ))}
                                         <ListItem>
@@ -269,8 +397,40 @@ const Post = ({user, post}) => {
                             </Collapse>
                         </Card>
                     </Grid>
+                    <Grid item>
+                        <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition>
+                            {({ TransitionProps }) => (
+                            <Grow {...TransitionProps}>
+                                <Paper>
+                                    <ClickAwayListener onClickAway={handleUserClose}>
+                                        <MenuList id="user-grow">
+                                            {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
+                                                <ListItemIcon>
+                                                    {<PersonAddIcon />}
+                                                </ListItemIcon>
+                                                <Typography>{friendRequestText}</Typography>
+                                            </ListItem>}
+                                            {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
+                                            <ListItem button>
+                                                <ListItemIcon>
+                                                    <PersonIcon/>
+                                                </ListItemIcon>
+                                                <Typography>View Profile</Typography>
+                                            </ListItem>
+                                        </MenuList>
+                                        </ClickAwayListener>
+                                </Paper>
+                            </Grow>
+                            )}
+                        </Popper>
+                    </Grid>
                 </Grid>
             </Container>
+            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                    {openSnackbar}
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

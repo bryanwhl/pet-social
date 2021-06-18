@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PostsContainer = ({ user }) => {
 
-  const allPosts = useQuery(getPostsQuery);
+  const allPosts = useQuery(getPostsQuery, {fetchPolicy: "no-cache"});
 
   const [posts, setPosts] = useState([]);
 
