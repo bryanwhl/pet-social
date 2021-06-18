@@ -183,6 +183,7 @@ const typeDefs = gql`
         getPosts: [Post]!
         findComment(id: ID!): Comment
         findPet(id: ID!): Pet
+        getPlaygroup: [Playgroup]!
     }
     type Mutation {
         addUser(
@@ -357,6 +358,14 @@ const resolvers = {
             return (await root.populate('tagged').execPopulate()).tagged
         },
     },
+    Playgroup: {
+        playgroupAdmin: (root) => {
+            return User.findById(root.playgroupAdmin)
+        },
+        members: async (root) => {
+            return (await root.populate('members').execPopulate()).members
+        },
+    },
     Pet: {
         owners: async (root) => {
             return (await root.populate('owners').execPopulate()).owners
@@ -369,7 +378,8 @@ const resolvers = {
         findUser: (root, args) => User.findById(args.id),
         findPost: (root, args) => Post.findById(args.id),
         findComment: (root, args) => Comment.findById(args.id),
-        findPet: (root, args) => Pet.findById(args.id)
+        findPet: (root, args) => Pet.findById(args.id),
+        getPlaygroup: () => Playgroup.find({})
     },
     Mutation: {
         addUser: async (root, args) => {
@@ -502,7 +512,7 @@ const resolvers = {
                 members: [],
                 dateCreated: Date(),
             });
-            const savePlaygroup = newPlaygroup.save();
+            const savePlaygroup = await newPlaygroup.save();
             console.log(savePlaygroup);
             return savePlaygroup;
         },

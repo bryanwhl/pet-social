@@ -6,7 +6,6 @@ const playgroupSchema = new Schema({
     name: String,
     description: String,
     playgroupAdmin: {type: Schema.Types.ObjectId, ref: 'User'},
-    //playgroupAdmin: [{type: Schema.Types.ObjectId, ref: 'User'}],
     members: [{type: Schema.Types.ObjectId, ref: 'User'}],
     meetingDate: Date,
     meetingLat: Number,

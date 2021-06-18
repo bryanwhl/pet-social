@@ -16,6 +16,9 @@ import AddIcon from '@material-ui/icons/Add';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import PlaygroupForm from './PlaygroupForm.js';
 import Geocode from "react-geocode";
+import { useQuery } from '@apollo/client';
+import { getPlaygroupsQuery } from '../../queries.js';
+import { useState, useEffect } from 'react';
 
 Geocode.setApiKey(process.env.REACT_APP_KEY);
 
@@ -111,7 +114,18 @@ const Playgroups = ({ user }) => {
         libraries,
     })
 
-    const [markers, setMarkers] = React.useState([]);
+    const [allPlaygroups, setAllPlaygroups] = useState([]);
+
+    const playgroups = useQuery(getPlaygroupsQuery);
+
+    useEffect(() => {
+      if (playgroups.data) {
+        console.log(playgroups.data)
+        setAllPlaygroups(playgroups.data.getPlaygroup)
+      }
+    }, [playgroups])
+
+    const [tempMarker, setTempMarker] = React.useState();
     const [selected, setSelected] = React.useState(null);
     const [newPlaygroup, setNewPlaygroup] = React.useState(false);
 
@@ -119,6 +133,10 @@ const Playgroups = ({ user }) => {
     const onMapLoad = React.useCallback((map) => {
       mapRef.current = map;
     }, []);
+
+    // const renderMarkers = (allPlaygroups) => {
+    //   //need to implement 
+    // }
 
     const panTo = React.useCallback(({ lat, lng }) => {
       mapRef.current.panTo({ lat, lng });
@@ -141,14 +159,11 @@ const Playgroups = ({ user }) => {
     };
 
     const onMapClick = React.useCallback((e) => {
-        setMarkers((current) => [
-            ...current,
-            {
+        setTempMarker({
                 lat: e.latLng.lat(),
                 lng: e.latLng.lng(),
                 id: generateNewID(),
-            },
-        ]);
+        });
         handleStopNewPlaygroup();
         setSelected({
           lat: e.latLng.lat(),
@@ -331,20 +346,20 @@ const Playgroups = ({ user }) => {
                 onLoad={onMapLoad}
                 clickableIcons={false}
             >
-                {markers.map(marker =>
+                {allPlaygroups.map(playgroup =>
                     <Marker 
-                        key={marker.id} 
+                        key={playgroup.id} 
                         position={{
-                            lat: marker.lat,
-                            lng: marker.lng
+                            lat: playgroup.meetingLat,
+                            lng: playgroup.meetingLng
                         }}
                         onClick={() => {
-                            setSelected(marker);
+                            setSelected({lat: playgroup.meetingLat, lng: playgroup.meetingLng });
                         }}
                     />
                 )}
 
-                {selected ? (<InfoWindow position={{lat: selected.lat, lng:selected.lng}} 
+                {selected ? (<InfoWindow position={{lat: selected.lat, lng: selected.lng}} 
                 onCloseClick={() => {
                     setSelected(null);
                 }}>

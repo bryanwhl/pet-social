@@ -428,3 +428,24 @@ export const getPostsQuery=gql`
     }
   }
 `
+
+export const getPlaygroupsQuery=gql`
+  query {
+    getPlaygroup {
+      id
+      description
+      name
+      meetingLat
+      meetingLng
+      meetingDate
+      playgroupAdmin {
+        id
+        username
+      }
+      members {
+        id
+      }
+      dateCreated
+    }
+  }
+`
