@@ -397,33 +397,35 @@ const Post = ({user, post}) => {
                             </Collapse>
                         </Card>
                     </Grid>
+                    <Grid item>
+                        <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition>
+                            {({ TransitionProps }) => (
+                            <Grow {...TransitionProps}>
+                                <Paper>
+                                    <ClickAwayListener onClickAway={handleUserClose}>
+                                        <MenuList id="user-grow">
+                                            {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
+                                                <ListItemIcon>
+                                                    {<PersonAddIcon />}
+                                                </ListItemIcon>
+                                                <Typography>{friendRequestText}</Typography>
+                                            </ListItem>}
+                                            {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
+                                            <ListItem button>
+                                                <ListItemIcon>
+                                                    <PersonIcon/>
+                                                </ListItemIcon>
+                                                <Typography>View Profile</Typography>
+                                            </ListItem>
+                                        </MenuList>
+                                        </ClickAwayListener>
+                                </Paper>
+                            </Grow>
+                            )}
+                        </Popper>
+                    </Grid>
                 </Grid>
             </Container>
-            <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition>
-                {({ TransitionProps }) => (
-                <Grow {...TransitionProps}>
-                    <Paper>
-                        <ClickAwayListener onClickAway={handleUserClose}>
-                            <MenuList id="user-grow">
-                                {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
-                                    <ListItemIcon>
-                                        {<PersonAddIcon />}
-                                    </ListItemIcon>
-                                    <Typography>{friendRequestText}</Typography>
-                                </ListItem>}
-                                {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <PersonIcon/>
-                                    </ListItemIcon>
-                                    <Typography>View Profile</Typography>
-                                </ListItem>
-                            </MenuList>
-                            </ClickAwayListener>
-                    </Paper>
-                </Grow>
-                )}
-            </Popper>
             <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
                     {openSnackbar}

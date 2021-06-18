@@ -218,6 +218,10 @@ const typeDefs = gql`
             id: ID!
             password: String!
         ): User
+        deleteFriend(
+            id: ID!
+            friend: ID!
+        ): User
         deleteOwner(
             owner: ID!
             pet: ID!
@@ -621,6 +625,23 @@ const resolvers = {
                     console.log("Deleted : ", docs);
                 }
             })
+        },
+        deleteFriend: async (root, args) => {
+            const user = await User.findById( args.id ).exec();
+            if (!user) {
+                return null
+            }
+            
+            const friend = await User.findById( args.friend ).exec();
+            if (!friend) {
+                return null
+            }
+
+            User.updateOne({_id: args.id}, {$pull: {friends: args.friend}}).exec()
+            User.updateOne({_id: args.friend}, {$pull: {friends: args.id}}).exec()
+            
+
+            return user
         },
         deleteOwner: async (root, args) => {
             const owner = await User.findById( args.owner ).exec();

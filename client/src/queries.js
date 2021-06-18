@@ -297,6 +297,17 @@ export const deleteUserQuery=gql`
   }
 `
 
+export const deleteFriendQuery=gql`
+  mutation ($id: ID!, $friend: ID!) {
+    deleteFriend(
+      id: $id,
+      friend: $friend
+    ) {
+      id
+    }
+  }
+`
+
 export const deleteOwnerQuery=gql`
   mutation ($owner: ID!, $pet: ID!) {
     deleteOwner(
