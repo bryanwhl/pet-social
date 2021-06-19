@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
+const Playgroup = require('./models/playgroup.js')
 const FriendRequest = require('./models/friendRequest.js')
 const path = require('path')
 const fs = require('fs')
@@ -156,13 +157,14 @@ const typeDefs = gql`
     type Playgroup {
         id: ID!
         name: String!
-        description: String
-        playgroupAdmin: [User!]!
-        members: [User!]!
-        meetingDates: [Date]!
-        meetingLocation: [Float]!
+        description: String!
+        playgroupAdmin: User!
+        members: [User]
+        meetingDate: Date!
+        meetingLat: Float!
+        meetingLng: Float!
         dateCreated: Date!
-        playgroupChat: Chat!
+        playgroupChat: Chat
     }
     type FriendRequest {
         id: ID!
@@ -184,6 +186,7 @@ const typeDefs = gql`
         getPosts: [Post]!
         findComment(id: ID!): Comment
         findPet(id: ID!): Pet
+        getPlaygroup: [Playgroup]!
     }
     type Mutation {
         addUser(
@@ -202,6 +205,17 @@ const typeDefs = gql`
             postType: String!
             privacy: String!
         ): Post
+        addPlaygroup (
+            playgroupAdmin: ID!
+            name: String!
+            description: String!
+            meetingLat: Float!
+            meetingLng: Float!
+            meetingDate: Date!
+        ): Playgroup
+        deletePlaygroup (
+            id: ID!
+        ): Playgroup
         addPet(
             name: String!
             owner: ID!
@@ -304,7 +318,6 @@ const typeDefs = gql`
 
 const resolvers = {
     Date: dateScalar,
-//    Upload: GraphQLUpload,
     User: {
         name: (root) => {
             return {
@@ -377,6 +390,14 @@ const resolvers = {
             return (await root.populate('tagged').execPopulate()).tagged
         },
     },
+    Playgroup: {
+        playgroupAdmin: (root) => {
+            return User.findById(root.playgroupAdmin)
+        },
+        members: async (root) => {
+            return (await root.populate('members').execPopulate()).members
+        },
+    },
     Pet: {
         owners: async (root) => {
             return (await root.populate('owners').execPopulate()).owners
@@ -397,7 +418,8 @@ const resolvers = {
         findUser: (root, args) => User.findById(args.id),
         findPost: (root, args) => Post.findById(args.id),
         findComment: (root, args) => Comment.findById(args.id),
-        findPet: (root, args) => Pet.findById(args.id)
+        findPet: (root, args) => Pet.findById(args.id),
+        getPlaygroup: () => Playgroup.find({})
     },
     Mutation: {
         addUser: async (root, args) => {
@@ -452,8 +474,6 @@ const resolvers = {
             if (args.dateOfBirth > Date()) {
                 throw new UserInputError("Date of Birth cannot be after today")
             }
-
-            console.log("Here")
 
             const owners = [args.owner]
             console.log(owners)
@@ -520,13 +540,31 @@ const resolvers = {
             if (!user) {
                 return null
             }
-            console.log(user.id);
             const savePost = await newPost.save();
-            console.log(savePost);
             user.posts = user.posts.concat(savePost.id);
             user.save();
-            console.log(user.posts);
             return savePost;
+        },
+        addPlaygroup: async (root, args) => {
+            console.log(args);
+            const newPlaygroup = new Playgroup ({
+                ...args,
+                members: [],
+                dateCreated: Date(),
+            });
+            const savePlaygroup = await newPlaygroup.save();
+            console.log(savePlaygroup);
+            return savePlaygroup;
+        },
+        deletePlaygroup: async (root, args) => {
+            Playgroup.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
         },
         sendFriendRequest: async (root, args) => {
             const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()

@@ -14,7 +14,12 @@ import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
 import AddIcon from '@material-ui/icons/Add';
 import ToggleButton from '@material-ui/lab/ToggleButton';
+import PlaygroupForm from './PlaygroupForm.js';
+import PlaygroupInfo from './PlaygroupInfo.js';
 import Geocode from "react-geocode";
+import { useQuery } from '@apollo/client';
+import { getPlaygroupsQuery } from '../../queries.js';
+import { useState, useEffect } from 'react';
 
 Geocode.setApiKey(process.env.REACT_APP_KEY);
 
@@ -101,7 +106,7 @@ const generateNewID = () => {
 
 const libraries = ["places"];
 
-const Playgroups = () => {
+const Playgroups = ({ user }) => {
 
     const classes = useStyles();
 
@@ -110,9 +115,22 @@ const Playgroups = () => {
         libraries,
     })
 
-    const [markers, setMarkers] = React.useState([]);
+    const [allPlaygroups, setAllPlaygroups] = useState([]);
+    const [tempMarker, setTempMarker] = React.useState(null);
     const [selected, setSelected] = React.useState(null);
     const [newPlaygroup, setNewPlaygroup] = React.useState(false);
+
+    const playgroups = useQuery(getPlaygroupsQuery);
+
+    useEffect(() => {
+      if (playgroups.data) {
+        console.log(playgroups.data)
+        setAllPlaygroups(playgroups.data.getPlaygroup)
+      }
+      setSelected(null);
+      setTempMarker(null);
+      setNewPlaygroup(false);
+    }, [playgroups])
 
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
@@ -140,14 +158,11 @@ const Playgroups = () => {
     };
 
     const onMapClick = React.useCallback((e) => {
-        setMarkers((current) => [
-            ...current,
-            {
+        setTempMarker({
                 lat: e.latLng.lat(),
                 lng: e.latLng.lng(),
                 id: generateNewID(),
-            },
-        ]);
+        });
         handleStopNewPlaygroup();
         setSelected({
           lat: e.latLng.lat(),
@@ -330,47 +345,50 @@ const Playgroups = () => {
                 onLoad={onMapLoad}
                 clickableIcons={false}
             >
-                {markers.map(marker =>
+                {allPlaygroups.map(playgroup =>
                     <Marker 
-                        key={marker.id} 
+                        key={playgroup.id} 
                         position={{
-                            lat: marker.lat,
-                            lng: marker.lng
+                            lat: playgroup.meetingLat,
+                            lng: playgroup.meetingLng
                         }}
                         onClick={() => {
-                            setSelected(marker);
+                            setSelected({
+                              lat: playgroup.meetingLat, 
+                              lng: playgroup.meetingLng, 
+                              name: playgroup.name, 
+                              description: playgroup.description, 
+                              date: playgroup.meetingDate, 
+                              user: playgroup.playgroupAdmin.username, 
+                              id: playgroup.id,
+                              userID: playgroup.playgroupAdmin.id
+                            });
                         }}
                     />
                 )}
 
-                {selected ? (<InfoWindow position={{lat: selected.lat, lng:selected.lng}} 
+                {selected ? (<InfoWindow position={{lat: selected.lat, lng: selected.lng}} 
                 onCloseClick={() => {
                     setSelected(null);
                 }}>
                     <div>
-                        <FormControl>
-                            <List subheader={
-                              <ListSubheader component="div" id="nested-list-subheader">
-                                Create a Playgroup!
-                              </ListSubheader>
-                            }>
-                                <ListItem>
-                                    <TextField id="name-of-playgroup" label="Name Of Playgroup" variant="outlined" />
-                                </ListItem>
-                                <ListItem>
-                                    <TextField id="date-of-meeting" label="Date Of Meeting" variant="outlined" />
-                                </ListItem>
-                                <ListItem>
-                                    <TextField id="details" label="Details" variant="outlined" />
-                                </ListItem>
-                                <ListItem style={{display:'flex', justifyContent:'flex-end'}}>
-                                    <Button variant="contained" color="primary">
-                                        Submit
-                                    </Button>
-                                </ListItem>
-                            </List>
-                        </FormControl>
-  
+                      {tempMarker !== null && selected.lat === tempMarker.lat && selected.lng === tempMarker.lng ? 
+                      <PlaygroupForm 
+                        user={user} 
+                        meetingLocation={[selected.lat, selected.lng]}/> : 
+                      <PlaygroupInfo 
+                      playgroup={{
+                        lat: selected.lat, 
+                        lng: selected.lng, 
+                        name: selected.name, 
+                        description: selected.description, 
+                        date: selected.date,
+                        user: selected.user,
+                        id: selected.id,
+                        userID: selected.userID
+                      }}
+                      user={user}
+                      /> }
                     </div>
                 </InfoWindow>) : null}
             </GoogleMap>

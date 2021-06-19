@@ -485,6 +485,31 @@ export const submitPostQuery=gql`
   }
 `
 
+export const submitPlaygroupQuery=gql`
+  mutation ($playgroupAdmin: ID!, $name: String!, $description: String!, $meetingLat: Float!, $meetingLng: Float!, $meetingDate: Date!) {
+    addPlaygroup(
+      playgroupAdmin: $playgroupAdmin,
+      name: $name,
+      description: $description,
+      meetingLat: $meetingLat,
+      meetingLng: $meetingLng,
+      meetingDate: $meetingDate,
+    ) {
+      id
+    }
+  }
+`
+
+export const deletePlaygroupQuery=gql`
+  mutation ($id: ID!) {
+    deletePlaygroup(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
+
 export const UPLOAD_FILE=gql`
   mutation uploadFile($file: Upload!) {
     uploadFile (
@@ -537,6 +562,27 @@ export const getPostsQuery=gql`
         text
       }
       isEdited
+    }
+  }
+`
+
+export const getPlaygroupsQuery=gql`
+  query {
+    getPlaygroup {
+      id
+      description
+      name
+      meetingLat
+      meetingLng
+      meetingDate
+      playgroupAdmin {
+        id
+        username
+      }
+      members {
+        id
+      }
+      dateCreated
     }
   }
 `
