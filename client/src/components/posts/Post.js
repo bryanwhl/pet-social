@@ -5,7 +5,7 @@ import {Grid, Container, Card, IconButton,
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
-    Divider, List, ListItemSecondaryAction, TextField} from '@material-ui/core';
+    Divider, List, ListItemSecondaryAction} from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -21,6 +21,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import PersonIcon from '@material-ui/icons/Person';
 import AddCommentIcon from '@material-ui/icons/AddComment';
 import Snackbar from '@material-ui/core/Snackbar';
+import SubmitComment from './SubmitComment.js'
 import { displayName, convertDate } from '../../utility.js';
 import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
@@ -48,13 +49,6 @@ const useStyles = makeStyles((theme) => ({
     },
     avatarBlue: {
         backgroundColor: blue[500],
-    },
-    textField: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 14,
-        fullWidth: true
     },
     input: {
         marginLeft: theme.spacing(1),
@@ -380,15 +374,7 @@ const Post = ({user, post}) => {
                                             </ListItem>
                                         ))}
                                         <ListItem>
-                                            <TextField
-                                                id="outlined-multiline-static"
-                                                label="Write a comment..."
-                                                multiline
-                                                rows={4}
-                                                variant="outlined"
-                                                fullWidth
-                                                className={classes.textField}
-                                            />
+                                            <SubmitComment user={user} post={post}/>
                                         </ListItem>
                                         </List>
                                         <Divider />
