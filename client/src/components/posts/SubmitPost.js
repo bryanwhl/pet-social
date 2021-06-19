@@ -54,7 +54,9 @@ const SubmitPost = ({user, displayName}) => {
     if ( post.imageFilePath !== "" ) {
       console.log(post);
       submitPost({variables: { user: user.id, imageFilePath: post.imageFilePath, text: post.text, postType: post.postType, privacy: post.privacy }});
-      console.log("entering useEffect")
+      console.log("entering useEffect");
+      setFile(null);
+      setPost({user:"", imageFilePath:"", text:"", postType:"image", privacy:"public"});
     }
   }, [post.imageFilePath])
 
