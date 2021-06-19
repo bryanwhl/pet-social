@@ -485,6 +485,18 @@ export const submitPostQuery=gql`
   }
 `
 
+export const submitCommentQuery=gql`
+  mutation ($post: ID!, $user: ID!, $text: String!) {
+    addComment(
+      post: $post,
+      user: $user,
+      text: $text,
+    ) {
+      id
+    },
+  }
+`
+
 export const submitPlaygroupQuery=gql`
   mutation ($playgroupAdmin: ID!, $name: String!, $description: String!, $meetingLat: Float!, $meetingLng: Float!, $meetingDate: Date!) {
     addPlaygroup(

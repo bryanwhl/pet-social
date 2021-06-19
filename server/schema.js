@@ -213,6 +213,11 @@ const typeDefs = gql`
             meetingLng: Float!
             meetingDate: Date!
         ): Playgroup
+        addComment (
+            user: ID!
+            text: String!
+            post: ID!
+        ): Comment
         deletePlaygroup (
             id: ID!
         ): Playgroup
@@ -546,15 +551,31 @@ const resolvers = {
             return savePost;
         },
         addPlaygroup: async (root, args) => {
-            console.log(args);
             const newPlaygroup = new Playgroup ({
                 ...args,
                 members: [],
                 dateCreated: Date(),
             });
             const savePlaygroup = await newPlaygroup.save();
-            console.log(savePlaygroup);
             return savePlaygroup;
+        },
+        addComment: async (root, args) => {
+            const newComment = new Comment ({
+                user: args.user,
+                text: args.text,
+                isEdited: false,
+                date: Date(),
+                likedBy: [],
+                replies: [],
+            });
+            const post = await Post.findById( args.post ).exec();
+            if (!post) {
+                return null;
+            }
+            const saveComment = await newComment.save();
+            post.comments = post.comments.concat(saveComment.id);
+            post.save();
+            return saveComment;
         },
         deletePlaygroup: async (root, args) => {
             Playgroup.findByIdAndDelete(args.id, function (err, docs) {
