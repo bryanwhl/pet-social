@@ -68,14 +68,32 @@ export const currentUserQuery=gql`
     }
     sentFriendRequests {
       id
+      date
       toUser {
         id
+        avatarPath
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
       }
     }
     receivedFriendRequests {
       id
+      date
       fromUser {
         id
+        avatarPath
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
       }
     }
     registeredDate
