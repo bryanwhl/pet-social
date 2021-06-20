@@ -41,6 +41,11 @@ const useStyles = makeStyles((theme) => ({
         height: 0,
         paddingTop: '90.25%', // 16:9
     },
+    videoMedia: {
+        height: "100%",
+        width: "100%",
+        // paddingTop: '90.25%', // 16:9
+    },
     bookmark: {
         marginLeft: 'auto',
     },
@@ -275,6 +280,7 @@ const Post = ({user, post}) => {
       prevOpen.current = open;
     }, [open]);
 
+    console.log(post.postType);
     return (
         <div>
             <Container className={classes.cardGrid}>
@@ -327,12 +333,19 @@ const Post = ({user, post}) => {
                                 title={displayName(post.user)}
                                 subheader={convertDate(post.date)}
                             />
-                            <CardMedia
-                                className={classes.media}
-                                image= {post.imageFilePath}
-                                title="dogs"
-                            />
-                            
+                                {post.postType === "image" ? <CardMedia
+                                    className={classes.media}
+                                    image={post.imageFilePath}
+                                    title="dogs"
+                                /> : <CardMedia className={classes.videoMedia}><video 
+                                src={post.imageFilePath}
+                                title="Video"
+                                controls
+                                height="100%"
+                                width="100%"
+                                controls
+                                >    
+                                </video></CardMedia>}
                             <CardContent>
                                 <Typography variant="body2" component="p">
                                     {post.text}
