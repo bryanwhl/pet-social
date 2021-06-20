@@ -19,6 +19,7 @@ const PlaygroupForm = ({user, meetingLocation}) => {
     const classes = useStyles();
 
     const [playgroup, setPlaygroup] = React.useState({playgroupAdmin: user.id, name:"", description:"", meetingLat: meetingLocation[0], meetingLng: meetingLocation[1], meetingDate:"",});
+    const [error, setError] = React.useState(false);
 
     const [ submitPlaygroup, submitPlaygroupResult ] = useMutation(submitPlaygroupQuery, {
         refetchQueries: [{query: getPlaygroupsQuery}],
@@ -28,20 +29,45 @@ const PlaygroupForm = ({user, meetingLocation}) => {
 
     const handleChange = (prop) => (event) => {
         setPlaygroup({ ...playgroup, [prop]: event.target.value });
+        setError(false);
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        submitPlaygroup({
-            variables: { 
-                playgroupAdmin: playgroup.playgroupAdmin,
-                description: playgroup.description,
-                name: playgroup.name, 
-                meetingLat: playgroup.meetingLat, 
-                meetingLng: playgroup.meetingLng, 
-                meetingDate: playgroup.meetingDate 
+        console.log(playgroup.name);
+        console.log(playgroup.meetingDate);
+        console.log(playgroup.description);
+
+        if (playgroup.name === "") {
+            setError(true);
+            console.log(error);
+            if (error === true) {
+                return;
             }
-        });
+        } else if (playgroup.meetingDate === "") {
+            setError(true);
+            console.log(error);
+            if (error === true) {
+                return;
+            }
+        } else if (playgroup.description === "") {
+            setError(true);
+            console.log(error);
+            if (error === true) {
+                return;
+            }
+        } else {
+            submitPlaygroup({
+                variables: { 
+                    playgroupAdmin: playgroup.playgroupAdmin,
+                    description: playgroup.description,
+                    name: playgroup.name, 
+                    meetingLat: playgroup.meetingLat, 
+                    meetingLng: playgroup.meetingLng, 
+                    meetingDate: playgroup.meetingDate 
+                }
+            });
+        }
     }
 
     return (
@@ -53,7 +79,15 @@ const PlaygroupForm = ({user, meetingLocation}) => {
                     </ListSubheader>
                 }>
                     <ListItem>
-                        <TextField id="name-of-playgroup" label="Name Of Playgroup" variant="outlined" className={classes.textField} onChange={handleChange('name')}/>
+                        <TextField 
+                            id="name-of-playgroup" 
+                            label="Name Of Playgroup" 
+                            variant="outlined" 
+                            className={classes.textField} 
+                            onChange={handleChange('name')}
+                            error={error === true && playgroup.name === ""}
+                            helperText={error === true ? "Name cannot be empty!" : null}
+                        />
                     </ListItem>
                     <ListItem>
                         <TextField
@@ -66,10 +100,20 @@ const PlaygroupForm = ({user, meetingLocation}) => {
                             }}
                             className={classes.textField}
                             onChange={handleChange('meetingDate')}
+                            error={error === true && playgroup.meetingDate === ""}
+                            helperText={error === true ? "Date cannot be empty!" : null}
                         />
                     </ListItem>
                     <ListItem>
-                        <TextField id="details" label="Details" variant="outlined" className={classes.textField} onChange={handleChange('description')}/>
+                        <TextField 
+                            id="details" 
+                            label="Details" 
+                            variant="outlined" 
+                            className={classes.textField} 
+                            onChange={handleChange('description')}
+                            error={error === true && playgroup.description === ""}
+                            helperText={error === true ? "Description cannot be empty!" : null}
+                        />
                     </ListItem>
                     <ListItem style={{display:'flex', justifyContent:'flex-end'}}>
                         <Button variant="contained" color="primary" onClick={handleSubmit}>
