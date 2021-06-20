@@ -32,8 +32,6 @@ const SubmitPost = ({user, displayName}) => {
 
   const classes = useStyles();
 
-  const [error, setError] = useState(null);
-
   const [uploadFile, uploadFileResult] = useMutation(UPLOAD_FILE, {
     // onCompleted: data => {
     //   // console.log("we are here!! " + data)
@@ -48,7 +46,7 @@ const SubmitPost = ({user, displayName}) => {
 
   const [post, setPost] = useState({user:"", imageFilePath:"", text:"", postType:"image", privacy:"public"});
   const [file, setFile] = useState(null);
-  const [imageFilePath, setImageFilePath] = useState("");
+  const [error, setError] = React.useState(false);
 
   useEffect(() => {
     if ( post.imageFilePath !== "" ) {
@@ -83,12 +81,20 @@ const SubmitPost = ({user, displayName}) => {
 
   const handleChange = (prop) => (event) => {
     setPost({ ...post, [prop]: event.target.value });
+    setError(false);
   };
 
   const handleSubmit = event => {
     event.preventDefault();
     console.log(file);
-    uploadFile({variables: {file}});
+    setError(false);
+    if (file === null) {
+      setError(true);
+    } else if (post.text === "") {
+      setError(true);
+    } else {
+      uploadFile({variables: {file}});
+    }
     // setPost({ ...post, user: user.id });
     // submitPost({variables: { user: user.id, imageFilePath: post.imageFilePath, text: post.text, postType: post.postType, privacy: post.privacy }});
   }
@@ -114,6 +120,8 @@ const SubmitPost = ({user, displayName}) => {
                       placeholder="How's your pet doing?"
                       variant="outlined"
                       onChange={handleChange('text')}
+                      error={error === true}
+                      helperText={error === true ? file === null ? "You must attach a file or a video!" : post.text === "" ? "Post cannot be empty!" : null : null}
                     />
                   </CardContent>
                   <CardActions disableSpacing>
