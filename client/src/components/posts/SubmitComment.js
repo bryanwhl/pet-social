@@ -25,6 +25,7 @@ const SubmitComment = ({user, post}) => {
     const classes = useStyles();
 
     const [comment, setComment] = React.useState({post: post.id, user: user.id, text: ""});
+    const [error, setError] = React.useState(null);
 
     const [ submitComment, submitCommentResult ] = useMutation(submitCommentQuery, {
         refetchQueries: [{query: getPostsQuery}],
@@ -33,10 +34,17 @@ const SubmitComment = ({user, post}) => {
 
     const handleChange = (prop) => (event) => {
         setComment({ ...comment, [prop]: event.target.value });
+        if (comment.text !== "") {
+            setError(null);
+        }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (comment.text === "") {
+            setError("Comment cannot be empty!");
+            return;
+        }
         submitComment({
             variables: { 
                 post: comment.post,
@@ -60,6 +68,8 @@ const SubmitComment = ({user, post}) => {
                     className={classes.textField}
                     onChange={handleChange('text')}
                     value={comment.text}
+                    error={["Comment cannot be empty!"].includes(error)}
+                    helperText={["Comment cannot be empty!"].includes(error) ? error : ""}
                 />
                 <Button
                     variant="contained"

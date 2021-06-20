@@ -129,8 +129,15 @@ const SubmitPost = ({user, displayName}) => {
                         <PhotoCamera />
                       </IconButton>
                     </label>
-                    <label htmlFor="icon-button-file">
-                      <IconButton aria-label="upload picture" component="span">
+                    <input 
+                      type="file" 
+                      accept="video/*" 
+                      className={classes.input} 
+                      id="icon-button-video" 
+                      onChange={handleFileChange}  
+                    />
+                    <label htmlFor="icon-button-video">
+                      <IconButton aria-label="upload video" component="span">
                         <VideocamIcon />
                       </IconButton>
                     </label>
