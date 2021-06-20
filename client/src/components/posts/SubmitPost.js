@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, Card, IconButton, CardContent, CardHeader, Button, makeStyles, 
-    CardActions, TextField, Container, Grid } from '@material-ui/core';
+    CardActions, TextField, Container, Grid, Typography } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import VideocamIcon from '@material-ui/icons/Videocam';
 import { useMutation } from '@apollo/client';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
 import { submitPostQuery, getPostsQuery, UPLOAD_FILE } from '../../queries.js';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,8 +33,6 @@ const SubmitPost = ({user, displayName}) => {
 
   const classes = useStyles();
 
-  const [error, setError] = useState(null);
-
   const [uploadFile, uploadFileResult] = useMutation(UPLOAD_FILE, {
     // onCompleted: data => {
     //   // console.log("we are here!! " + data)
@@ -46,49 +45,57 @@ const SubmitPost = ({user, displayName}) => {
     refetchQueries: [{query: getPostsQuery}],
   })
 
-  const [post, setPost] = useState({user:"", imageFilePath:"", text:"", postType:"image", privacy:"public"});
+  const [post, setPost] = useState({user:"", imageFilePath:"", text:"", postType:"", privacy:"public"});
   const [file, setFile] = useState(null);
-  const [imageFilePath, setImageFilePath] = useState("");
-
+  const [error, setError] = useState(false);
   useEffect(() => {
     if ( post.imageFilePath !== "" ) {
       console.log(post);
       submitPost({variables: { user: user.id, imageFilePath: post.imageFilePath, text: post.text, postType: post.postType, privacy: post.privacy }});
-      console.log("entering useEffect")
+      console.log("entering useEffect");
+      setFile(null);
+      // To reset the variables
+      setPost({user:"", imageFilePath:"", text:"", postType: "", privacy:"public"});
     }
   }, [post.imageFilePath])
 
   useEffect(() => {
     if ( uploadFileResult.data ) {
-      console.log(uploadFileResult.data);
-      console.log(uploadFileResult.data.url);
       setPost({ ...post, imageFilePath: uploadFileResult.data.uploadFile.url });
       console.log("entering useEffect")
     }
-    //console.log("entering useEffect")
   }, [uploadFileResult.data])
 
-  const handleSetFile = (inputFile) => {
+  const handleVideoFileChange = (event) => {
+    let inputFile = event.target.files[0]
+    console.log("File successfully tagged!")
     setFile(inputFile);
+    setPost({ ...post, postType: 'video' });
   }
 
-  const handleFileChange = (event) => {
-    const inputFile = event.target.files[0]
+  const handleImageFileChange = (event) => {
+    let inputFile = event.target.files[0]
     console.log("File successfully tagged!")
-    //uploadFile({variables: {file}});
-    handleSetFile(inputFile);
+    setFile(inputFile);
+    setPost({ ...post, postType: 'image' });
   }
 
   const handleChange = (prop) => (event) => {
     setPost({ ...post, [prop]: event.target.value });
+    setError(false);
   };
 
   const handleSubmit = event => {
     event.preventDefault();
     console.log(file);
-    uploadFile({variables: {file}});
-    // setPost({ ...post, user: user.id });
-    // submitPost({variables: { user: user.id, imageFilePath: post.imageFilePath, text: post.text, postType: post.postType, privacy: post.privacy }});
+    setError(false);
+    if (file === null) {
+      setError(true);
+    } else if (post.text === "") {
+      setError(true);
+    } else {
+      uploadFile({variables: {file}});
+    }
   }
 
   return (
@@ -112,6 +119,9 @@ const SubmitPost = ({user, displayName}) => {
                       placeholder="How's your pet doing?"
                       variant="outlined"
                       onChange={handleChange('text')}
+                      error={error === true}
+                      helperText={error === true ? file === null ? "You must attach a file or a video!" : post.text === "" ? "Post cannot be empty!" : null : null}
+                      value={post.text}
                     />
                   </CardContent>
                   <CardActions disableSpacing>
@@ -120,18 +130,30 @@ const SubmitPost = ({user, displayName}) => {
                       accept="image/*" 
                       className={classes.input} 
                       id="icon-button-file" 
-                      onChange={handleFileChange}  
+                      onChange={handleImageFileChange}  
                     />
                     <label htmlFor="icon-button-file">
                       <IconButton aria-label="upload picture" component="span">
                         <PhotoCamera />
                       </IconButton>
                     </label>
-                    <label htmlFor="icon-button-file">
-                      <IconButton aria-label="upload picture" component="span">
+                    <input 
+                      type="file" 
+                      accept="video/*" 
+                      className={classes.input} 
+                      id="icon-button-video" 
+                      onChange={handleVideoFileChange}  
+                    />
+                    <label htmlFor="icon-button-video">
+                      <IconButton aria-label="upload video" component="span">
                         <VideocamIcon />
                       </IconButton>
                     </label>
+                    {post.postType === 'video' ? <Typography>
+                      Video File Attached
+                    </Typography> : post.postType === 'image' ? <Typography>
+                      Image File Attached
+                    </Typography> : null}
                     <Button 
                       type="submit"
                       variant="contained" 

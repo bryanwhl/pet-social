@@ -28,8 +28,9 @@ const PostsContainer = ({ user }) => {
 
   useEffect(() => {
     if (allPosts.data) {
-      console.log(allPosts.data)
-      setPosts(allPosts.data.getPosts)
+      console.log(allPosts.data);
+      let outputArr = allPosts.data.getPosts.slice().sort((a, b) => {return b.date - a.date}); 
+      setPosts(outputArr);
     }
   }, [allPosts])
 
