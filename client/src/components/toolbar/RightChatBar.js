@@ -79,6 +79,9 @@ const RightChatBar = ({ drawerState }) => {
                         </ListItem>
                     ))}
                 </div>
+                <ListItem>
+                    <ListItemText primary={"Chats coming soon"}></ListItemText>
+                </ListItem>
                 </MenuList>
             </Drawer>
         </div>

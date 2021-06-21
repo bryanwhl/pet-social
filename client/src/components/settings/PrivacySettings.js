@@ -18,6 +18,9 @@ const PrivacySettings = ( {user} ) => {
             <Typography variant="body1" gutterBottom>
                 Current Privacy Setting: {user.settings.defaultPrivacy}
             </Typography>
+            <Typography variant="body1" gutterBottom>
+                More Settings Coming Soon!
+            </Typography>
         </div>
     )
 }

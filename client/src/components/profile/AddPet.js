@@ -74,7 +74,7 @@ const AddPet = ({ user, setPet, setPetMode, getCurrentUser }) => {
         if (!error) {
           setPet(addPetResponse.data.addPet.id)
           setPetMode(false)
-          getCurrentUser()
+          getCurrentUser();
         }
       }
     }, [addPetResponse.data])
