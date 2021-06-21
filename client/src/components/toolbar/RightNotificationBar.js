@@ -96,6 +96,9 @@ const RightNotificationBar = ({ drawerState }) => {
                         </ListItem>
                     ))}
                 </div>
+                <ListItem>
+                    <ListItemText primary={"Notifications coming soon"}></ListItemText>
+                </ListItem>
                 </MenuList>
             </Drawer>
         </div>

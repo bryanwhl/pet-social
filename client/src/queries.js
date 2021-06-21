@@ -333,6 +333,11 @@ export const deleteOwnerQuery=gql`
       pet: $pet
     ) {
       id
+      pets {
+        id
+        name
+        picturePath
+      }
     }
   }
 `

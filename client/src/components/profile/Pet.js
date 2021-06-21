@@ -77,8 +77,8 @@ const Pet = ({ user, petId, setPetId, setPetMode }) => {
       setError(error.graphQLErrors[0].message)
      }
     })
-  const [ deleteOwner ] = useMutation(deleteOwnerQuery, {refetchQueries: [{query: currentUserQuery}]})
-  const [ deletePet ] = useMutation(deletePetQuery, {refetchQueries: [{query: currentUserQuery}]})
+  const [ deleteOwner ] = useMutation(deleteOwnerQuery, {refetchQueries: [{query: currentUserQuery}], options: {awaitRefetchQueries: true}})
+  const [ deletePet ] = useMutation(deletePetQuery, {refetchQueries: [{query: currentUserQuery}], options: {awaitRefetchQueries: true}})
   const [ editPetPicture, editPetPictureResponse ] = useMutation(editPetPictureQuery)
   const [ uploadFile, uploadFileResponse ] = useMutation(UPLOAD_FILE)
 

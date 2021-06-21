@@ -22,6 +22,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import AddCommentIcon from '@material-ui/icons/AddComment';
 import Snackbar from '@material-ui/core/Snackbar';
 import SubmitComment from './SubmitComment.js'
+import Tooltip from '@material-ui/core/Tooltip';
 import { displayName, convertDate } from '../../utility.js';
 import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
@@ -135,17 +136,17 @@ const Post = ({user, post}) => {
 
     const menuItems = [
         {
-            text: "Receive notifications from this post",
+            text: "Receive notifications from this post (Coming Soon)",
             icon: <NotificationsActiveIcon />,
             path: "/"
         },
         {
-            text: "Hide posts from this user",
+            text: "Hide posts from this user (Coming Soon)",
             icon: <CancelIcon />,
             path: "/"
         },
         {
-            text: "Report Post",
+            text: "Report Post (Coming Soon)",
             icon: <ReportIcon />,
             path: "/"
         }
@@ -358,9 +359,11 @@ const Post = ({user, post}) => {
                                 <IconButton aria-label="comment" onClick={handleExpandClick}>
                                     <CommentIcon />
                                 </IconButton>
-                                <IconButton aria-label="share">
-                                    <ShareIcon />
-                                </IconButton>
+                                <Tooltip title="Coming Soon">
+                                    <IconButton aria-label="share">
+                                        <ShareIcon />
+                                    </IconButton>
+                                </Tooltip>
                                 <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
                                     {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                                 </IconButton>
@@ -414,7 +417,7 @@ const Post = ({user, post}) => {
                                                 <ListItemIcon>
                                                     <PersonIcon/>
                                                 </ListItemIcon>
-                                                <Typography>View Profile</Typography>
+                                                <Typography>View Profile (Coming soon)</Typography>
                                             </ListItem>
                                         </MenuList>
                                         </ClickAwayListener>
