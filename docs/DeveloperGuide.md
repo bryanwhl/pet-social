@@ -1,4 +1,4 @@
-# Developer Guide
+# Pet Social Developer Guide
 
 ![Pet Social](uml/BannerRounded.png)
 
