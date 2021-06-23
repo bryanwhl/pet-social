@@ -149,7 +149,9 @@ This sequence diagrams shows the execution flow of the program when a user signs
 
 ![Token Authentication](uml/TokenAuthentication.png)
 
-Every time a user logs in, a token will be generated and saved into the browser's `sessionStorage`. Each query for `currentUserQuery` will verify the validity of this token. If the token is invalidated or deleted, the user would be logged out.
+Every time a user logs in, a token will be generated and saved to the browser's `sessionStorage`. Each query for `currentUserQuery` will verify the validity of this token. If the token is invalidated or deleted, the user would be logged out.
+
+If 'Remember Me' is selected during sign in, the token will be saved to the browser's `localStorage`. Upon reloading the application, this token will be retrieved and verified for automatic sign in. If no valid token is present, the original sign in screen is rendered. `localStorage` is cleared when the user logs out.
 
 ### Arrange Playgroup Meetup
 
