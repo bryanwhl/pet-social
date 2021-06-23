@@ -1,10 +1,8 @@
 # Developer Guide
 
-## Introduction
+![Pet Social](uml/BannerRounded.png)
 
-```
-Pet Social
-```
+## Introduction
 
 Pet Social is a web app that will serve as a social media for pet owners, as well as a platform for services like booking Vet appointments and Shopping for pet accessories.
 
@@ -37,6 +35,7 @@ information.
   - [Database](#database)
   - [Hosting](#hosting)
 - [Implementation](#implementation)
+  - [Sign Up and Password Encryption](#sign-up-and-password-encryption)
   - [Sign In and Token Authentication](#sign-in-and-token-authentication)
   - [Arrange Playgroup Meetup](#arrange-playgroup-meetup)
 - [Product scope](#product-scope)
@@ -56,9 +55,11 @@ but feel free to use your preferred IDE.
 1. Ensure you have React and NodeJS installed on your computer.
 1. Fork the Pet Social repository from [here](https://github.com/bryanwhl/pet-social).
 1. Clone your fork to your local machine, using the Git software you prefer.
-1. Open Visual Studio Code; you may download it from [here](https://code.visualstudio.com/) first.
+1. Open Visual Studio Code; you may download it from [here](https://code.visualstudio.com/). (Or your preferred IDE)
 1. On the terminal, run `npm install` for missing node modules.
-1. In the root directory, run `npm run dev` to start the local development server. In the `/client` directory, run `npm start` to start the web app.
+1. On the terminal, in the root directory, run `npm run dev` to start the local development server. In the `/client` directory, run `npm start` to start the web app.
+
+Note that API and encryption keys are not hosted on GitHub, hence you will require your own keys in a `.env` file.
 
 For readers who are not familiar with the commands of Pet Social, they can access the User Guide (Coming Soon).
 
@@ -116,6 +117,8 @@ You may use _GraphQL Playground_ to make queries to the server by adding `/graph
 
 ### Database
 
+All data except for media (pictures and videos) are stored on a MongoDB Atlas cloud database. The `mongoose` node package is used to model the application data and simplifies interactions with the database. The data model follows the data schema used by the server.
+
 This diagram shows our data schema with connections shown explicitly.
 
 ![Data Schema Explicit](uml/DataSchemaExplicitConnections.png)
@@ -132,11 +135,21 @@ Pet Social is being hosted on Amazon Web Services. It is hosted on an EC2 instan
 
 This subsection provides sequence and activity diagrams detailing the workflows for more complicated processes in Pet Social.
 
+### Sign Up and Password Encryption
+
+When the user signs up for a new account, a validity check is done to ensure a unique email and username are used.
+
+Subsequently, the password is encrypted using the password-hashing function `bcrypt`. It is hashed through a predetermined number of "salt rounds" or cost factors. A higher cost factor uses more time to calculate a single `bcrypt` hash but makes the encrypted password more difficult to brute-force. 10 salt rounds were chosen to balance speed and security.
+
+This encrypted password is sent and stored on the database.
+
 ### Sign In and Token Authentication
+
+This sequence diagrams shows the execution flow of the program when a user signs in to the app.
 
 ![Token Authentication](uml/TokenAuthentication.png)
 
-This sequence diagrams shows the execution flow of the program when a user signs in to the app.
+Every time a user logs in, a token will be generated and saved into the browser's `sessionStorage`. Each query for `currentUserQuery` will verify the validity of this token. If the token is invalidated or deleted, the user would be logged out.
 
 ### Arrange Playgroup Meetup
 
