@@ -4,11 +4,18 @@ skinparam classAttributeIconSize 0
 
 class App 
 class ProfilePage
+class ProfileTabs
+class FriendList
+class Pet
+class AddPet
 class SettingsPage
 class PostsContainer
 class Playgroups
+class PlaygroupForm
+class PlaygroupInfo
 class Shop
 class Post
+class SubmitComment
 class SubmitPost
 class AccountSettings
 class NotificationsSettings
@@ -31,11 +38,19 @@ App -->"1" ProfilePage
 App -->"1" SettingsPage
 App -->"1" Playgroups
 App -->"1" Shop
+ProfilePage --> "1" ProfileTabs
+ProfilePage --> "1" FriendList
+ProfilePage --> "1" Pet
+ProfilePage --> "1" AddPet
+ProfileTabs --> "1" Post
+Playgroups --> "1" PlaygroupForm
+Playgroups --> "1" PlaygroupInfo
 SettingsPage --> "1" AccountSettings
 SettingsPage --> "1" NotificationsSettings
 SettingsPage --> "1" PrivacySettings
 PostsContainer --> "1" SubmitPost
 PostsContainer --> "0...*" Post
+PostsContainer --> "0...*" SubmitComment
 TopBar --> "1" SideBar
 TopBar --> "1" RightNotificationBar
 TopBar --> "1" RightChatBar
