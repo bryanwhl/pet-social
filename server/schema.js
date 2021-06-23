@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server-express')
 const express = require('express')
+// const cors = require('cors')
 
 const {
     GraphQLSchema,
@@ -41,7 +42,7 @@ let users = [
       accountType: "Personal",
       givenName: "Ad",
       familyName: "Min",
-      avatarPath: 'http://localhost:4000/images/nerddog.jpg',
+      avatarPath: 'http://54.179.234.160/images/nerddog.jpg',
       profilePicturePath: "",
       posts: ["1"],
       savedPosts: [],
@@ -64,7 +65,7 @@ let users = [
       accountType: "Business",
       givenName: "Pet",
       familyName: "Social",
-      avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+      avatarPath: 'http://54.179.234.160/images/cute-dog.jpg',
       familyNameFirst: false,
       defaultPrivacy: true
     },
@@ -75,7 +76,7 @@ let users = [
       accountType: "Personal",
       givenName: "Bryan",
       familyName: "Wong",
-      avatarPath: 'http://localhost:4000/images/jaryl.jpg',
+      avatarPath: 'http://54.179.234.160/images/jaryl.jpg',
       familyNameFirst: false,
       defaultPrivacy: true
     },
@@ -86,7 +87,7 @@ let users = [
         accountType: "Personal",
         givenName: "Matthew",
         familyName: "Tan",
-        avatarPath: 'http://localhost:4000/images/coco.png',
+        avatarPath: 'http://54.179.234.160/images/coco.png',
         familyNameFirst: false,
         defaultPrivacy: true
     },
@@ -101,13 +102,13 @@ let posts = [
             accountType: "Personal",
             givenName: "Matthew",
             familyName: "Tan",
-            avatarPath: 'http://localhost:4000/images/coco.png',
+            avatarPath: 'http://54.179.234.160/images/coco.png',
             familyNameFirst: false,
         },
         date: dateScalar.parseValue("22 May 2021"),
         postType: "Image",
         privacy: "Public",
-        imageFilePath: "http://localhost:4000/images/coco2.jpg",
+        imageFilePath: "http://54.179.234.160/images/coco2.jpg",
         videoFilePath: "",
         location: "",
         text: "Here's coco sunbathing at the balcony. Good way to spend her time during the lockdown!",
@@ -117,7 +118,7 @@ let posts = [
                 givenName: "Ethan",
                 familyName: "Lee",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/husky.jpg",
+                avatarPath: "http://54.179.234.160/images/husky.jpg",
             },
             text: "SO CUTEEEE",
             isEdited: false,
@@ -132,13 +133,13 @@ let posts = [
             accountType: "Personal",
             givenName: "Bryan",
             familyName: "Wong",
-            avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+            avatarPath: 'http://54.179.234.160/images/cute-dog.jpg',
             familyNameFirst: false,
         },
         date: dateScalar.parseValue("21 May 2021"),
         postType: "Image",
         privacy: "Public",
-        imageFilePath: "http://localhost:4000/images/jaryl.jpg",
+        imageFilePath: "http://54.179.234.160/images/jaryl.jpg",
         videoFilePath: "",
         location: "",
         text: "Botanic Gardens: Best place to bring Jaryl to for a day of entertainment",
@@ -148,7 +149,7 @@ let posts = [
                 givenName: "Anderson",
                 familyName: "Tang",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/dogprofilepic.jpg",
+                avatarPath: "http://54.179.234.160/images/dogprofilepic.jpg",
             },
             text: "Let's go together some day with my Corgi!",
             isEdited: false,
@@ -163,13 +164,13 @@ let posts = [
             accountType: "Personal",
             givenName: "Bryan",
             familyName: "Wong",
-            avatarPath: 'http://localhost:4000/images/cute-dog.jpg',
+            avatarPath: 'http://54.179.234.160/images/cute-dog.jpg',
             familyNameFirst: false,
         },
         date: dateScalar.parseValue("21 May 2021"),
         postType: "Image",
         privacy: "Public",
-        imageFilePath: "http://localhost:4000/images/eastcoast.jpg",
+        imageFilePath: "http://54.179.234.160/images/eastcoast.jpg",
         videoFilePath: "",
         location: "",
         text: "Took my dogs out to East Coast Park for a walk today. They seem to enjoy the sea breeze a lot!",
@@ -179,7 +180,7 @@ let posts = [
                 givenName: "Gregg",
                 familyName: "Tang",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/bulldog.jpg",
+                avatarPath: "http://54.179.234.160/images/bulldog.jpg",
             },
             text: "Yooo I was there about an hour ago with my Bulldog! Didn't know you frequent there with your dogs too. We should form a playgroup there soon.",
             isEdited: false
@@ -189,7 +190,7 @@ let posts = [
                 givenName: "Patrick",
                 familyName: "Wong",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/cutie.jpg",
+                avatarPath: "http://54.179.234.160/images/cutie.jpg",
             },
             text: "Your dogs seem to enjoy the sea breeze hahaha",
             isEdited: false
@@ -199,7 +200,7 @@ let posts = [
                 givenName: "Brendan",
                 familyName: "Lim",
                 familyNameFirst: false,
-                avatarPath: "http://localhost:4000/images/pug.jpg",
+                avatarPath: "http://54.179.234.160/images/pug.jpg",
             },
             text: "Awww did you really get a stroller for them too?",
             isEdited: false
@@ -464,10 +465,13 @@ const server = new ApolloServer({
 
 server.applyMiddleware({app})
 
-app.use(express.static('server/public'))
+// app.use(cors())
 
+app.use(express.static(__dirname + '/public'))
+console.log(__dirname + '/public');
+console.log(process.env.NODE_ENV);
 app.listen({port: 4000}, () => {
-    console.log(`Server ready at http://localhost:4000`)
+    console.log(`Server ready at http://54.179.234.160`)
 })
 
 // app.listen().then(({ url, subscriptionsUrl }) => {

@@ -18,7 +18,7 @@ import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js'
 
 // image file path for Pet Social logo
-const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
+const LOGO_PATH = "http://54.179.234.160/images/pet-social-logo.jpg"
 
 // for root AppBar component use
 const useStyles = makeStyles((theme) => ({
