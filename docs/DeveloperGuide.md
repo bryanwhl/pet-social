@@ -38,6 +38,7 @@ information.
   - [Sign Up and Password Encryption](#sign-up-and-password-encryption)
   - [Sign In and Token Authentication](#sign-in-and-token-authentication)
   - [Arrange Playgroup Meetup](#arrange-playgroup-meetup)
+- [Testing](#testing)
 - [Product scope](#product-scope)
   - [Target user profile](#target-user-profile)
   - [Value proposition](#value-proposition)
@@ -158,6 +159,16 @@ If 'Remember Me' is selected during sign in, the token will be saved to the brow
 ![Playgroup Meetup](uml/PlaygroupMeetupActivity.png)
 
 Playgroup Meetups can be suggested on the Playgroup. Upon agreement among the members, the meetup date is set. Else, new dates are suggested.
+
+## Testing
+
+Our application follows the Model-View-Controller(MVC) model. The model being the MongoDB Database, the view being the User Interface, and the controller being the frontend logic with React states and backend logic with Apollo Client and mongoose.
+
+We divided our testing into two: Model and Controller Testing, as well as View testing.
+
+Model/Controller Testing is done with mock data and unit tests on our database to test application logic and flow.
+
+View testing is done with user interaction, gathering feedback on UI usability and functionality.
 
 ## Product scope
 
