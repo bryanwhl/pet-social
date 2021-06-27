@@ -942,3 +942,4 @@ app.listen({port: 4000}, () => {
 // app.listen().then(({ url, subscriptionsUrl }) => {
 //     console.log(`Server ready at ${subscriptionsUrl}`)
 // })
+module.exports = app
