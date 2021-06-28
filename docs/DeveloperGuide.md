@@ -30,7 +30,7 @@ information.
 - [Setting Up](#setting-up)
 - [CI/CD Workflow](#cicd-workflow)
   - [Github Workflow](#github-workflow)
-  - [Automated Checks and Testing](#automated-checks-and-testing)
+  - [Automated Checks](#automated-checks)
 - [Design](#design)
   - [Tech Stack](#tech-stack)
   - [Frontend and User Interface](#frontend-and-user-interface)
