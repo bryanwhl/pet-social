@@ -39,6 +39,8 @@ information.
   - [Sign In and Token Authentication](#sign-in-and-token-authentication)
   - [Arrange Playgroup Meetup](#arrange-playgroup-meetup)
 - [Testing](#testing)
+  - [Model/Controller Testing](#modelcontroller-testing)
+  - [View Testing](#view-testing)
 - [Product scope](#product-scope)
   - [Target user profile](#target-user-profile)
   - [Value proposition](#value-proposition)
@@ -57,19 +59,20 @@ but feel free to use your preferred IDE.
 1. Fork the Pet Social repository from [here](https://github.com/bryanwhl/pet-social).
 1. Clone your fork to your local machine, using the Git software you prefer.
 1. Open Visual Studio Code; you may download it from [here](https://code.visualstudio.com/). (Or your preferred IDE)
-1. On the terminal, run `npm install` for missing node modules.
+1. On the terminal, run `npm install` in both the root and `/client` directories for missing node modules.
 1. On the terminal, in the root directory, run `npm run dev` to start the local development server. In the `/client` directory, run `npm start` to start the web app.
+1. A server and development build of the app will run on `localhost:4000` server in your default browser.
 
-Note that API and encryption keys are not hosted on GitHub, hence you will require your own keys in a `.env` file.
+Note that API and encryption keys are not hosted on GitHub, hence you will require your own keys in a `.env` file (Which means you cannot interface directly with the Google Maps and password encryption).
 
-For readers who are not familiar with the commands of Pet Social, they can access the User Guide (Coming Soon).
+This developer guide does not provide detailed instructions on how to use Pet Social. For readers who wish to familiarise themselves with the commands of Pet Social, they can access the [User Guide](https://github.com/bryanwhl/pet-social/blob/main/docs/UserGuide.md).
 
 <div style="page-break-after: always;"></div>
 
 ## Design
 
-This section describes the architectural design of Pet Social, as well as the connections between them.
-The overall tech stack of Pet Social is explained first, before diving into each of the architecture components.
+This section describes the architectural and technical design of Pet Social, as well as the connections between them.
+The whole tech stack of Pet Social is explained first, before diving into each component.
 
 ### Tech Stack
 
@@ -106,7 +109,7 @@ Many of the components are made from sub-components taken from the Material-UI l
 
 ### Server
 
-We implemented our server using Express.js as a router and GraphQL with Apollo client as the query language to handle queries between the front and back end.
+The server for Pet Social is implemented using Express.js as a router and GraphQL with Apollo client as the query language to handle queries between the front and back end.
 
 Express is used as a router as middleware that defines the application's endpoints and corresponds to HTTP methods.
 
@@ -118,7 +121,7 @@ You may use _GraphQL Playground_ to make queries to the server by adding `/graph
 
 ### Database
 
-All data except for media (pictures and videos) are stored on a MongoDB Atlas cloud database. The `mongoose` node package is used to model the application data and simplifies interactions with the database. The data model follows the data schema used by the server.
+All data except for media (picture and video files are stored on the AWS server) are stored on a MongoDB Atlas cloud database. The `mongoose` node package is used to model the application data and simplifies interactions with the database. The data model follows the data schema used by the server.
 
 This diagram shows our data schema with connections shown explicitly.
 
@@ -164,11 +167,31 @@ Playgroup Meetups can be suggested on the Playgroup. Upon agreement among the me
 
 Our application follows the Model-View-Controller(MVC) model. The model being the MongoDB Database, the view being the User Interface, and the controller being the frontend logic with React states and backend logic with Apollo Client and mongoose.
 
-We divided our testing into two: Model and Controller Testing, as well as View testing.
+We divided our testing into two sections: Model and Controller Testing, as well as View testing.
 
-Model/Controller Testing is done with mock data and unit tests on our database to test application logic and flow.
+Model/Controller Testing is conducted with mock data and unit tests on our database and server to test application logic and flow. It is a form of integration testing between the server and database.
 
-View testing is done with user interaction, gathering feedback on UI usability and functionality.
+View testing is done with hands on user interaction, gathering feedback on UI usability and functionality. It is a form of unit testing of the frontend as well as acceptance testing of the features.
+
+### Model/Controller Testing
+
+The backend model/controller testing is done with Jest - a JavaScript Testing Framework that provides simple and detailed testing functionality and exception handling.
+
+The `supertest` npm package is used along with Jest to help us write tests for testing GraphQL requests.
+
+Tests are run with the `npm run test` script in the root directory. The tests verify the expected response codes and data (successful request) or error messages (unsuccessful request) are actually returned from the database and server. When it does not, Jest provides detailed and contextual error messages to pinpoint the nature of the error easily.
+
+The tests are found in the `_tests_` folder in `graphqlTest.js`.
+
+This form of integration testing ensures the interactions and functions between the server and database run as intended. These tests are run before each pull request to minimise code regression. Any changes that affect the interactions between the server and database can be quickly identified and fixed.
+
+### View Testing
+
+The frontend view testing is done with hands on user testing on a high-fidelity artifact - a working prototype of the application.
+
+For milestone 2, the link to the live deployment of the application is sent with a user feedback form to a large pool of users. This large-scale testing includes both pet owners and non-pet owners with a focus on usability and user experience. The feedback is collected on a [Google Form](https://forms.gle/KHhQLmau7aoJbxTH8), with two parts to the form: a semi-guided section which asks the tester to perform an action without explicit instructions on how to perform it, followed by independent testing where the user can refer to the comprehensive [User Guide](https://github.com/bryanwhl/pet-social/blob/main/docs/UserGuide.md) and spend time to evaluate the overall function and intuitivity of the application. The testers are asked to rate ease of use as well as report any bugs.
+
+For milestone 3, the live deployment will be sent with another feedback form. However, this round of user feedback would be more targeted - focusing on actual pet owners for acceptance testing, evaluating if the application and its features meet the needs and requirements of the end users.
 
 ## Product scope
 
@@ -188,9 +211,9 @@ Product scope provides you an insight into the value of Pet Social, and its bene
 
 ### Value proposition
 
-There is currently no easy way to do this besides meeting other pet owners from our own social circle. Apart from Facebook groups, there are no centralised digital platforms for pet owners to interact, socialise or advise each other on pet ownership.
+There is currently no easy way to do these besides meeting other pet owners from our own social circle. Apart from Facebook groups, there are no centralised digital platforms for pet owners to interact, socialise or advise each other on pet ownership.
 
-Pet Social will be the first to implement such an application; one that connects pet owners and that enhances their experience as pet owners.
+Pet Social will be the first to implement such features in an integrated application; one that connects pet owners and that enhances their experience as pet owners.
 
 ### User Stories
 
@@ -212,7 +235,7 @@ Pet Social will be the first to implement such an application; one that connects
 ### Non-Functional Requirements
 
 1. The application should work on any _mainstream_ browser (e.g. Chrome, Firefox, Edge)
-1. The application should be responsive - users should be able to use the app with different devices and browser configurations.
+1. The application should be responsive - users should be able to use the app and interact intuitively with the UI with different devices and browser configurations.
 
 <div style="page-break-after: always;"></div>
 
