@@ -181,7 +181,11 @@ The `supertest` npm package is used along with Jest to help us write tests for t
 
 Tests are run with the `npm run test` script in the root directory. The tests verify the expected response codes and data (successful request) or error messages (unsuccessful request) are actually returned from the database and server. When it does not, Jest provides detailed and contextual error messages to pinpoint the nature of the error easily.
 
-The tests are found in the `_tests_` folder in `graphqlTest.js`.
+![Example test run](uml/test-result.png)
+
+The picture above shows a screenshot of the latest test run using the `npm run test` command.
+
+The test scripts are found in the `_tests_` folder in `graphqlTest.js`.
 
 This form of integration testing ensures the interactions and functions between the server and database run as intended. These tests are run before each pull request to minimise code regression. Any changes that affect the interactions between the server and database can be quickly identified and fixed.
 
