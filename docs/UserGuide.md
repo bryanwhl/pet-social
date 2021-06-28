@@ -23,7 +23,7 @@ This user guide helps you to get started with Pet Social by providing you with e
 Here are four main features of the User Guide:
 
 - You may navigate to any subsection from the [Table of Contents](#table-of-contents).
-- Scroll down or click [here](#quick-start) for the Quick Start guide to get started with Pet Social.
+- Scroll down or click [here](#1-quick-start) for the Quick Start guide to get started with Pet Social.
 - The [Features](#2-features) section will run you through all the commands that are available in Pet Social.
 - [FAQ](#3-faq) and [Feature Summary](#4-feature-summary) are available for quick queries or reference.
 
