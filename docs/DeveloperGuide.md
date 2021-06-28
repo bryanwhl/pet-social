@@ -28,6 +28,9 @@ information.
 ## Table of contents
 
 - [Setting Up](#setting-up)
+- [CI/CD Workflow](#cicd-workflow)
+  - [Github Workflow](#github-workflow)
+  - [Automated Checks and Testing](#automated-checks-and-testing)
 - [Design](#design)
   - [Tech Stack](#tech-stack)
   - [Frontend and User Interface](#frontend-and-user-interface)
@@ -68,6 +71,35 @@ Note that API and encryption keys are not hosted on GitHub, hence you will requi
 This developer guide does not provide detailed instructions on how to use Pet Social. For readers who wish to familiarise themselves with the commands of Pet Social, they can access the [User Guide](https://github.com/bryanwhl/pet-social/blob/main/docs/UserGuide.md).
 
 <div style="page-break-after: always;"></div>
+
+## CI/CD Workflow
+
+This section details the workflow that we have adopted for the continuous integration and deployment of our application.
+
+### Github Workflow
+
+The central repository that we perform continuous integration on is at the following [github repository](https://github.com/bryanwhl/pet-social). Our Github workflow is as follows:
+
+1. `git pull` the latest changes from the `main` branch of the repository to your local repository
+1. Run `npm install` in both the root folder and the client folder of your local repository
+1. Create a new branch locally to implement new features or make changes to the codebase
+1. Work on the changes, committing your code locally everytime a new feature or change has been implemented using `git add .` and `git commit -m "{commit message}"`
+1. After all changes are made, `cd` into the local root folder of the repository and run `npm run test`. Ensure that the test passes before proceeding to step 6
+1. Once the test passes, push the code from your local repository to the remote repository using `git push origin {branch name}`
+1. Create a Pull request on Github, stating the list of changes that you have made in the Pull request itself
+1. Another developer from the team will review your code, providing feedback if necessary
+1. If no further updates are required for the pull request, that developer will merge the pull request into the `main` branch
+1. Before starting on your next feature, run `git checkout main` to switch to the main branch locally. Run `git pull` to obtain the latest codebase. Repeat step 1
+
+### Automated Checks
+
+Currently, upon every Pull request, two checks will be done automatically on Github:
+1. GitGuardian Security check
+1. Github Pages check
+
+The GitGuardian Security check will ensure that we have not posted any of our secret API or encryption keys onto GitHub. The GitHub Pages check will ensure that our [GitHub Pages](https://bryanwhl.github.io/pet-social/) continues to work fine upon the Pull request.
+
+
 
 ## Design
 
