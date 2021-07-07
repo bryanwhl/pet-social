@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
@@ -132,12 +133,14 @@ const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrent
                 autoComplete="current-password"
                 onChange={handleChange('password')}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" name="remember" color="primary" />}
-                label="Remember me" 
-                defaultValue={false}
-                onClick={handleChange('remember')}
-              />
+              <Tooltip title="Auto Sign In on Page Refresh" placement= "right">
+                <FormControlLabel
+                  control={<Checkbox value="remember" name="remember" color="primary" />}
+                  label="Remember me" 
+                  defaultValue={false}
+                  onClick={handleChange('remember')}
+                />
+              </Tooltip>
               <Button
                 type="submit"
                 fullWidth

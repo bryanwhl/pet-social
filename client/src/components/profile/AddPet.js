@@ -55,7 +55,7 @@ const AddPet = ({ user, setPet, setPetMode, getCurrentUser }) => {
     const [profileBadge, setProfileBadge] = useState(true);
     const [details, setDetails] = useState({name:"", gender:"", breed:"", dateOfBirth:null});
 
-    const genders = ["Male", "Female"]
+    const genders = ["Male", "Female", "Other"]
 
     const [ addPet, addPetResponse ] = useMutation(addPetQuery, {
       onError: (error) => {
@@ -177,6 +177,7 @@ const AddPet = ({ user, setPet, setPetMode, getCurrentUser }) => {
                           id="date-picker-inline"
                           label="Date of Birth"
                           value={details.dateOfBirth}
+                          disableFuture
                           onChange={handleDateChange}
                           KeyboardButtonProps={{
                               'aria-label': 'change date',

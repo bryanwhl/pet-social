@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     dialog: {
       width: "75vmin"
     },
+    emptyBio: {
+      ...theme.typography.button,
+      padding: theme.spacing(1),
+    },
   }));
 
 const ProfilePage = ({ user, getCurrentUser }) => {
@@ -176,7 +180,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
               <Divider/>
               <Tooltip title="Edit Bio">
                 <Grid style={{cursor: "pointer"}} onClick={handleOpenBio}>
-                  <Typography align="center" variant="body1">
+                  <Typography align="center" className={profileBio ? null : classes.emptyBio}>
                     {profileBio ? profileBio : "+ Add Profile Bio"}
                   </Typography>
                 </Grid>
@@ -205,13 +209,13 @@ const ProfilePage = ({ user, getCurrentUser }) => {
                   </Typography>
                 </Box>
               </Box>
-              <List>
-                <ListItem button onClick={handlePetClick}>
-                    <ListItemIcon>{petOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}</ListItemIcon>
-                    <ListItemText primary="Your Pets"/>
+              <List >
+                <ListItem button onClick={user.pets.length===0 ? handleAddPet : handlePetClick}>
+                    <ListItemIcon>{user.pets.length===0 ? <AddIcon/> : petOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}</ListItemIcon>
+                    <ListItemText primary={user.pets.length===0 ? "Add Pet" : "Your Pets"}/>
                 </ListItem>
               </List>
-              <Collapse in={petOpen} timeout="auto" unmountOnExit>
+              <Collapse in={user.pets.length!==0 && petOpen} timeout="auto" unmountOnExit>
                 <List>
                     {user.pets.map(item => (
                         <ListItem
@@ -239,7 +243,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
             {(petMode===true) && <AddPet user={user} setPet={setPet} setPetMode={setPetMode} getCurrentUser={getCurrentUser} />}
           </Box>
           <Dialog onClose={handleCloseBio} open={bioOpen} fullWidth>
-            <DialogTitle>Edit your profile bio</DialogTitle>
+            <DialogTitle>Your profile bio</DialogTitle>
             <DialogContent>
               <TextField
                 label="Profile Bio"
@@ -251,10 +255,10 @@ const ProfilePage = ({ user, getCurrentUser }) => {
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleSubmitBio} color="primary" disabled={profileBio===edittedBio}>
-                Edit
+              <Button onClick={handleSubmitBio} variant="contained" color="primary" disabled={profileBio===edittedBio}>
+                Change
               </Button>
-              <Button onClick={handleCloseBio} color="primary">
+              <Button onClick={handleCloseBio} variant="contained" color="primary">
                 Cancel
               </Button>
             </DialogActions>

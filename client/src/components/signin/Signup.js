@@ -209,6 +209,9 @@ const Signup = ({ switchToSignin }) => {
                   </MenuItem>
                 ))}
               </TextField>
+              <Typography variant="body2">
+                * Required Field
+              </Typography>
               <Button
                 type="submit"
                 fullWidth

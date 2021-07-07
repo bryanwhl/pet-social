@@ -181,6 +181,9 @@ export const getPostByIdQuery=gql`
           familyNameFirst
         }
       }
+      likedBy {
+        id
+      }
       date
       postType
       privacy
@@ -256,6 +259,11 @@ export const addPetQuery=gql`
       picturePath: $picturePath,
     ) {
       id
+      pets {
+        id
+        name
+        picturePath
+      }
     }
   }
 `
@@ -343,11 +351,17 @@ export const deleteOwnerQuery=gql`
 `
 
 export const deletePetQuery=gql`
-  mutation ($id: ID!) {
+  mutation ($id: ID!, $user: ID!) {
     deletePet(
-      id: $id
+      id: $id,
+      user: $user
     ) {
       id
+      pets {
+        id
+        name
+        picturePath
+      }
     }
   }
 `

@@ -6,6 +6,7 @@ import {Grid, Container, Card, IconButton,
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
     Divider, List, ListItemSecondaryAction} from '@material-ui/core';
+import Badge from '@material-ui/core/Badge';
 import MuiAlert from '@material-ui/lab/Alert';
 import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -354,10 +355,14 @@ const Post = ({user, post}) => {
                             </CardContent>
                             <CardActions disableSpacing>
                                 <IconButton aria-label="like" onClick={handleLikedToggle}>
-                                    {liked === true ? <ThumbUpAltIcon color="secondary"/> : <ThumbUpAltIcon />} 
+                                    <Badge color="secondary" badgeContent={post.likedBy.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
+                                            {liked === true ? <ThumbUpAltIcon color="secondary"/> : <ThumbUpAltIcon />} 
+                                    </Badge>
                                 </IconButton>
                                 <IconButton aria-label="comment" onClick={handleExpandClick}>
-                                    <CommentIcon />
+                                    <Badge color="secondary" badgeContent={post.comments.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
+                                        <CommentIcon />
+                                    </Badge>
                                 </IconButton>
                                 <Tooltip title="Coming Soon">
                                     <IconButton aria-label="share">

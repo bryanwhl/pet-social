@@ -228,7 +228,7 @@ const typeDefs = gql`
             gender: String!
             breed: String!
             picturePath: String
-        ): Pet
+        ): User
         addPetOwner(
             id: ID!
             username: String!
@@ -247,7 +247,8 @@ const typeDefs = gql`
         ): User
         deletePet(
             id: ID!
-        ): Pet
+            user: ID!
+        ): User
         login(
             username: String!
             password: String!
@@ -476,7 +477,7 @@ const resolvers = {
             return newUser.save()
         },
         addPet: async (root, args) => {
-            if (args.dateOfBirth > Date()) {
+            if (args.dateOfBirth.getTime() > new Date().getTime()) {
                 throw new UserInputError("Date of Birth cannot be after today")
             }
 
@@ -499,7 +500,7 @@ const resolvers = {
 
             await owner.save()
 
-            return addedPet
+            return owner
         },
         uploadFile: async (parent, {file}) => {
             console.log("reached");
@@ -720,6 +721,7 @@ const resolvers = {
             return owner
         },
         deletePet: async (root, args) => {
+            const user = await User.findById( args.user).exec();
             const pet = await Pet.findById( args.id ).exec();
             if (!pet) {
                 return null
@@ -737,7 +739,7 @@ const resolvers = {
                 }
             })
 
-            return pet
+            return user
         },
         login: async (root, args) => {
             if ( args.username === "" ) {
@@ -886,9 +888,7 @@ const resolvers = {
                 return null;
             }
             if (postToUpdate.likedBy.includes(args.userID)) {
-                postToUpdate.likedBy = postToUpdate.likedBy.filter((item) => {
-                    item !== args.userID;
-                });
+                Post.updateOne({_id: args.id}, {$pull: {likedBy: args.userID}}).exec()
             } else {
                 postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
             }
@@ -900,9 +900,7 @@ const resolvers = {
                 return null;
             }
             if (userToUpdate.savedPosts.includes(args.postID)) {
-                userToUpdate.savedPosts = userToUpdate.savedPosts.filter((item) => {
-                    item !== args.postID;
-                });
+                User.updateOne({_id: args.id}, {$pull: {savedPosts: args.postID}}).exec()
             } else {
                 userToUpdate.savedPosts = userToUpdate.savedPosts.concat(args.postID);
             }
