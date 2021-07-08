@@ -192,6 +192,7 @@ export const getPostByIdQuery=gql`
       location
       text
       comments {
+        id
         user {
           name {
             givenName
@@ -201,6 +202,9 @@ export const getPostByIdQuery=gql`
             familyNameFirst
           }
           avatarPath
+        }
+        likedBy {
+          id
         }
         text
       }
@@ -362,6 +366,82 @@ export const deletePetQuery=gql`
         name
         picturePath
       }
+    }
+  }
+`
+
+export const deleteCommentQuery=gql`
+  mutation ($id: ID!, $post: ID!) {
+    deleteComment(
+      id: $id,
+      post: $post
+    ) {
+      user {
+        id
+        username
+        accountType
+        name {
+          givenName
+          familyName
+        }
+        avatarPath
+        settings {
+          familyNameFirst
+        }
+      }
+      likedBy {
+        id
+      }
+      date
+      postType
+      privacy
+      imageFilePath
+      videoFilePath
+      location
+      text
+      comments {
+        id
+        user {
+          name {
+            givenName
+            familyName
+          }
+          settings {
+            familyNameFirst
+          }
+          avatarPath
+        }
+        likedBy {
+          id
+        }
+        text
+      }
+      isEdited
+    }
+  }
+`
+
+export const likeCommentQuery=gql`
+  mutation ($id: ID!, $user: ID!) {
+    editCommentLike(
+      id: $id,
+      user: $user
+    ) {
+      id
+      user {
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      likedBy {
+        id
+      }
+      text
     }
   }
 `
@@ -597,6 +677,7 @@ export const getPostsQuery=gql`
         id
       }
       comments {
+        id
         user {
           id
           name {
@@ -607,6 +688,9 @@ export const getPostsQuery=gql`
             familyNameFirst
           }
           avatarPath
+        }
+        likedBy {
+          id
         }
         text
       }

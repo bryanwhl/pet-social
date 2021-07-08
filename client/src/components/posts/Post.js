@@ -20,9 +20,11 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import PersonIcon from '@material-ui/icons/Person';
-import AddCommentIcon from '@material-ui/icons/AddComment';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Snackbar from '@material-ui/core/Snackbar';
 import SubmitComment from './SubmitComment.js'
+import Comment from './Comment.js'
 import Tooltip from '@material-ui/core/Tooltip';
 import { displayName, convertDate } from '../../utility.js';
 import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
@@ -73,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Post = ({user, post}) => {
+const Post = ({user, post, closePost}) => {
     const classes = useStyles();
 
     const [openSnackbar, setOpenSnackbar] = useState(null)
@@ -135,7 +137,7 @@ const Post = ({user, post}) => {
          }, refetchQueries: [{query: currentUserQuery}]
     })
 
-    const menuItems = [
+    const otherUserMenuItems = [
         {
             text: "Receive notifications from this post (Coming Soon)",
             icon: <NotificationsActiveIcon />,
@@ -149,6 +151,24 @@ const Post = ({user, post}) => {
         {
             text: "Report Post (Coming Soon)",
             icon: <ReportIcon />,
+            path: "/"
+        }
+    ]
+    
+    const userMenuItems = [
+        {
+            text: "Receive notifications from this post (Coming Soon)",
+            icon: <NotificationsActiveIcon />,
+            path: "/"
+        },
+        {
+            text: "Edit Post (Coming Soon)",
+            icon: <EditIcon />,
+            path: "/"
+        },
+        {
+            text: "Delete Post (Coming Soon)",
+            icon: <DeleteIcon />,
             path: "/"
         }
     ]
@@ -184,6 +204,12 @@ const Post = ({user, post}) => {
 
     const handleSavedToggle = () => {
       savePost({variables: {id: user.id, postID: post.id}});
+      if (closePost) {
+          closePost()
+      }
+      if (user !== undefined && !user.savedPosts.map(post => post.id).includes(post.id)) {
+        handleOpenSnackbar("Post saved. You may find it in Profile -> Saved", "success")
+      }
     };
   
     function handleListKeyDown(event) {
@@ -312,7 +338,19 @@ const Post = ({user, post}) => {
                                             <Paper>
                                                 <ClickAwayListener onClickAway={handleOptionsClose}>
                                                 <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                                    {menuItems.map(item => (
+                                                    {user.id===post.user.id && userMenuItems.map(item => (
+                                                        <ListItem
+                                                            button
+                                                            key={item.text}
+                                                            onClick={handleOptionsClose}
+                                                        >
+                                                            <ListItemIcon>
+                                                                {item.icon}
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={item.text}></ListItemText>
+                                                        </ListItem>
+                                                    ))}
+                                                    {user.id!==post.user.id && userMenuItems.map(item => (
                                                         <ListItem
                                                             button
                                                             key={item.text}
@@ -364,14 +402,16 @@ const Post = ({user, post}) => {
                                         <CommentIcon />
                                     </Badge>
                                 </IconButton>
-                                <Tooltip title="Coming Soon">
+                                <Tooltip title="Share this post (Coming Soon)">
                                     <IconButton aria-label="share">
                                         <ShareIcon />
                                     </IconButton>
                                 </Tooltip>
-                                <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
-                                    {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                                </IconButton>
+                                <Tooltip title="Save this post">
+                                    <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
+                                        {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                                    </IconButton>
+                                </Tooltip>
                             </CardActions>
                             <Collapse in={expanded} timeout="auto" unmountOnExit>
                                 <CardContent>
@@ -379,20 +419,7 @@ const Post = ({user, post}) => {
                                         <Divider />
                                         <List>
                                         {post.comments.map(item => (
-                                            <ListItem
-                                                button
-                                                divider="true"
-                                            >
-                                                <ListItemIcon onClick={handleUserClick(item.user.id)}>
-                                                    <Avatar src={item.user.avatarPath} />
-                                                </ListItemIcon>
-                                                <ListItemText primary={displayName(item.user)} secondary={item.text} onClick={handleUserClick}></ListItemText>
-                                                <ListItemSecondaryAction>
-                                                    <IconButton edge="end" aria-label="comments">
-                                                        <AddCommentIcon />
-                                                    </IconButton>
-                                                </ListItemSecondaryAction>
-                                            </ListItem>
+                                            <Comment user={user} post={post} comment={item} handleUserClick={handleUserClick}/>
                                         ))}
                                         <ListItem>
                                             <SubmitComment user={user} post={post}/>
@@ -404,35 +431,33 @@ const Post = ({user, post}) => {
                             </Collapse>
                         </Card>
                     </Grid>
-                    <Grid item>
-                        <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition>
-                            {({ TransitionProps }) => (
-                            <Grow {...TransitionProps}>
-                                <Paper>
-                                    <ClickAwayListener onClickAway={handleUserClose}>
-                                        <MenuList id="user-grow">
-                                            {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
-                                                <ListItemIcon>
-                                                    {<PersonAddIcon />}
-                                                </ListItemIcon>
-                                                <Typography>{friendRequestText}</Typography>
-                                            </ListItem>}
-                                            {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
-                                            <ListItem button>
-                                                <ListItemIcon>
-                                                    <PersonIcon/>
-                                                </ListItemIcon>
-                                                <Typography>View Profile (Coming soon)</Typography>
-                                            </ListItem>
-                                        </MenuList>
-                                        </ClickAwayListener>
-                                </Paper>
-                            </Grow>
-                            )}
-                        </Popper>
-                    </Grid>
                 </Grid>
             </Container>
+                    <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition disablePortal className={classes.popper}>
+                        {({ TransitionProps }) => (
+                        <Grow {...TransitionProps}>
+                            <Paper>
+                                <ClickAwayListener onClickAway={handleUserClose}>
+                                    <MenuList id="user-grow">
+                                        {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
+                                            <ListItemIcon>
+                                                {<PersonAddIcon />}
+                                            </ListItemIcon>
+                                            <Typography>{friendRequestText}</Typography>
+                                        </ListItem>}
+                                        {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
+                                        <ListItem button>
+                                            <ListItemIcon>
+                                                <PersonIcon/>
+                                            </ListItemIcon>
+                                            <Typography>View Profile (Coming soon)</Typography>
+                                        </ListItem>
+                                    </MenuList>
+                                    </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                        )}
+                    </Popper>
             <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
                     {openSnackbar}

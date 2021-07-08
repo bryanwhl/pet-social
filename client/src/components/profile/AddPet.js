@@ -179,6 +179,7 @@ const AddPet = ({ user, setPet, setPetMode, getCurrentUser }) => {
                           value={details.dateOfBirth}
                           disableFuture
                           onChange={handleDateChange}
+                          openTo="year"
                           KeyboardButtonProps={{
                               'aria-label': 'change date',
                           }}

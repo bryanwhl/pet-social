@@ -50,7 +50,8 @@ SettingsPage --> "1" NotificationsSettings
 SettingsPage --> "1" PrivacySettings
 PostsContainer --> "1" SubmitPost
 PostsContainer --> "0...*" Post
-PostsContainer --> "0...*" SubmitComment
+Post --> "0...*" Comment
+Post --> "0...1" SubmitComment
 TopBar --> "1" SideBar
 TopBar --> "1" RightNotificationBar
 TopBar --> "1" RightChatBar

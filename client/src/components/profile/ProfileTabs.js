@@ -126,7 +126,7 @@ const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {
                 maxWidth: "75vmin"
                 },
             }}>
-                {backdropPost && <Post user={user} post={backdropPost}/>}
+                {backdropPost && <Post user={user} post={backdropPost} closePost={handleClosePost}/>}
             </Dialog>
         </div>
     )

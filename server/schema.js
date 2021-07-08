@@ -217,7 +217,7 @@ const typeDefs = gql`
             user: ID!
             text: String!
             post: ID!
-        ): Comment
+        ): Post
         deletePlaygroup (
             id: ID!
         ): Playgroup
@@ -249,6 +249,10 @@ const typeDefs = gql`
             id: ID!
             user: ID!
         ): User
+        deleteComment(
+            id: ID!
+            post: ID!
+        ): Post
         login(
             username: String!
             password: String!
@@ -318,6 +322,10 @@ const typeDefs = gql`
             id: ID!,
             postID: ID!
         ): User
+        editCommentLike(
+            id: ID!,
+            user: ID!
+        ): Comment
     }
 
 `
@@ -576,7 +584,7 @@ const resolvers = {
             const saveComment = await newComment.save();
             post.comments = post.comments.concat(saveComment.id);
             post.save();
-            return saveComment;
+            return post;
         },
         deletePlaygroup: async (root, args) => {
             Playgroup.findByIdAndDelete(args.id, function (err, docs) {
@@ -587,6 +595,20 @@ const resolvers = {
                     console.log("Deleted : ", docs);
                 }
             })
+        },
+        deleteComment: async (root, args) => {
+            Comment.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+            Post.updateOne({_id: args.post}, {$pull: {comments: args.id}}).exec()
+            post = await Post.findById(args.post).exec()
+
+            return post
         },
         sendFriendRequest: async (root, args) => {
             const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
@@ -905,6 +927,19 @@ const resolvers = {
                 userToUpdate.savedPosts = userToUpdate.savedPosts.concat(args.postID);
             }
             await userToUpdate.save();
+        },
+        editCommentLike: async (root, args) => {
+            const commentToUpdate = await Comment.findById( args.id ).exec(); //must change to use context for authentication
+            if (!commentToUpdate) {
+                return null;
+            }
+            if (commentToUpdate.likedBy.includes(args.user)) {
+                Comment.updateOne({_id: args.id}, {$pull: {likedBy: args.user}}).exec()
+            } else {
+                commentToUpdate.likedBy = commentToUpdate.likedBy.concat(args.user);
+            }
+            await commentToUpdate.save();
+            return commentToUpdate
         },
     }
 }
