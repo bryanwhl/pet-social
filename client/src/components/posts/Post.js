@@ -350,7 +350,7 @@ const Post = ({user, post, closePost}) => {
                                                             <ListItemText primary={item.text}></ListItemText>
                                                         </ListItem>
                                                     ))}
-                                                    {user.id!==post.user.id && userMenuItems.map(item => (
+                                                    {user.id!==post.user.id && otherUserMenuItems.map(item => (
                                                         <ListItem
                                                             button
                                                             key={item.text}
@@ -407,7 +407,7 @@ const Post = ({user, post, closePost}) => {
                                         <ShareIcon />
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Save this post">
+                                <Tooltip title={user.savedPosts.map(post => post.id).includes(post.id) ? "Unsave this post" : "Save this post"}>
                                     <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
                                         {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                                     </IconButton>
