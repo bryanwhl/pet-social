@@ -145,6 +145,9 @@ const ResetPassword = ({ switchToSignin }) => {
                 onChange={handleChange('confirmPassword')}
                 disabled={success}
               />
+              <Typography variant="body2">
+                * Required
+              </Typography>
               <Button
                 type="submit"
                 fullWidth

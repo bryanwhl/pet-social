@@ -255,10 +255,10 @@ const AccountSettings = ({ user, logout }) => {
                 />
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleCloseDelete} color="primary">
+                <Button onClick={handleCloseDelete} variant="contained" color="primary">
                     No
                 </Button>
-                <Button onClick={handleConfirmDelete} color="primary" autoFocus disabled={confirmPassword===""}>
+                <Button onClick={handleConfirmDelete} variant="contained" color="primary" autoFocus disabled={confirmPassword===""}>
                     Yes
                 </Button>
                 </DialogActions>
@@ -285,10 +285,10 @@ const AccountSettings = ({ user, logout }) => {
                 />
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleConfirmEmail} color="primary" disabled={edittedEmail===email || edittedEmail===""}>
+                <Button onClick={handleConfirmEmail} variant="contained" color="primary" disabled={edittedEmail===email || edittedEmail===""}>
                     Change
                 </Button>
-                <Button onClick={handleCloseEmail} color="primary" autoFocus>
+                <Button onClick={handleCloseEmail} variant="contained" color="primary" autoFocus>
                     Cancel
                 </Button>
                 </DialogActions>
@@ -334,10 +334,10 @@ const AccountSettings = ({ user, logout }) => {
                 />
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleConfirmPassword} color="primary" disabled={passwordDetails.newPassword!==passwordDetails.confirmPassword || passwordDetails.oldPassword===passwordDetails.newPassword || passwordDetails.oldPassword==="" || passwordDetails.newPassword==="" || passwordDetails.confirmPassword===""}>
-                    Change
+                <Button onClick={handleConfirmPassword} variant="contained" color="primary" disabled={passwordDetails.newPassword!==passwordDetails.confirmPassword || passwordDetails.oldPassword===passwordDetails.newPassword || passwordDetails.oldPassword==="" || passwordDetails.newPassword==="" || passwordDetails.confirmPassword===""}>
+                    Save
                 </Button>
-                <Button onClick={handleClosePassword} color="primary" autoFocus>
+                <Button onClick={handleClosePassword} variant="contained" color="primary" autoFocus>
                     Cancel
                 </Button>
                 </DialogActions>

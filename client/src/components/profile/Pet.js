@@ -170,7 +170,7 @@ const handleCloseDeletePet = () => {
 }
 
 const handleConfirmDeletePet = () => {
-  deletePet({variables: {id: pet.id}})
+  deletePet({variables: {id: pet.id, user: user.id}})
   setPetId(null)
   setPetMode(null)
   handleCloseDeletePet()

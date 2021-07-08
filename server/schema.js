@@ -217,7 +217,7 @@ const typeDefs = gql`
             user: ID!
             text: String!
             post: ID!
-        ): Comment
+        ): Post
         deletePlaygroup (
             id: ID!
         ): Playgroup
@@ -228,7 +228,7 @@ const typeDefs = gql`
             gender: String!
             breed: String!
             picturePath: String
-        ): Pet
+        ): User
         addPetOwner(
             id: ID!
             username: String!
@@ -247,7 +247,12 @@ const typeDefs = gql`
         ): User
         deletePet(
             id: ID!
-        ): Pet
+            user: ID!
+        ): User
+        deleteComment(
+            id: ID!
+            post: ID!
+        ): Post
         login(
             username: String!
             password: String!
@@ -317,6 +322,10 @@ const typeDefs = gql`
             id: ID!,
             postID: ID!
         ): User
+        editCommentLike(
+            id: ID!,
+            user: ID!
+        ): Comment
     }
 
 `
@@ -476,7 +485,7 @@ const resolvers = {
             return newUser.save()
         },
         addPet: async (root, args) => {
-            if (args.dateOfBirth > Date()) {
+            if (args.dateOfBirth.getTime() > new Date().getTime()) {
                 throw new UserInputError("Date of Birth cannot be after today")
             }
 
@@ -499,7 +508,7 @@ const resolvers = {
 
             await owner.save()
 
-            return addedPet
+            return owner
         },
         uploadFile: async (parent, {file}) => {
             console.log("reached");
@@ -575,7 +584,7 @@ const resolvers = {
             const saveComment = await newComment.save();
             post.comments = post.comments.concat(saveComment.id);
             post.save();
-            return saveComment;
+            return post;
         },
         deletePlaygroup: async (root, args) => {
             Playgroup.findByIdAndDelete(args.id, function (err, docs) {
@@ -586,6 +595,20 @@ const resolvers = {
                     console.log("Deleted : ", docs);
                 }
             })
+        },
+        deleteComment: async (root, args) => {
+            Comment.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+            Post.updateOne({_id: args.post}, {$pull: {comments: args.id}}).exec()
+            post = await Post.findById(args.post).exec()
+
+            return post
         },
         sendFriendRequest: async (root, args) => {
             const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
@@ -720,6 +743,7 @@ const resolvers = {
             return owner
         },
         deletePet: async (root, args) => {
+            const user = await User.findById( args.user).exec();
             const pet = await Pet.findById( args.id ).exec();
             if (!pet) {
                 return null
@@ -737,7 +761,7 @@ const resolvers = {
                 }
             })
 
-            return pet
+            return user
         },
         login: async (root, args) => {
             if ( args.username === "" ) {
@@ -886,9 +910,7 @@ const resolvers = {
                 return null;
             }
             if (postToUpdate.likedBy.includes(args.userID)) {
-                postToUpdate.likedBy = postToUpdate.likedBy.filter((item) => {
-                    item !== args.userID;
-                });
+                Post.updateOne({_id: args.id}, {$pull: {likedBy: args.userID}}).exec()
             } else {
                 postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
             }
@@ -900,13 +922,24 @@ const resolvers = {
                 return null;
             }
             if (userToUpdate.savedPosts.includes(args.postID)) {
-                userToUpdate.savedPosts = userToUpdate.savedPosts.filter((item) => {
-                    item !== args.postID;
-                });
+                User.updateOne({_id: args.id}, {$pull: {savedPosts: args.postID}}).exec()
             } else {
                 userToUpdate.savedPosts = userToUpdate.savedPosts.concat(args.postID);
             }
             await userToUpdate.save();
+        },
+        editCommentLike: async (root, args) => {
+            const commentToUpdate = await Comment.findById( args.id ).exec(); //must change to use context for authentication
+            if (!commentToUpdate) {
+                return null;
+            }
+            if (commentToUpdate.likedBy.includes(args.user)) {
+                Comment.updateOne({_id: args.id}, {$pull: {likedBy: args.user}}).exec()
+            } else {
+                commentToUpdate.likedBy = commentToUpdate.likedBy.concat(args.user);
+            }
+            await commentToUpdate.save();
+            return commentToUpdate
         },
     }
 }
