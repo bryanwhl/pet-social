@@ -335,7 +335,7 @@ const AccountSettings = ({ user, logout }) => {
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleConfirmPassword} variant="contained" color="primary" disabled={passwordDetails.newPassword!==passwordDetails.confirmPassword || passwordDetails.oldPassword===passwordDetails.newPassword || passwordDetails.oldPassword==="" || passwordDetails.newPassword==="" || passwordDetails.confirmPassword===""}>
-                    Change
+                    Save
                 </Button>
                 <Button onClick={handleClosePassword} variant="contained" color="primary" autoFocus>
                     Cancel
