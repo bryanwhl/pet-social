@@ -95,8 +95,8 @@ const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrent
       console.log("Remember Me")
       sessionStorage.setItem('user-token', rememberMe)
       getCurrentUser()
-      switchToHome();
       setRememberMe(false)
+      // switchToHome();
     }
 
     return (
