@@ -68,6 +68,7 @@ class Comment {
 class Notification {
     id: ID!
     fromUser: User!
+    toUser: User!
     date: Date!
     notificationType: String!
     post: Post
