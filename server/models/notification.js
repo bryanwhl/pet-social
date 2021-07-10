@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema({
     fromUser: {type: Schema.Types.ObjectId, ref: 'User'},
+    toUser: {type: Schema.Types.ObjectId, ref: 'User'},
     date: Date,
     notificationType: String,
     post: {type: Schema.Types.ObjectId, ref: 'Post'},

@@ -13,12 +13,8 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ReplyIcon from '@material-ui/icons/Reply';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { red, blue } from '@material-ui/core/colors';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import PersonIcon from '@material-ui/icons/Person';
-import Snackbar from '@material-ui/core/Snackbar';
-import Tooltip from '@material-ui/core/Tooltip';
-import { displayName, convertDate } from '../../utility.js';
+import * as timeago from 'timeago.js';
+import { displayName } from '../../utility.js';
 import { deleteCommentQuery, getPostsQuery, likeCommentQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 
@@ -119,7 +115,17 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
                 <ListItemIcon onClick={handleUserClick(comment.user.id)}>
                     <Avatar src={comment.user.avatarPath} />
                 </ListItemIcon>
-                <ListItemText primary={displayName(comment.user)} secondary={comment.text} onClick={handleUserClick}></ListItemText>
+                <ListItemText primary={
+                <React.Fragment>
+                    <Typography
+                        component="span"
+                        variant="body1"
+                        className={classes.inline}
+                        color="textPrimary"
+                    >
+                    {' ' + comment.text}
+                    </Typography>
+                </React.Fragment>} secondary={displayName(comment.user) + ' - ' + timeago.format(comment.date)} onClick={handleUserClick}></ListItemText>
                 <ListItemSecondaryAction>
                     <IconButton aria-label="like" onClick={handleLikedToggle}>
                         <Badge color="secondary" badgeContent={comment.likedBy.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>

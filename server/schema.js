@@ -1,4 +1,5 @@
-const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError, AuthenticationError } = require('apollo-server-express')
+const {createServer} = require('http')
+const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError, AuthenticationError, PubSub } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
@@ -8,9 +9,12 @@ const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
 const Playgroup = require('./models/playgroup.js')
 const FriendRequest = require('./models/friendRequest.js')
+const Notification = require('./models/notification.js')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
+const pubsub = new PubSub()
+
 const Pet = require('./models/pet.js')
 require('dotenv').config({path: `${__dirname}/.env`});
 
@@ -127,6 +131,7 @@ const typeDefs = gql`
     type Notification {
         id: ID!
         fromUser: User!
+        toUser: User!
         date: Date!
         notificationType: String!
         post: Post
@@ -187,6 +192,7 @@ const typeDefs = gql`
         findComment(id: ID!): Comment
         findPet(id: ID!): Pet
         getPlaygroup: [Playgroup]!
+        getNotifications: [Notification]!
     }
     type Mutation {
         addUser(
@@ -327,7 +333,9 @@ const typeDefs = gql`
             user: ID!
         ): Comment
     }
-
+    type Subscription {
+        notification: Notification!
+    }
 `
 
 const resolvers = {
@@ -425,6 +433,23 @@ const resolvers = {
             return User.findById(root.toUser).exec()
         },
     },
+    Notification: {
+        fromUser: async (root) => {
+            return User.findById(root.fromUser).exec()
+        },
+        toUser: async (root) => {
+            return User.findById(root.fromUser).exec()
+        },
+        post: async (root) => {
+            return (await root.populate('post').execPopulate()).post
+        },
+        friendRequest: async (root) => {
+            return (await root.populate('friendRequest').execPopulate()).friendRequest
+        },
+        comment: async (root) => {
+            return (await root.populate('comment').execPopulate()).comment
+        },
+    },
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
@@ -433,7 +458,8 @@ const resolvers = {
         findPost: (root, args) => Post.findById(args.id),
         findComment: (root, args) => Comment.findById(args.id),
         findPet: (root, args) => Pet.findById(args.id),
-        getPlaygroup: () => Playgroup.find({})
+        getPlaygroup: () => Playgroup.find({}),
+        getNotifications: (root, args) => Notification.find({toUser: args.id})
     },
     Mutation: {
         addUser: async (root, args) => {
@@ -913,6 +939,19 @@ const resolvers = {
                 Post.updateOne({_id: args.id}, {$pull: {likedBy: args.userID}}).exec()
             } else {
                 postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
+                if (String(postToUpdate.user._id) !== args.userID) {
+                    const newNotification = new Notification ({
+                        fromUser: args.userID,
+                        toUser: String(postToUpdate.user._id),
+                        date: Date(),
+                        notificationType: "Post Like",
+                        post: args.id,
+                        friendRequest: null,
+                        comment: null,
+                    })
+                    newNotification.save()
+                    pubsub.publish('POST_LIKED', {notification: newNotification})
+                }
             }
             await postToUpdate.save();
         },
@@ -941,6 +980,11 @@ const resolvers = {
             await commentToUpdate.save();
             return commentToUpdate
         },
+    },
+    Subscription: {
+        notification: {
+            subscribe: () => pubsub.asyncIterator(['POST_LIKED'])
+        }
     }
 }
 
@@ -950,6 +994,9 @@ const server = new ApolloServer({
     //uploads: false,
     typeDefs,
     resolvers,
+    subscriptions: {
+        path: '/subscriptions'
+    },
     
     context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null
@@ -968,11 +1015,17 @@ server.applyMiddleware({app})
 app.use(express.static('server/public'))
 app.use(cors())
 
-app.listen({port: 4000}, () => {
-    console.log(`Server ready at http://localhost:4000`)
-})
+const httpServer = createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
-// app.listen().then(({ url, subscriptionsUrl }) => {
-//     console.log(`Server ready at ${subscriptionsUrl}`)
+// app.listen({port: 4000}, () => {
+//     console.log(`Server ready at http://localhost:4000`)
+//     console.log(`Subscriptions ready at ws://localhost:4000/graphql`)
 // })
+
+httpServer.listen(4000, () => {
+    console.log(`🚀 Server ready at http://localhost:${4000}${server.graphqlPath}`)
+    console.log(`🚀 Subscriptions ready at ws://localhost:${4000}${server.subscriptionsPath}`)
+  })
+
 module.exports = app

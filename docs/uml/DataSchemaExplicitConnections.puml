@@ -110,6 +110,7 @@ Comment --> "*" Comment: comments >
 
 Notification --> "0..1" Post: post >
 Notification --> "1" User: fromUser >
+Notification --> "1" User: toUser >
 Notification --> "0..1" FriendRequest: friendRequest >
 Notification --> "0..1" Comment: comment >
 

@@ -26,6 +26,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SubmitComment from './SubmitComment.js'
 import Comment from './Comment.js'
 import Tooltip from '@material-ui/core/Tooltip';
+import * as timeago from 'timeago.js';
 import { displayName, convertDate } from '../../utility.js';
 import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
@@ -371,7 +372,8 @@ const Post = ({user, post, closePost}) => {
                                     </div>
                                 }
                                 title={displayName(post.user)}
-                                subheader={convertDate(post.date)}
+                                subheader={timeago.format(post.date)}
+                                //subheader={convertDate(post.date)}
                             />
                                 {post.postType === "image" ? <CardMedia
                                     className={classes.media}
