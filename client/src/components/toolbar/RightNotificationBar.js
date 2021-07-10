@@ -2,6 +2,8 @@ import { Drawer, Divider } from '@material-ui/core';
 import { MenuList, Avatar, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { blue } from '@material-ui/core/colors';
+import { useSubscription } from '@apollo/client'
+import { POST_LIKED } from '../../subscriptions.js';
 
 const drawerWidth = 320;
 
@@ -31,6 +33,12 @@ const handleNotificationClick = () => {
 const RightNotificationBar = ({ drawerState }) => {
 
     const classes = useStyles();
+
+    useSubscription(POST_LIKED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+          console.log(subscriptionData)
+        }
+    })
 
     const notifications = [
         {

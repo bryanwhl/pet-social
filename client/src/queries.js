@@ -203,6 +203,7 @@ export const getPostByIdQuery=gql`
           }
           avatarPath
         }
+        date
         likedBy {
           id
         }
@@ -411,6 +412,7 @@ export const deleteCommentQuery=gql`
           }
           avatarPath
         }
+        date
         likedBy {
           id
         }
@@ -438,6 +440,7 @@ export const likeCommentQuery=gql`
         }
         avatarPath
       }
+      date
       likedBy {
         id
       }
@@ -689,6 +692,7 @@ export const getPostsQuery=gql`
           }
           avatarPath
         }
+        date
         likedBy {
           id
         }

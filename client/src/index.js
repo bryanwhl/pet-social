@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { from, ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client'
+import { from, ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from '@apollo/client'
 import { setContext } from 'apollo-link-context'
 import { createUploadLink } from 'apollo-upload-client'
 import { RetryLink } from 'apollo-link-retry';
 import { getMainDefinition } from 'apollo-utilities';
 import { extractFiles } from 'extract-files';
 import { ApolloLink } from 'apollo-link';
+import { WebSocketLink } from '@apollo/client/link/ws'
 
 
 const authLink = setContext((_, { headers }) => {
@@ -24,6 +25,25 @@ const authLink = setContext((_, { headers }) => {
 
 const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' }) //Rmb to change
 
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:4000/subscriptions`,
+  options: {
+    reconnect: true,
+  }
+})
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink),
+)
+
 const uploadLink = createUploadLink({
   uri: 'http://localhost:4000/graphql'
 })
@@ -34,9 +54,11 @@ const uploadAndBatchHTTPLink = opts => ApolloLink.split(
   authLink.concat(httpLink)
 );
 
+//const link = ApolloLink.from([splitLink, uploadAndBatchHTTPLink])
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: uploadAndBatchHTTPLink()
+  link: splitLink //uploadAndBatchHTTPLink()
 })
 
 ReactDOM.render(
