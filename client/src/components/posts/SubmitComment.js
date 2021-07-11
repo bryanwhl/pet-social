@@ -7,16 +7,18 @@ import { useMutation } from '@apollo/client';
 const useStyles = makeStyles((theme) => ({
     textField: {
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'start',
         justifyContent: 'center',
         marginTop: 10,
+        paddingRight: 24,
         width: "68vmin"
     },
     button: {
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'start',
         justifyContent: 'center',
-        width: "68vmin",
+        width: "64vmin",
+        paddingRight: 20,
         marginTop: 10,
     },
 }));
@@ -76,7 +78,7 @@ const SubmitComment = ({user, post}) => {
                     color="primary"
                     endIcon={<SendIcon />}
                     className={classes.button}
-                    fullWidth="true"
+                    
                     onClick={handleSubmit}
                 >
                     Submit
