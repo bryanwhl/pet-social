@@ -111,6 +111,7 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
                 button
                 divider="true"
                 selected={open}
+                alignItems="flex-start"
             >
                 <ListItemIcon onClick={handleUserClick(comment.user.id)}>
                     <Avatar src={comment.user.avatarPath} />
@@ -123,11 +124,31 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
                         className={classes.inline}
                         color="textPrimary"
                     >
-                    {' ' + comment.text}
+                    {displayName(comment.user)}
                     </Typography>
-                </React.Fragment>} secondary={displayName(comment.user) + ' - ' + timeago.format(comment.date)} onClick={handleUserClick}></ListItemText>
-                <ListItemSecondaryAction>
-                    <IconButton aria-label="like" onClick={handleLikedToggle}>
+                    <Typography
+                        component="span"
+                        variant="body2"
+                        className={classes.inline}
+                        color="textSecondary"
+                    >
+                    {' - ' + timeago.format(comment.date)}
+                    </Typography>
+                </React.Fragment>}
+                secondary={<React.Fragment>
+                    <Typography
+                        component="span"
+                        variant="body2"
+                        className={classes.inline}
+                        color="textPrimary"
+                    >
+                        {comment.text} 
+                    </Typography>
+                </React.Fragment>}
+                >
+                </ListItemText>
+                <ListItemIcon>
+                    <IconButton edge="end" aria-label="like" onClick={handleLikedToggle}>
                         <Badge color="secondary" badgeContent={comment.likedBy.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
                                 {liked === true ? <ThumbUpAltIcon color="secondary"/> : <ThumbUpAltIcon />} 
                         </Badge>
@@ -135,7 +156,7 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
                     <IconButton edge="end" aria-label="comments" onClick={handleOptionsToggle}>
                         <MoreVertIcon />
                     </IconButton>
-                </ListItemSecondaryAction>
+                </ListItemIcon>
                 <Popper open={open} anchorEl={anchorEl} transition disablePortal className={classes.popper} placement="bottom-end">
                     {({ TransitionProps, placement }) => (
                         <Grow
