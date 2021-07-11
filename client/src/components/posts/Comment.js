@@ -4,7 +4,7 @@ import {Grid, Container, Card, IconButton,
     CardHeader, makeStyles, CardActions, 
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
-    ListItemIcon, ListItemText, Collapse,
+    ListItemIcon, ListItemText, ButtonBase, Collapse,
     Divider, List, ListItemSecondaryAction} from '@material-ui/core';
 import Badge from '@material-ui/core/Badge';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -108,13 +108,13 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
     return (
         <div>
             <ListItem
-                button
                 divider="true"
-                selected={open}
                 alignItems="flex-start"
             >
                 <ListItemIcon onClick={handleUserClick(comment.user.id)}>
-                    <Avatar src={comment.user.avatarPath} />
+                    <ButtonBase disableRipple disableTouchRipple>
+                        <Avatar src={comment.user.avatarPath} />
+                    </ButtonBase>
                 </ListItemIcon>
                 <ListItemText primary={
                 <React.Fragment>
