@@ -14,6 +14,7 @@ const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
 const pubsub = new PubSub()
+const { withFilter } = require('graphql-subscriptions');
 
 const Pet = require('./models/pet.js')
 require('dotenv').config({path: `${__dirname}/.env`});
@@ -122,6 +123,7 @@ const typeDefs = gql`
     type Comment {
         id: ID!
         user: User!
+        post: Post!
         date: Date!
         text: String!
         likedBy: [User]
@@ -192,7 +194,7 @@ const typeDefs = gql`
         findComment(id: ID!): Comment
         findPet(id: ID!): Pet
         getPlaygroup: [Playgroup]!
-        getNotifications: [Notification]!
+        getNotifications(id: ID!): [Notification]!
     }
     type Mutation {
         addUser(
@@ -221,6 +223,7 @@ const typeDefs = gql`
         ): Playgroup
         addComment (
             user: ID!
+            post: ID!
             text: String!
             post: ID!
         ): Post
@@ -259,6 +262,9 @@ const typeDefs = gql`
             id: ID!
             post: ID!
         ): Post
+        deleteNotification(
+            id: ID!
+        ): Notification
         login(
             username: String!
             password: String!
@@ -266,7 +272,7 @@ const typeDefs = gql`
         sendFriendRequest(
             from: ID!
             to: ID!
-        ): FriendRequest
+        ): User
         retractFriendRequest(
             from: ID!
             to: ID!
@@ -334,7 +340,13 @@ const typeDefs = gql`
         ): Comment
     }
     type Subscription {
-        notification: Notification!
+        postLiked(id: ID!): Notification!
+        postComment(id: ID!): Notification!
+        commentLiked(id: ID!): Notification!
+        friendRequestReceived(id: ID!): Notification!
+        friendRequestInteracted(id: ID!): FriendRequest!
+        deleteFriendSub(id: ID!): User!
+        deleteNotif(id: ID!): Notification!
     }
 `
 
@@ -390,6 +402,9 @@ const resolvers = {
     Comment: {
         user: (root) => {
             return User.findById(root.user).exec()
+        },
+        post: (root) => {
+            return Post.findById(root.post).exec()
         },
         likedBy: async (root) => {
             return (await root.populate('likedBy').execPopulate()).likedBy
@@ -597,6 +612,7 @@ const resolvers = {
         addComment: async (root, args) => {
             const newComment = new Comment ({
                 user: args.user,
+                post: args.post,
                 text: args.text,
                 isEdited: false,
                 date: Date(),
@@ -610,6 +626,21 @@ const resolvers = {
             const saveComment = await newComment.save();
             post.comments = post.comments.concat(saveComment.id);
             post.save();
+
+            if (String(post.user._id) !== args.user) {
+                const newNotification = new Notification ({
+                    fromUser: args.user,
+                    toUser: String(post.user._id),
+                    date: Date(),
+                    notificationType: "Post Comment",
+                    post: String(post._id),
+                    friendRequest: null,
+                    comment: saveComment.id,
+                })
+                newNotification.save()
+                pubsub.publish('POST_COMMENT', {postComment: newNotification})
+            }
+
             return post;
         },
         deletePlaygroup: async (root, args) => {
@@ -633,6 +664,10 @@ const resolvers = {
             })
             Post.updateOne({_id: args.post}, {$pull: {comments: args.id}}).exec()
             post = await Post.findById(args.post).exec()
+
+            const notification = await Notification.find({comment: args.id}).exec()
+            Notification.findOneAndDelete({comment: args.id}).exec()
+            pubsub.publish('DELETE_NOTIF', {deleteNotif: notification[0]})
 
             return post
         },
@@ -661,7 +696,20 @@ const resolvers = {
             await fromUser.save();
             toUser.receivedFriendRequests = toUser.receivedFriendRequests.concat(saveFriendRequest.id);
             await toUser.save();
-            return saveFriendRequest;
+
+            const newNotification = new Notification ({
+                fromUser: args.from,
+                toUser: args.to,
+                date: Date(),
+                notificationType: "Friend Request",
+                post: null,
+                friendRequest: saveFriendRequest.id,
+                comment: null,
+            })
+            newNotification.save()
+            pubsub.publish('FRIEND_REQUEST', {friendRequestReceived: newNotification})
+
+            return fromUser;
         },
         retractFriendRequest: async (root, args) => {
             const friendRequest = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
@@ -672,6 +720,12 @@ const resolvers = {
             User.updateOne({_id: friendRequest.fromUser}, {$pull: {sentFriendRequests: friendRequest.id}}).exec()
             User.updateOne({_id: friendRequest.toUser}, {$pull: {receivedFriendRequests: friendRequest.id}}).exec()
             await FriendRequest.deleteOne({_id: friendRequest.id}).exec()
+
+            const notification = await Notification.find({friendRequest: friendRequest.id}).exec()
+            Notification.findOneAndDelete({friendRequest: friendRequest.id}).exec()
+            pubsub.publish('DELETE_NOTIF', {deleteNotif: notification[0]})
+            pubsub.publish('FRIEND_REQUEST_INTERACT', {friendRequestInteracted: friendRequest})
+
             return friendRequest;
         },
         acceptFriendRequest: async (root, args) => {
@@ -685,6 +739,12 @@ const resolvers = {
             User.updateOne({_id: friendRequest.fromUser}, {$pull: {sentFriendRequests: friendRequest.id}}).exec()
             User.updateOne({_id: friendRequest.toUser}, {$pull: {receivedFriendRequests: friendRequest.id}}).exec()
             await FriendRequest.deleteOne({_id: friendRequest.id}).exec()
+
+            const notification = await Notification.find({friendRequest: friendRequest.id}).exec()
+            Notification.findOneAndDelete({friendRequest: friendRequest.id}).exec()
+            pubsub.publish('DELETE_NOTIF', {deleteNotif: notification[0]})
+            pubsub.publish('FRIEND_REQUEST_INTERACT', {friendRequestInteracted: friendRequest})
+
             return friendRequest;
         },
         addPetOwner: async (root, args) => {
@@ -747,7 +807,7 @@ const resolvers = {
 
             User.updateOne({_id: args.id}, {$pull: {friends: args.friend}}).exec()
             User.updateOne({_id: args.friend}, {$pull: {friends: args.id}}).exec()
-            
+            pubsub.publish('DELETE_FRIEND', {deleteFriendSub: friend})
 
             return user
         },
@@ -788,6 +848,23 @@ const resolvers = {
             })
 
             return user
+        },
+        deleteNotification: async (root, args) => {
+            const notification = await Notification.findById(args.id).exec();
+            if (!notification) {
+                return null
+            }
+            
+            Notification.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+
+            return notification
         },
         login: async (root, args) => {
             if ( args.username === "" ) {
@@ -937,6 +1014,9 @@ const resolvers = {
             }
             if (postToUpdate.likedBy.includes(args.userID)) {
                 Post.updateOne({_id: args.id}, {$pull: {likedBy: args.userID}}).exec()
+                const notification = await Notification.find({post: args.id}).exec()
+                Notification.findOneAndDelete({post: args.id}).exec()
+                pubsub.publish('DELETE_NOTIF', {deleteNotif: notification[0]})
             } else {
                 postToUpdate.likedBy = postToUpdate.likedBy.concat(args.userID);
                 if (String(postToUpdate.user._id) !== args.userID) {
@@ -950,7 +1030,7 @@ const resolvers = {
                         comment: null,
                     })
                     newNotification.save()
-                    pubsub.publish('POST_LIKED', {notification: newNotification})
+                    pubsub.publish('POST_LIKED', {postLiked: newNotification})
                 }
             }
             await postToUpdate.save();
@@ -974,16 +1054,78 @@ const resolvers = {
             }
             if (commentToUpdate.likedBy.includes(args.user)) {
                 Comment.updateOne({_id: args.id}, {$pull: {likedBy: args.user}}).exec()
+                const notification = await Notification.find({comment: args.id}).exec()
+                Notification.findOneAndDelete({comment: args.id}).exec()
+                pubsub.publish('DELETE_NOTIF', {deleteNotif: notification[0]})
             } else {
                 commentToUpdate.likedBy = commentToUpdate.likedBy.concat(args.user);
+                if (String(commentToUpdate.user._id) !== args.user) {
+                    const newNotification = new Notification ({
+                        fromUser: args.user,
+                        toUser: String(commentToUpdate.user._id),
+                        date: Date(),
+                        notificationType: "Comment Like",
+                        post: commentToUpdate.post._id,
+                        friendRequest: null,
+                        comment: args.id,
+                    })
+                    newNotification.save()
+                    pubsub.publish('COMMENT_LIKED', {commentLiked: newNotification})
+                }
             }
             await commentToUpdate.save();
             return commentToUpdate
         },
     },
     Subscription: {
-        notification: {
-            subscribe: () => pubsub.asyncIterator(['POST_LIKED'])
+        postLiked: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['POST_LIKED']),
+                    (payload, variables) => {
+                        return String(payload.postLiked.toUser) === variables.id
+                    })
+        },
+        postComment: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['POST_COMMENT']),
+                    (payload, variables) => {
+                        return String(payload.postComment.toUser) === variables.id
+                    })
+        },
+        commentLiked: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['COMMENT_LIKED']),
+                    (payload, variables) => {
+                        return String(payload.commentLiked.toUser) === variables.id
+                    })
+        },
+        friendRequestReceived: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['FRIEND_REQUEST']),
+                    (payload, variables) => {
+                        return String(payload.friendRequestReceived.toUser) === variables.id
+                    })
+        },
+        friendRequestInteracted: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['FRIEND_REQUEST_INTERACT']),
+                    (payload, variables) => {
+                        return String(payload.friendRequestInteracted.fromUser) === variables.id || String(payload.friendRequestInteracted.toUser) === variables.id
+                    })
+        },
+        deleteFriendSub: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['DELETE_FRIEND']),
+                    (payload, variables) => {
+                        return String(payload.deleteFriendSub.id) === variables.id
+                    })
+        },
+        deleteNotif: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['DELETE_NOTIF']),
+                    (payload, variables) => {
+                        return String(payload.deleteNotif.toUser) === variables.id
+                    })
         }
     }
 }

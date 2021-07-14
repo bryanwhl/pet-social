@@ -28,7 +28,7 @@ const handleNotificationClick = () => {
     console.log('Navigate to home')
 }
 
-const RightChatBar = ({ drawerState }) => {
+const RightChatBar = ({ drawerState, user }) => {
 
     const classes = useStyles();
 
