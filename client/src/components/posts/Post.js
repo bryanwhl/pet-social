@@ -171,6 +171,8 @@ const Post = ({user, post, closePost}) => {
 
     const handleOptionsToggle = () => {
       setOpen((prevOpen) => !prevOpen);
+      console.log("Options popper is toggling now!")
+      console.log("value after toggle: " + prevOpen)
     };
   
     // const handleOptionsClose = (event) => {
@@ -183,6 +185,7 @@ const Post = ({user, post, closePost}) => {
 
     const handleOptionsClose = () => {
       setOpen(false);
+      console.log("Options popper is closing now!")
     };
 
     const handleLikedToggle = () => {
@@ -238,10 +241,12 @@ const Post = ({user, post, closePost}) => {
 
     const handleOpenEditPost = () => {
       setOpenEditPost(true);
+      console.log("Edit Post Dialog is opening now!")
     };
   
     const handleCloseEditPost = () => {
       setOpenEditPost(false);
+      console.log("Edit Post Dialog is closing now!")
     };
 
     const handleEditCaption = (event) => {
@@ -393,13 +398,12 @@ const Post = ({user, post, closePost}) => {
                                                     {user.id===post.user.id && userMenuItems.map(item => (
                                                         <ListItem
                                                             button
-                                                            key={item.text}
-                                                            onClick={item.onClick}
                                                         >
-                                                            <ListItemIcon>
+                                                            <ListItemIcon onClick={item.onClick}>
                                                                 {item.icon}
                                                             </ListItemIcon>
-                                                            {item.text==="Edit Post" && <Dialog open={openEditPost} onClose={handleCloseEditPost} aria-labelledby="form-dialog-title">
+                                                            <ListItemText primary={item.text} onClick={item.onClick} />
+                                                            {item.text!=="Edit Post" ? null : <Dialog open={openEditPost} aria-labelledby="form-dialog-title">
                                                               <DialogTitle id="form-dialog-title">Edit Caption</DialogTitle>
                                                               <DialogContent>
                                                                 <DialogContentText>
@@ -425,7 +429,6 @@ const Post = ({user, post, closePost}) => {
                                                                 </Button>
                                                               </DialogActions>
                                                             </Dialog>}
-                                                            <ListItemText primary={item.text}></ListItemText>
                                                         </ListItem>
                                                     ))}
                                                     {user.id!==post.user.id && otherUserMenuItems.map(item => (
