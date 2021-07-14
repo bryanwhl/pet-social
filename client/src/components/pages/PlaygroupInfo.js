@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListSubheader, Divider, Button, CardHeader, Typography, Card, CardContent, CardActions, ListItem, TextField, makeStyles } from '@material-ui/core';
-import { deletePlaygroupQuery, getPlaygroupsQuery } from '../../queries.js';
+import { deletePlaygroupQuery, getPlaygroupsQuery, joinPlaygroupQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 import { convertDate, convertTime } from '../../utility.js';
 
@@ -21,8 +21,16 @@ const PlaygroupInfo = ({ playgroup, user }) => {
         refetchQueries: [{query: getPlaygroupsQuery}],
     })
 
+    const [ joinPlaygroup, joinPlaygroupResponse ] = useMutation(joinPlaygroupQuery,{
+        refetchQueries: [{query: getPlaygroupsQuery}],
+    })
+
     const handleDelete = () => {
         deletePlaygroup({variables: {id: playgroup.id}})
+    }
+
+    const handleJoin = () => {
+        joinPlaygroup({variables: {id: playgroup.id, userID: user.id}})
     }
 
     return (
@@ -45,6 +53,12 @@ const PlaygroupInfo = ({ playgroup, user }) => {
                     <Typography color="textSecondary">
                         Creator: @{playgroup.user}
                     </Typography>
+                    <Typography color="textSecondary">
+                      Member: {"\n"}
+                      {playgroup.members.map((member) => {
+                        return "@" + member.username + "\n"
+                      })}
+                    </Typography>
                 </CardContent>
                 <Divider />
                 <CardContent>
@@ -55,13 +69,21 @@ const PlaygroupInfo = ({ playgroup, user }) => {
                         {playgroup.description}
                     </Typography>
                 </CardContent>
-                {user.id === playgroup.userID ? <CardActions>
+                {user.id === playgroup.userID ? 
+                <CardActions>
                     <Button size="small" onClick={handleDelete}>
                         <Typography color="secondary">
                             Delete Playgroup
                         </Typography>
                     </Button>
-                </CardActions> : null}
+                </CardActions> : 
+                <CardActions>
+                    <Button size="small" onClick={handleJoin}>
+                        <Typography color="secondary">
+                            Join Playgroup
+                        </Typography>
+                    </Button>
+                </CardActions>}
             </Card>
         </div>
     )

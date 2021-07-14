@@ -227,6 +227,10 @@ const typeDefs = gql`
         deletePlaygroup (
             id: ID!
         ): Playgroup
+        joinPlaygroup (
+            id: ID!
+            userID: ID!
+        ): Playgroup
         addPet(
             name: String!
             owner: ID!
@@ -629,6 +633,12 @@ const resolvers = {
                     console.log("Deleted : ", docs);
                 }
             })
+        },
+        joinPlaygroup: async (root, args) => {
+            const playgroup = await Playgroup.findById( args.id ).exec()
+            playgroup.members = playgroup.members.concat(args.userID);
+            playgroup.save()
+            return playgroup
         },
         deleteComment: async (root, args) => {
             Comment.findByIdAndDelete(args.id, function (err, docs) {

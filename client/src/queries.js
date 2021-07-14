@@ -665,6 +665,17 @@ export const deletePlaygroupQuery=gql`
   }
 `
 
+export const joinPlaygroupQuery=gql`
+  mutation ($id: ID!, $userID: ID!) {
+    joinPlaygroup(
+      id: $id,
+      userID: $userID
+    ) {
+      id
+    }
+  }
+`
+
 export const UPLOAD_FILE=gql`
   mutation uploadFile($file: Upload!) {
     uploadFile (
@@ -741,6 +752,7 @@ export const getPlaygroupsQuery=gql`
       }
       members {
         id
+        username
       }
       dateCreated
     }

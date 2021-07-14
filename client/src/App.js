@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import LoggedOut from './components/signin/LoggedOut.js'
 import LoggedIn from './components/pages/LoggedIn.js'
 import { red } from '@material-ui/core/colors'
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { ThemeProvider, createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 import { useLazyQuery } from '@apollo/client'
 import { currentUserQuery } from './queries.js'
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import { useHistory, withRouter } from "react-router-dom";
 
-const customTheme = createMuiTheme({
+let customTheme = createMuiTheme({
   palette: {
     primary: {
       main: "#F39991",
@@ -44,6 +44,8 @@ const customTheme = createMuiTheme({
     ].join(','),
   },
 })
+
+customTheme = responsiveFontSizes(customTheme)
 
 function App({ client }) {
 

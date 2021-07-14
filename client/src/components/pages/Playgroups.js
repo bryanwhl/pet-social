@@ -361,7 +361,8 @@ const Playgroups = ({ user }) => {
                               date: playgroup.meetingDate, 
                               user: playgroup.playgroupAdmin.username, 
                               id: playgroup.id,
-                              userID: playgroup.playgroupAdmin.id
+                              userID: playgroup.playgroupAdmin.id,
+                              members: playgroup.members
                             });
                         }}
                     />
@@ -385,7 +386,8 @@ const Playgroups = ({ user }) => {
                         date: selected.date,
                         user: selected.user,
                         id: selected.id,
-                        userID: selected.userID
+                        userID: selected.userID,
+                        members: selected.members
                       }}
                       user={user}
                       /> }
