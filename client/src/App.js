@@ -49,7 +49,7 @@ function App({ client }) {
 
   // All user data can be centralized here
 
-  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery)
+  const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {fetchPolicy: 'network-only'})
 
   let history = useHistory();
 
@@ -90,7 +90,7 @@ function App({ client }) {
       <div className="App">
         <ThemeProvider theme = {customTheme}>
           <Route exact path='/home'>
-            {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser}/> : <Redirect to="/login" /> }
+            {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
           </Route>
           <Route exact path='/login'>
             {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/home" /> }

@@ -25,6 +25,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { displayName, convertDate } from '../../utility.js';
 import { useMutation } from '@apollo/client'
 import { currentUserQuery, deleteFriendQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js'
+import ReceivedFriendRequests from './ReceivedFriendRequests.js';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -58,12 +59,6 @@ const FriendList = ({ user }) => {
           setError(error.graphQLErrors[0].message)
          }, refetchQueries: [{query: currentUserQuery}]
     })
-    const [ acceptFriendRequest,  acceptFriendRequestResponse ] = useMutation(acceptFriendRequestQuery, {
-        onError: (error) => {
-          setError(error.graphQLErrors[0].message)
-         }, refetchQueries: [{query: currentUserQuery}]
-    })
-
 
     useEffect(() => {
         if ( deleteFriendResponse.data ) {
@@ -79,30 +74,12 @@ const FriendList = ({ user }) => {
                 if (user.sentFriendRequests.length === 1) {
                     handleCloseSentRequests()
                 }
-            } else {
-                handleOpenSnackbar("Friend Request Dismissed", "success")
-                if (user.receivedFriendRequests.length === 1) {
-                    handleCloseReceivedRequests()
-                }
             }
         } else {
             handleOpenSnackbar(error, "error")
         }
     }
     }, [retractFriendRequestResponse.data])
-
-    useEffect(() => {
-        if (acceptFriendRequestResponse.data) {
-            if (!error) {
-                handleOpenSnackbar("Friend Request Accepted", "success")
-                if (user.receivedFriendRequests.length === 1) {
-                    handleCloseReceivedRequests()
-                }
-            } else {
-                handleOpenSnackbar(error, "error")
-            }
-        }
-    }, [acceptFriendRequestResponse.data])
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(null)
@@ -153,13 +130,6 @@ const FriendList = ({ user }) => {
         setReceivedDialog(false)
     };
 
-    const handleAcceptRequest = (request) => () => {
-        acceptFriendRequest({variables: {to: user.id, from: request.fromUser.id}})
-    };
-    
-    const handleRejectRequest = (request) => () => {
-        retractFriendRequest({variables: {to: user.id, from: request.fromUser.id}})
-    };
 
     return (
         <div>
@@ -251,31 +221,7 @@ const FriendList = ({ user }) => {
                         ))}
                     </List>
                 </Dialog>
-                <Dialog onClose={handleCloseReceivedRequests} aria-labelledby="simple-dialog-title" open={receivedDialog}>
-                <DialogTitle id="simple-dialog-title">Received Friend Requests</DialogTitle>
-                    <List>
-                        {user.receivedFriendRequests.map((request) => (
-                        <ListItem button key={request}>
-                            <ListItemAvatar>
-                            <Avatar src={request.fromUser.avatarPath}/>
-                            </ListItemAvatar>
-                            <ListItemText primary={displayName(request.fromUser)} secondary={`At ${convertDate(request.date)}`}/>
-                            <ListItemSecondaryAction>
-                                <Tooltip title="Accept Friend Request">
-                                    <IconButton edge="end" aria-label="comments" onClick={handleAcceptRequest(request)}>
-                                        <CheckIcon />
-                                    </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Dismiss Friend Request">
-                                    <IconButton edge="end" aria-label="comments" onClick={handleRejectRequest(request)}>
-                                        <ClearIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                        ))}
-                    </List>
-                </Dialog>
+                <ReceivedFriendRequests user={user} receivedDialog={receivedDialog} handleCloseReceivedRequests={handleCloseReceivedRequests}/>
                 <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
                     <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
                         {openSnackbar}

@@ -29,7 +29,7 @@ const LoggedIn = ({setUser, client, user, getCurrentUser}) => {
   return (
     <div>
       <CssBaseline />
-      <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} />
+      <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} client={client} getCurrentUser={getCurrentUser} />
       {appState === "Home" && <PostsContainer user={user}/>}
       {appState === "Profile" && <ProfilePage user={user} getCurrentUser={getCurrentUser}/>}
       {appState === "Settings" && <SettingsPage user={user} logout={logout}/>}
