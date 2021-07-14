@@ -259,6 +259,10 @@ const typeDefs = gql`
             id: ID!
             post: ID!
         ): Post
+        deletePost(
+            id: ID!
+            userID: ID!
+        ): User
         login(
             username: String!
             password: String!
@@ -308,6 +312,10 @@ const typeDefs = gql`
         editProfileBio(
             id: ID!
             profileBio: String!
+        ): User
+        editPostCaption(
+            id: ID!
+            text: String!
         ): User
         editAvatar(
             id: ID!
@@ -636,6 +644,20 @@ const resolvers = {
 
             return post
         },
+        deletePost: async (root, args) => {
+            Post.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+            User.updateOne({_id: args.userID}, {$pull: {post: args.id}}).exec()
+            user = await User.findById(args.userID).exec()
+
+            return user
+        },
         sendFriendRequest: async (root, args) => {
             const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
             const existingTo = await FriendRequest.findOne({ fromUser: args.to, toUser: args.from}).exec()
@@ -913,6 +935,14 @@ const resolvers = {
             }
             userToUpdate.profileBio = args.profileBio
             await userToUpdate.save();
+        },
+        editPostCaption: async (root, args) => {
+            const postToUpdate = await Post.findById( args.id ).exec(); //must change
+            if (!postToUpdate) {
+                return null;
+            }
+            postToUpdate.text = args.text
+            await postToUpdate.save();
         },
         editAvatar: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change

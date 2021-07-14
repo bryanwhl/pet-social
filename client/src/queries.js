@@ -423,6 +423,18 @@ export const deleteCommentQuery=gql`
   }
 `
 
+export const deletePostQuery=gql`
+  mutation ($id: ID!, $userID: ID!) {
+    deletePost(
+      id: $id,
+      userID: $userID
+    ) {
+      id
+    }
+  }
+`
+
+
 export const likeCommentQuery=gql`
   mutation ($id: ID!, $user: ID!) {
     editCommentLike(
@@ -563,6 +575,17 @@ export const editProfileBioQuery=gql`
     editProfileBio(
       id: $id,
       profileBio: $profileBio
+    ) {
+      id
+    }
+  }
+`
+
+export const editPostCaptionQuery=gql`
+  mutation ($id: ID!, $text: String!) {
+    editPostCaption(
+      id: $id,
+      text: $text
     ) {
       id
     }
