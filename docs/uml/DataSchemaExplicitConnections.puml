@@ -105,6 +105,7 @@ Post --> "*" User: likedBy >
 Post --> "*" Comment: comments >
 
 Comment --> "1" User: user >
+Comment --> "1" Post: post >
 Comment --> "*" User: likedBy >
 Comment --> "*" Comment: comments >
 

@@ -115,6 +115,40 @@ export const currentUserQuery=gql`
  }
 `
 
+export const getNotificationsQuery=gql`
+ query ($id: ID!) {
+   getNotifications (id: $id) {
+    id
+    fromUser {
+      id
+      username
+      name {
+        givenName
+        familyName
+      }
+      settings {
+        familyNameFirst
+      }
+      avatarPath
+    }
+    toUser {
+      id
+    }
+    date
+    notificationType
+    post {
+        id
+    }
+    friendRequest {
+        id
+    }
+    comment {
+      id
+    }
+   }
+ }
+`
+
 export const getUserByIdQuery=gql`
   query ($id: ID!) {
     findUser(id: $id) {
@@ -335,6 +369,18 @@ export const deleteFriendQuery=gql`
       friend: $friend
     ) {
       id
+      friends {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
     }
   }
 `
@@ -367,6 +413,16 @@ export const deletePetQuery=gql`
         name
         picturePath
       }
+    }
+  }
+`
+
+export const deleteNotificationQuery=gql`
+  mutation ($id: ID!) {
+    deleteNotification(
+      id: $id
+    ) {
+      id
     }
   }
 `

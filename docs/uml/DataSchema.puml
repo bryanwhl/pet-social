@@ -58,6 +58,7 @@ class Post {
 class Comment {
     id: ID!
     user: User!
+    post: Post!
     date: Date!
     text: String!
     likedBy: [User]

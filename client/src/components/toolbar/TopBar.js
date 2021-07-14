@@ -42,12 +42,13 @@ const useStyles = makeStyles((theme) => ({
 
 // constructor function for TopBar
 // appState helps navigate the app, and goes one level deeper for SideBar to change the app state
-const TopBar = ({ logout, user, appState, setAppState }) => {
+const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser }) => {
 
     // const for all components
     const classes = useStyles();
 
     // data set up for notifications
+    const [numNotifications, setNumNotifications] = useState(0);
     const notifications = [
         {
         text: "Bryan Wong liked your post.",
@@ -198,7 +199,7 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                             </Badge>
                         </IconButton>
                         <IconButton onClick={handleRightDrawerNotification}>
-                            <Badge badgeContent={notifications.length} color="secondary">
+                            <Badge badgeContent={numNotifications} color="secondary">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
@@ -238,8 +239,8 @@ const TopBar = ({ logout, user, appState, setAppState }) => {
                 </Toolbar>
             </AppBar>
             <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} appState={appState} setAppState={setAppState} />
-            <RightNotificationBar drawerState={rightDrawerState === 'notification'} />
-            <RightChatBar drawerState={rightDrawerState === 'chat'} />
+            <RightNotificationBar drawerState={rightDrawerState === 'notification'} user={user} setNumNotifications={setNumNotifications} client={client} getCurrentUser={getCurrentUser} />
+            <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} />
         </div>
     )
 }
