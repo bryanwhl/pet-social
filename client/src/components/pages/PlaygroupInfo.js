@@ -65,7 +65,11 @@ const PlaygroupInfo = ({ playgroup, user }) => {
                     <Typography>
                         Description:
                     </Typography>
-                    <Typography color="textSecondary">
+                    <Typography 
+                        component="span"
+                        variant="body2"
+                        color="textSecondary"
+                    >
                         {playgroup.description}
                     </Typography>
                 </CardContent>

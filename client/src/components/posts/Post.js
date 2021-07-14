@@ -292,7 +292,7 @@ const Post = ({user, post, closePost}) => {
             onClick: handleOpenEditPost
         },
         {
-            text: "Delete Post (Coming Soon)",
+            text: "Delete Post",
             icon: <DeleteIcon />,
             path: "/",
             onClick: handleDelete
