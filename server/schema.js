@@ -230,6 +230,10 @@ const typeDefs = gql`
         deletePlaygroup (
             id: ID!
         ): Playgroup
+        joinPlaygroup (
+            id: ID!
+            userID: ID!
+        ): Playgroup
         addPet(
             name: String!
             owner: ID!
@@ -262,6 +266,10 @@ const typeDefs = gql`
             id: ID!
             post: ID!
         ): Post
+        deletePost(
+            id: ID!
+            userID: ID!
+        ): User
         deleteNotification(
             id: ID!
         ): Notification
@@ -314,6 +322,10 @@ const typeDefs = gql`
         editProfileBio(
             id: ID!
             profileBio: String!
+        ): User
+        editPostCaption(
+            id: ID!
+            text: String!
         ): User
         editAvatar(
             id: ID!
@@ -653,6 +665,12 @@ const resolvers = {
                 }
             })
         },
+        joinPlaygroup: async (root, args) => {
+            const playgroup = await Playgroup.findById( args.id ).exec()
+            playgroup.members = playgroup.members.concat(args.userID);
+            playgroup.save()
+            return playgroup
+        },
         deleteComment: async (root, args) => {
             Comment.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
@@ -670,6 +688,20 @@ const resolvers = {
             pubsub.publish('DELETE_NOTIF', {deleteNotif: notification[0]})
 
             return post
+        },
+        deletePost: async (root, args) => {
+            Post.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+            User.updateOne({_id: args.userID}, {$pull: {post: args.id}}).exec()
+            user = await User.findById(args.userID).exec()
+
+            return user
         },
         sendFriendRequest: async (root, args) => {
             const existingFrom = await FriendRequest.findOne({ fromUser: args.from, toUser: args.to}).exec()
@@ -990,6 +1022,14 @@ const resolvers = {
             }
             userToUpdate.profileBio = args.profileBio
             await userToUpdate.save();
+        },
+        editPostCaption: async (root, args) => {
+            const postToUpdate = await Post.findById( args.id ).exec(); //must change
+            if (!postToUpdate) {
+                return null;
+            }
+            postToUpdate.text = args.text
+            await postToUpdate.save();
         },
         editAvatar: async (root, args) => {
             const userToUpdate = await User.findById( args.id ).exec(); //must change

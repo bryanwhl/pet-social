@@ -5,7 +5,7 @@ import {Grid, Container, Card, IconButton,
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
-    Divider, List, ListItemSecondaryAction} from '@material-ui/core';
+    Divider, List, Button, ListItemSecondaryAction} from '@material-ui/core';
 import Badge from '@material-ui/core/Badge';
 import MuiAlert from '@material-ui/lab/Alert';
 import ShareIcon from '@material-ui/icons/Share';
@@ -28,8 +28,16 @@ import Comment from './Comment.js'
 import Tooltip from '@material-ui/core/Tooltip';
 import * as timeago from 'timeago.js';
 import { displayName, convertDate } from '../../utility.js';
-import { getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
+import { editPostCaptionQuery, getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, deletePostQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
+import { id } from 'date-fns/locale';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -91,6 +99,8 @@ const Post = ({user, post, closePost}) => {
     const [saved, setSaved] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
     const [userAnchor, setUserAnchor] = React.useState(null);
+    const [edittedCaption, setEdittedCaption] = useState(post.text);
+    const [openEditPost, setOpenEditPost] = React.useState(false);
 
     React.useEffect(() => {
         setLiked(false);
@@ -121,6 +131,10 @@ const Post = ({user, post, closePost}) => {
     const [ savePost, savePostResult ] = useMutation(savePostQuery, {
         refetchQueries: [{query: currentUserQuery}],
     })
+
+    const [ editPostCaption ] = useMutation(editPostCaptionQuery, {
+        refetchQueries: [{query: getPostsQuery}]
+    })
     
     const [ sendFriendRequest,  sendFriendRequestResponse ] = useMutation(sendFriendRequestQuery, {
         onError: (error) => {
@@ -138,41 +152,9 @@ const Post = ({user, post, closePost}) => {
          }, refetchQueries: [{query: currentUserQuery}]
     })
 
-    const otherUserMenuItems = [
-        {
-            text: "Receive notifications from this post (Coming Soon)",
-            icon: <NotificationsActiveIcon />,
-            path: "/"
-        },
-        {
-            text: "Hide posts from this user (Coming Soon)",
-            icon: <CancelIcon />,
-            path: "/"
-        },
-        {
-            text: "Report Post (Coming Soon)",
-            icon: <ReportIcon />,
-            path: "/"
-        }
-    ]
-    
-    const userMenuItems = [
-        {
-            text: "Receive notifications from this post (Coming Soon)",
-            icon: <NotificationsActiveIcon />,
-            path: "/"
-        },
-        {
-            text: "Edit Post (Coming Soon)",
-            icon: <EditIcon />,
-            path: "/"
-        },
-        {
-            text: "Delete Post (Coming Soon)",
-            icon: <DeleteIcon />,
-            path: "/"
-        }
-    ]
+    const [ deletePost, deletePostResult ] = useMutation(deletePostQuery, {
+        refetchQueries: [{query: getPostsQuery}],
+    })
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(null)
@@ -189,14 +171,21 @@ const Post = ({user, post, closePost}) => {
 
     const handleOptionsToggle = () => {
       setOpen((prevOpen) => !prevOpen);
+      console.log("Options popper is toggling now!")
+      console.log("value after toggle: " + prevOpen)
     };
   
-    const handleOptionsClose = (event) => {
-      if (anchorOptionsRef.current && anchorOptionsRef.current.contains(event.target)) {
-        return;
-      }
+    // const handleOptionsClose = (event) => {
+    //   if (anchorOptionsRef.current && anchorOptionsRef.current.contains(event.target)) {
+    //     return;
+    //   }
   
+    //   setOpen(false);
+    // };
+
+    const handleOptionsClose = () => {
       setOpen(false);
+      console.log("Options popper is closing now!")
     };
 
     const handleLikedToggle = () => {
@@ -240,8 +229,75 @@ const Post = ({user, post, closePost}) => {
         } else if (friendRequestText === "Accept Friend Request") {
             acceptFriendRequest({variables: {from: openUser, to: user.id}})
         }
-
     }
+
+    const handleDelete = () => {
+        console.log(user.id, post.id)
+        deletePost({variables: {id: post.id, userID: user.id}})
+        handleOptionsClose()
+        // setOpen(false)
+        // setAnchorEl(false)
+    }
+
+    const handleOpenEditPost = () => {
+      setOpenEditPost(true);
+      console.log("Edit Post Dialog is opening now!")
+    };
+  
+    const handleCloseEditPost = () => {
+      setOpenEditPost(false);
+      console.log("Edit Post Dialog is closing now!")
+    };
+
+    const handleEditCaption = (event) => {
+      event.preventDefault();
+      editPostCaption({variables: {id: post.id, text: edittedCaption}})
+      handleCloseEditPost();
+      handleOptionsClose();
+    }
+
+    const handleEditChange = (event) => {
+      setEdittedCaption(event.target.value);
+    };
+
+    const otherUserMenuItems = [
+        {
+            text: "Receive notifications from this post (Coming Soon)",
+            icon: <NotificationsActiveIcon />,
+            path: "/"
+        },
+        {
+            text: "Hide posts from this user (Coming Soon)",
+            icon: <CancelIcon />,
+            path: "/"
+        },
+        {
+            text: "Report Post (Coming Soon)",
+            icon: <ReportIcon />,
+            path: "/"
+        }
+    ]
+    
+    const userMenuItems = [
+        {
+            text: "Receive notifications from this post (Coming Soon)",
+            icon: <NotificationsActiveIcon />,
+            path: "/",
+            onClick: handleOptionsClose
+        },
+        {
+            text: "Edit Post",
+            icon: <EditIcon />,
+            path: "/",
+            onClick: handleOpenEditPost
+        },
+        {
+            text: "Delete Post",
+            icon: <DeleteIcon />,
+            path: "/",
+            onClick: handleDelete
+        }
+    ]
 
     useEffect(() => {
         if (openUser) {
@@ -342,13 +398,37 @@ const Post = ({user, post, closePost}) => {
                                                     {user.id===post.user.id && userMenuItems.map(item => (
                                                         <ListItem
                                                             button
-                                                            key={item.text}
-                                                            onClick={handleOptionsClose}
                                                         >
-                                                            <ListItemIcon>
+                                                            <ListItemIcon onClick={item.onClick}>
                                                                 {item.icon}
                                                             </ListItemIcon>
-                                                            <ListItemText primary={item.text}></ListItemText>
+                                                            <ListItemText primary={item.text} onClick={item.onClick} />
+                                                            {item.text!=="Edit Post" ? null : <Dialog open={openEditPost} aria-labelledby="form-dialog-title">
+                                                              <DialogTitle id="form-dialog-title">Edit Caption</DialogTitle>
+                                                              <DialogContent>
+                                                                <DialogContentText>
+                                                                  Please submit your new caption:
+                                                                </DialogContentText>
+                                                                <TextField
+                                                                  autoFocus
+                                                                  margin="dense"
+                                                                  id="name"
+                                                                  label="Email Address"
+                                                                  type="email"
+                                                                  fullWidth
+                                                                  defaultValue={post.text}
+                                                                  onChange={handleEditChange}
+                                                                />
+                                                              </DialogContent>
+                                                              <DialogActions>
+                                                                <Button onClick={handleCloseEditPost} color="primary">
+                                                                  Cancel
+                                                                </Button>
+                                                                <Button onClick={handleEditCaption} color="primary">
+                                                                  Submit
+                                                                </Button>
+                                                              </DialogActions>
+                                                            </Dialog>}
                                                         </ListItem>
                                                     ))}
                                                     {user.id!==post.user.id && otherUserMenuItems.map(item => (

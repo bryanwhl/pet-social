@@ -479,6 +479,18 @@ export const deleteCommentQuery=gql`
   }
 `
 
+export const deletePostQuery=gql`
+  mutation ($id: ID!, $userID: ID!) {
+    deletePost(
+      id: $id,
+      userID: $userID
+    ) {
+      id
+    }
+  }
+`
+
+
 export const likeCommentQuery=gql`
   mutation ($id: ID!, $user: ID!) {
     editCommentLike(
@@ -625,6 +637,17 @@ export const editProfileBioQuery=gql`
   }
 `
 
+export const editPostCaptionQuery=gql`
+  mutation ($id: ID!, $text: String!) {
+    editPostCaption(
+      id: $id,
+      text: $text
+    ) {
+      id
+    }
+  }
+`
+
 export const editAvatarQuery=gql`
   mutation ($id: ID!, $avatarPath: String!) {
     editAvatar(
@@ -692,6 +715,17 @@ export const deletePlaygroupQuery=gql`
   mutation ($id: ID!) {
     deletePlaygroup(
       id: $id,
+    ) {
+      id
+    }
+  }
+`
+
+export const joinPlaygroupQuery=gql`
+  mutation ($id: ID!, $userID: ID!) {
+    joinPlaygroup(
+      id: $id,
+      userID: $userID
     ) {
       id
     }
@@ -774,6 +808,7 @@ export const getPlaygroupsQuery=gql`
       }
       members {
         id
+        username
       }
       dateCreated
     }
