@@ -80,7 +80,14 @@ const PlaygroupInfo = ({ playgroup, user }) => {
                             Delete Playgroup
                         </Typography>
                     </Button>
-                </CardActions> : 
+                </CardActions> : playgroup.members.some(e => e.id === user.id) ?
+                <CardActions>
+                    <Button size="small" onClick={handleJoin}>
+                        <Typography color="secondary">
+                            Leave Playgroup
+                        </Typography>
+                    </Button>
+                </CardActions> :
                 <CardActions>
                     <Button size="small" onClick={handleJoin}>
                         <Typography color="secondary">

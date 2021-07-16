@@ -667,9 +667,14 @@ const resolvers = {
         },
         joinPlaygroup: async (root, args) => {
             const playgroup = await Playgroup.findById( args.id ).exec()
-            playgroup.members = playgroup.members.concat(args.userID);
-            playgroup.save()
-            return playgroup
+            if (playgroup.members.includes(args.userID)) {
+              // User has already joined
+              Playgroup.updateOne({_id: args.id}, {$pull: {members: args.userID}}).exec()
+            } else {
+              // Add user to members array
+              playgroup.members = playgroup.members.concat(args.userID);
+            }
+            await playgroup.save()
         },
         deleteComment: async (root, args) => {
             Comment.findByIdAndDelete(args.id, function (err, docs) {
