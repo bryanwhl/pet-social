@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
-    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, Typography, Divider, Hidden } from '@material-ui/core';
+    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, InputBase, Typography, Divider, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -15,7 +15,8 @@ import RightNotificationBar from './RightNotificationBar';
 import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
-import { displayName } from '../../utility.js'
+import { displayName } from '../../utility.js';
+import { spacing } from '@material-ui/system';
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -37,6 +38,27 @@ const useStyles = makeStyles((theme) => ({
     },
     customizeToolbar: {
         minHeight: 65
+    },
+    searchBarRoot: {
+      padding: '2px 4px',
+      display: 'flex',
+      alignItems: 'center',
+      width: 400,
+    },
+    input: {
+      marginLeft: theme.spacing(2),
+      fontSize:17,
+      flex: 1,
+    },
+    iconButton: {
+      padding: 10,
+    },
+    divider: {
+      height: 28,
+      margin: 4,
+    },
+    resize:{
+      fontSize:50
     }
 }));
 
@@ -172,17 +194,26 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
                 <Toolbar className={classes.customizeToolbar}>
-                    <Grid container spacing={1} alignItems="center" justify="flex-start" wrap="nowrap">
+                    <Grid container spacing={3} alignItems="center" justify="flex-start" wrap="nowrap">
                         <IconButton onClick={toggleLeftDrawer}>
                             <MenuIcon />
                         </IconButton>
-                        <Grid item alignItems="center">
+                        {/* <Grid item alignItems="center">
                             <IconButton>
                                 <SearchIcon />
                             </IconButton>
-                        </Grid>
+                        </Grid> */}
                         <Grid item alignItems="center">
-                            <TextField id="input-with-icon-grid" placeholder="Search"/>
+                          <Paper component="form" className={classes.root}>
+                            <InputBase
+                              className={classes.input}
+                              placeholder="Search Pet Social"
+                              inputProps={{ 'aria-label': 'search pet social' }}
+                            />
+                            <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                              <SearchIcon />
+                            </IconButton>
+                          </Paper>
                         </Grid>
                     </Grid>
                     <Hidden smDown>
