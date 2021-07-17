@@ -17,7 +17,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { withStyles } from "@material-ui/core/styles";
+import { allUsernameQuery } from '../../queries.js';
+import { useQuery } from '@apollo/client';
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -139,6 +140,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
     // handles opening profile menu
     const [profileOpen, setProfileOpen] = useState(false);
     const [anchorProfileRef, setAnchorProfileRef] = useState(null);
+    const allUsers = useQuery(allUsernameQuery);
 
     const handleProfilePopper = (event) => {
         setAnchorProfileRef(event.currentTarget)
@@ -192,12 +194,6 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
         }
     }
 
-    const allUsers = [
-      {id: 1, name: "Bryan"},
-      {id: 2, name: "Kenneth"},
-      {id: 3, name: "Nicholas"}
-    ]
-
     return (
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
@@ -225,8 +221,8 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                           <Autocomplete
                             id="custom-input-demo"
                             freeSolo
-                            options={allUsers}
-                            getOptionLabel={(option) => option.name}
+                            options={allUsers.data.allUsers}
+                            getOptionLabel={(option) => '@' + option.username}
                             renderInput={(params) => (
                               <div ref={params.InputProps.ref}>
                                 <Paper component="form" className={classes.searchBarRoot}>

@@ -26,6 +26,14 @@ export const allUsersQuery=gql`
   }
 `
 
+export const allUsernameQuery=gql`
+  query {
+    allUsers {
+      username
+    }
+  }
+`
+
 export const currentUserQuery=gql`
  query {
    me {
