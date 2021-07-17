@@ -16,7 +16,8 @@ import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js';
-import { spacing } from '@material-ui/system';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { withStyles } from "@material-ui/core/styles";
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -37,16 +38,16 @@ const useStyles = makeStyles((theme) => ({
         width: '200px',
     },
     customizeToolbar: {
-        minHeight: 65
+        height: "4vh"
     },
     searchBarRoot: {
-      padding: '2px 4px',
+      padding: '2px 12px',
       display: 'flex',
       alignItems: 'center',
       width: 400,
     },
     input: {
-      marginLeft: theme.spacing(2),
+      marginLeft: theme.spacing(1),
       fontSize:17,
       flex: 1,
     },
@@ -59,7 +60,8 @@ const useStyles = makeStyles((theme) => ({
     },
     resize:{
       fontSize:50
-    }
+    },
+
 }));
 
 // constructor function for TopBar
@@ -190,6 +192,12 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
         }
     }
 
+    const allUsers = [
+      {id: 1, name: "Bryan"},
+      {id: 2, name: "Kenneth"},
+      {id: 3, name: "Nicholas"}
+    ]
+
     return (
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
@@ -204,16 +212,37 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                             </IconButton>
                         </Grid> */}
                         <Grid item alignItems="center">
-                          <Paper component="form" className={classes.root}>
-                            <InputBase
-                              className={classes.input}
-                              placeholder="Search Pet Social"
-                              inputProps={{ 'aria-label': 'search pet social' }}
-                            />
-                            <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                              <SearchIcon />
-                            </IconButton>
-                          </Paper>
+                          
+                          {/* <Autocomplete
+                            id="free-solo-demo"
+                            freeSolo
+                            options={allUsers.map((option) => option.name)}
+                            style={{ width: 100 }}
+                            renderInput={(params) => (
+                              <TextField {...params} label="freeSolo" size="small" margin="normal" height="40px" color="secondary" variant="outlined" className={classes.searchBarRoot}/>
+                            )}
+                          /> */}
+                          <Autocomplete
+                            id="custom-input-demo"
+                            freeSolo
+                            options={allUsers}
+                            getOptionLabel={(option) => option.name}
+                            renderInput={(params) => (
+                              <div ref={params.InputProps.ref}>
+                                <Paper component="form" className={classes.searchBarRoot}>
+                                  <InputBase
+                                    className={classes.input}
+                                    placeholder="Search Pet Social"
+                                    inputProps={{ 'aria-label': 'search pet social' }}
+                                    {...params.inputProps}
+                                  />
+                                  <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                    <SearchIcon />
+                                  </IconButton>
+                                </Paper>
+                              </div>
+                            )}
+                          />
                         </Grid>
                     </Grid>
                     <Hidden smDown>
