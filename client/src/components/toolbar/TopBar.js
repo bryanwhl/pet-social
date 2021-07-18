@@ -70,11 +70,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // constructor function for TopBar
-// appState helps navigate the app, and goes one level deeper for SideBar to change the app state
-const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser }) => {
+const TopBar = ({ logout, user, client, getCurrentUser }) => {
 
     // const for all components
     const classes = useStyles();
+    let history = useHistory();
 
     // data set up for notifications
     const [numNotifications, setNumNotifications] = useState(0);
@@ -107,15 +107,15 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
 
     // state changes from clicking buttons
     const switchToProfile = () => {
-        setAppState("Profile")
+        history.push('/myprofile')
     }
 
     const switchToHome = () => {
-        setAppState("Home")
+        history.push('/home')
     }
 
     const switchToSettings = () => {
-        setAppState("Settings")
+        history.push('/settings')
         closeLeftDrawer()
     }
 
@@ -204,6 +204,11 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
       setSearchText(value.username);
     };
 
+    const handleSearchInputChange = (event, value) => {
+      console.log(value)
+      setSearchText(value);
+    };
+
     const handleSubmitSearch = () => {
       if (searchText[0] === '@') {
         const resultString = searchText.slice(1);
@@ -223,28 +228,14 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                         <IconButton onClick={toggleLeftDrawer}>
                             <MenuIcon />
                         </IconButton>
-                        {/* <Grid item alignItems="center">
-                            <IconButton>
-                                <SearchIcon />
-                            </IconButton>
-                        </Grid> */}
                         <Grid item alignItems="center">
-                          
-                          {/* <Autocomplete
-                            id="free-solo-demo"
-                            freeSolo
-                            options={allUsers.map((option) => option.name)}
-                            style={{ width: 100 }}
-                            renderInput={(params) => (
-                              <TextField {...params} label="freeSolo" size="small" margin="normal" height="40px" color="secondary" variant="outlined" className={classes.searchBarRoot}/>
-                            )}
-                          /> */}
                           <Autocomplete
                             id="custom-input-demo"
                             freeSolo
                             options={allUsers.data === undefined ? null : allUsers.data.allUsers}
                             getOptionLabel={(option) => '@' + option.username}
                             onChange={handleSearchChange}
+                            onInputChange={handleSearchInputChange}
                             renderInput={(params) => (
                               <div ref={params.InputProps.ref}>
                                 <Paper component="form" className={classes.searchBarRoot}>
@@ -316,7 +307,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} appState={appState} setAppState={setAppState} />
+            <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} />
             <RightNotificationBar drawerState={rightDrawerState === 'notification'} user={user} setNumNotifications={setNumNotifications} client={client} getCurrentUser={getCurrentUser} />
             <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} />
         </div>

@@ -92,17 +92,11 @@ function App({ client }) {
     <Router>
       <div className="App">
         <ThemeProvider theme = {customTheme}>
-          <Route exact path='/home'>
+          <Route path='/'>
             {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
           </Route>
           <Route exact path='/login'>
-            {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/home" /> }
-          </Route>
-          <Route exact path='/profile'>
-            {(user !== null) ? <OtherUsersProfilePage setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
-          </Route>
-          <Route exact path='/'>
-            <Redirect to="/login" />
+            {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/" /> }
           </Route>
         </ThemeProvider>
       </div>
