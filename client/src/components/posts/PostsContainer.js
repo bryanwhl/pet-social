@@ -27,6 +27,7 @@ const PostsContainer = ({ user }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    console.log(allPosts)
     if (allPosts.data) {
       console.log(allPosts.data);
       let outputArr = allPosts.data.getPosts.slice().sort((a, b) => {return b.date - a.date}); 

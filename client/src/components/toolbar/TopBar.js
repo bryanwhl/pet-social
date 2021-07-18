@@ -19,6 +19,10 @@ import { displayName } from '../../utility.js';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { allUsernameQuery } from '../../queries.js';
 import { useQuery } from '@apollo/client';
+import {
+  Link,
+} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -140,6 +144,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
     // handles opening profile menu
     const [profileOpen, setProfileOpen] = useState(false);
     const [anchorProfileRef, setAnchorProfileRef] = useState(null);
+    const [searchText, setSearchText] = useState("");
     const allUsers = useQuery(allUsernameQuery);
 
     const handleProfilePopper = (event) => {
@@ -194,6 +199,22 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
         }
     }
 
+    const handleSearchChange = (event, value) => {
+      console.log(value)
+      setSearchText(value.username);
+    };
+
+    const handleSubmitSearch = () => {
+      if (searchText[0] === '@') {
+        const resultString = searchText.slice(1);
+        setSearchText(resultString)
+      } else {
+        setSearchText(searchText)
+      }
+      console.log(searchText);
+      return "/profile?username=" + searchText;
+    }
+
     return (
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
@@ -221,18 +242,19 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                           <Autocomplete
                             id="custom-input-demo"
                             freeSolo
-                            options={allUsers.data.allUsers}
+                            options={allUsers.data === undefined ? null : allUsers.data.allUsers}
                             getOptionLabel={(option) => '@' + option.username}
+                            onChange={handleSearchChange}
                             renderInput={(params) => (
                               <div ref={params.InputProps.ref}>
                                 <Paper component="form" className={classes.searchBarRoot}>
                                   <InputBase
                                     className={classes.input}
-                                    placeholder="Search Pet Social"
+                                    placeholder="Search Users"
                                     inputProps={{ 'aria-label': 'search pet social' }}
                                     {...params.inputProps}
                                   />
-                                  <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                  <IconButton component={Link} to={handleSubmitSearch} className={classes.iconButton} aria-label="search">
                                     <SearchIcon />
                                   </IconButton>
                                 </Paper>

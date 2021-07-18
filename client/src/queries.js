@@ -256,6 +256,55 @@ export const getPostByIdQuery=gql`
   }
 `
 
+export const getUserProfileQuery=gql`
+  query ($username: String!) {
+    getUserProfile(username: $username) {
+      username
+      email
+      profileBio
+      name {
+          givenName
+          familyName
+      }
+      friends {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      posts {
+        id
+        postType
+        imageFilePath
+        videoFilePath
+      }
+      savedPosts {
+        id
+        postType
+        imageFilePath
+        videoFilePath
+      }
+      registeredDate
+      accountType
+      avatarPath
+      pets {
+        id
+        name
+        picturePath
+      }
+      settings {
+        familyNameFirst
+      }
+    }
+  }
+`
+
 export const getPetByIdQuery=gql`
   query ($id: ID!) {
     findPet(id: $id) {

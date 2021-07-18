@@ -189,9 +189,10 @@ const typeDefs = gql`
         allUsers: [User]!
         findUser(id: ID): User
         me: User
-        findPost(id :ID): Post
+        findPost(id:ID): Post
         getPosts: [Post]!
         findComment(id: ID!): Comment
+        getUserProfile(username: String!): User
         findPet(id: ID!): Pet
         getPlaygroup: [Playgroup]!
         getNotifications(id: ID!): [Notification]!
@@ -486,7 +487,8 @@ const resolvers = {
         findComment: (root, args) => Comment.findById(args.id),
         findPet: (root, args) => Pet.findById(args.id),
         getPlaygroup: () => Playgroup.find({}),
-        getNotifications: (root, args) => Notification.find({toUser: args.id})
+        getNotifications: (root, args) => Notification.find({toUser: args.id}),
+        getUserProfile: (root, args) => User.findOne({username: args.username})
     },
     Mutation: {
         addUser: async (root, args) => {
