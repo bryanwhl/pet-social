@@ -204,6 +204,11 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
       setSearchText(value.username);
     };
 
+    const handleSearchInputChange = (event, value) => {
+      console.log(value)
+      setSearchText(value);
+    };
+
     const handleSubmitSearch = () => {
       if (searchText[0] === '@') {
         const resultString = searchText.slice(1);
@@ -245,6 +250,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                             options={allUsers.data === undefined ? null : allUsers.data.allUsers}
                             getOptionLabel={(option) => '@' + option.username}
                             onChange={handleSearchChange}
+                            onInputChange={handleSearchInputChange}
                             renderInput={(params) => (
                               <div ref={params.InputProps.ref}>
                                 <Paper component="form" className={classes.searchBarRoot}>
