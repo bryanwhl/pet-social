@@ -23,6 +23,7 @@ import {
   Link,
 } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import SearchBar from './SearchBar.js';
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -229,29 +230,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                             <MenuIcon />
                         </IconButton>
                         <Grid item alignItems="center">
-                          <Autocomplete
-                            id="custom-input-demo"
-                            freeSolo
-                            options={allUsers.data === undefined ? null : allUsers.data.allUsers}
-                            getOptionLabel={(option) => '@' + option.username}
-                            onChange={handleSearchChange}
-                            onInputChange={handleSearchInputChange}
-                            renderInput={(params) => (
-                              <div ref={params.InputProps.ref}>
-                                <Paper component="form" className={classes.searchBarRoot}>
-                                  <InputBase
-                                    className={classes.input}
-                                    placeholder="Search Users"
-                                    inputProps={{ 'aria-label': 'search pet social' }}
-                                    {...params.inputProps}
-                                  />
-                                  <IconButton component={Link} to={handleSubmitSearch} className={classes.iconButton} aria-label="search">
-                                    <SearchIcon />
-                                  </IconButton>
-                                </Paper>
-                              </div>
-                            )}
-                          />
+                          <SearchBar />
                         </Grid>
                     </Grid>
                     <Hidden smDown>
