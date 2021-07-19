@@ -26,6 +26,14 @@ export const allUsersQuery=gql`
   }
 `
 
+export const allUsernameQuery=gql`
+  query {
+    allUsers {
+      username
+    }
+  }
+`
+
 export const currentUserQuery=gql`
  query {
    me {
@@ -244,6 +252,55 @@ export const getPostByIdQuery=gql`
         text
       }
       isEdited
+    }
+  }
+`
+
+export const getUserProfileQuery=gql`
+  query ($username: String!) {
+    getUserProfile(username: $username) {
+      username
+      email
+      profileBio
+      name {
+          givenName
+          familyName
+      }
+      friends {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      posts {
+        id
+        postType
+        imageFilePath
+        videoFilePath
+      }
+      savedPosts {
+        id
+        postType
+        imageFilePath
+        videoFilePath
+      }
+      registeredDate
+      accountType
+      avatarPath
+      pets {
+        id
+        name
+        picturePath
+      }
+      settings {
+        familyNameFirst
+      }
     }
   }
 `

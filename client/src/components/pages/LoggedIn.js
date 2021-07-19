@@ -8,11 +8,12 @@ import Shop from '../pages/Shop.js'
 import SettingsPage from '../settings/SettingsPage.js'
 import { useHistory } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
+import OtherUsersProfilePage from '../profile/OtherUsersProfilePage.js'
+
 
 const LoggedIn = ({setUser, client, user, getCurrentUser}) => {
-
-  const [appState, setAppState] = useState("Home");
 
   const history = useHistory();
 
@@ -29,12 +30,27 @@ const LoggedIn = ({setUser, client, user, getCurrentUser}) => {
   return (
     <div>
       <CssBaseline />
-      <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} client={client} getCurrentUser={getCurrentUser} />
-      {appState === "Home" && <PostsContainer user={user}/>}
-      {appState === "Profile" && <ProfilePage user={user} getCurrentUser={getCurrentUser}/>}
-      {appState === "Settings" && <SettingsPage user={user} logout={logout}/>}
-      {appState === "Playgroups" && <Playgroups user={user}/>}
-      {appState === "Shop" && <Shop />}
+      <TopBar logout={logout} user={user} client={client} getCurrentUser={getCurrentUser} />
+      <Switch>
+        <Route exact path='/profile'>
+          {(user !== null) ? <OtherUsersProfilePage setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
+        </Route>
+        <Route exact path='/home'>
+          {(user !== null) ?<PostsContainer user={user}/> : <Redirect to="/login" /> }
+        </Route>
+        <Route exact path='/myprofile'>
+          {(user !== null) ?<ProfilePage user={user} getCurrentUser={getCurrentUser}/> : <Redirect to="/login" /> }
+        </Route>
+        <Route exact path='/settings'>
+          {(user !== null) ?<SettingsPage user={user} logout={logout}/> : <Redirect to="/login" /> }
+        </Route>
+        <Route exact path='/playgroups'>
+          {(user !== null) ?<Playgroups user={user}/> : <Redirect to="/login" /> }
+        </Route>
+        <Route exact path='/shop'>
+          {(user !== null) ?<Shop /> : <Redirect to="/login" /> }
+        </Route>
+      </Switch>
     </div>
   )
 }

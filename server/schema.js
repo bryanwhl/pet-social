@@ -189,9 +189,10 @@ const typeDefs = gql`
         allUsers: [User]!
         findUser(id: ID): User
         me: User
-        findPost(id :ID): Post
+        findPost(id:ID): Post
         getPosts: [Post]!
         findComment(id: ID!): Comment
+        getUserProfile(username: String!): User
         findPet(id: ID!): Pet
         getPlaygroup: [Playgroup]!
         getNotifications(id: ID!): [Notification]!
@@ -486,7 +487,8 @@ const resolvers = {
         findComment: (root, args) => Comment.findById(args.id),
         findPet: (root, args) => Pet.findById(args.id),
         getPlaygroup: () => Playgroup.find({}),
-        getNotifications: (root, args) => Notification.find({toUser: args.id})
+        getNotifications: (root, args) => Notification.find({toUser: args.id}),
+        getUserProfile: (root, args) => User.findOne({username: args.username})
     },
     Mutation: {
         addUser: async (root, args) => {
@@ -667,9 +669,14 @@ const resolvers = {
         },
         joinPlaygroup: async (root, args) => {
             const playgroup = await Playgroup.findById( args.id ).exec()
-            playgroup.members = playgroup.members.concat(args.userID);
-            playgroup.save()
-            return playgroup
+            if (playgroup.members.includes(args.userID)) {
+              // User has already joined
+              Playgroup.updateOne({_id: args.id}, {$pull: {members: args.userID}}).exec()
+            } else {
+              // Add user to members array
+              playgroup.members = playgroup.members.concat(args.userID);
+            }
+            await playgroup.save()
         },
         deleteComment: async (root, args) => {
             Comment.findByIdAndDelete(args.id, function (err, docs) {
