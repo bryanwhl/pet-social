@@ -60,6 +60,7 @@ class Chat {
 class Message {
     id: ID!
     date: Date!
+    text: String!
     isEdited: Boolean!
     isSeen: Boolean!
 }

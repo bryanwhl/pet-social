@@ -49,6 +49,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
 
     // data set up for notifications
     const [numNotifications, setNumNotifications] = useState(0);
+    const [numChats, setNumChats] = useState(0);
     const notifications = [
         {
         text: "Bryan Wong liked your post.",
@@ -194,7 +195,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                     </Hidden>
                     <Grid container spacing={1} alignItems="center" justify="flex-end" wrap="nowrap">
                         <IconButton onClick={handleRightDrawerChat}>
-                            <Badge badgeContent={1} color="secondary">
+                            <Badge badgeContent={numChats} color="secondary">
                                 <ChatIcon />
                             </Badge>
                         </IconButton>
@@ -240,7 +241,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
             </AppBar>
             <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} appState={appState} setAppState={setAppState} />
             <RightNotificationBar drawerState={rightDrawerState === 'notification'} user={user} setNumNotifications={setNumNotifications} client={client} getCurrentUser={getCurrentUser} />
-            <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} />
+            <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} setNumChats={setNumChats} client={client} />
         </div>
     )
 }

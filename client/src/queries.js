@@ -149,6 +149,45 @@ export const getNotificationsQuery=gql`
  }
 `
 
+export const getChatsQuery=gql`
+ query ($id: ID!) {
+   getChats (id: $id) {
+    id
+    users {
+      id
+      username
+      name {
+        givenName
+        familyName
+      }
+      settings {
+        familyNameFirst
+      }
+      avatarPath
+    }
+    messages {
+      id
+      user {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      date
+      text
+      isEdited
+      isSeen
+    }
+   }
+ }
+`
+
 export const getUserByIdQuery=gql`
   query ($id: ID!) {
     findUser(id: $id) {

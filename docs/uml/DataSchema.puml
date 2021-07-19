@@ -87,6 +87,7 @@ class Message {
     id: ID!
     user: User!
     date: Date!
+    text: String!
     isEdited: Boolean!
     isSeen: Boolean!
 }

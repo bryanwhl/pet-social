@@ -10,6 +10,8 @@ const Comment = require('./models/comment.js')
 const Playgroup = require('./models/playgroup.js')
 const FriendRequest = require('./models/friendRequest.js')
 const Notification = require('./models/notification.js')
+const Chat = require('./models/chat.js')
+const Message = require('./models/message.js')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
@@ -149,6 +151,7 @@ const typeDefs = gql`
         id: ID!
         user: User!
         date: Date!
+        text: String!
         isEdited: Boolean!
         isSeen: Boolean!
     }
@@ -195,6 +198,7 @@ const typeDefs = gql`
         findPet(id: ID!): Pet
         getPlaygroup: [Playgroup]!
         getNotifications(id: ID!): [Notification]!
+        getChats(id: ID!): [Chat]!
     }
     type Mutation {
         addUser(
@@ -477,6 +481,19 @@ const resolvers = {
             return (await root.populate('comment').execPopulate()).comment
         },
     },
+    Chat: {
+        users: async (root) => {
+            return (await root.populate('users').execPopulate()).users
+        },
+        messages: async (root) => {
+            return (await root.populate('messages').execPopulate()).messages
+        },
+    },
+    Message: {
+        user: async (root) => {
+            return User.findById(root.user).exec()
+        },
+    },
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
@@ -486,7 +503,8 @@ const resolvers = {
         findComment: (root, args) => Comment.findById(args.id),
         findPet: (root, args) => Pet.findById(args.id),
         getPlaygroup: () => Playgroup.find({}),
-        getNotifications: (root, args) => Notification.find({toUser: args.id})
+        getNotifications: (root, args) => Notification.find({toUser: args.id}),
+        getChats: (root, args) => Chat.find({"users.id": args.id})
     },
     Mutation: {
         addUser: async (root, args) => {

@@ -235,7 +235,7 @@ const RightNotificationBar = ({ drawerState, user, setNumNotifications, client, 
                     ))}
                 </div>
                 <ListItem>
-                    <ListItemText primary={String(notifications)===String([]) && "You have no notifications"}></ListItemText>
+                    <ListItemText primary={String(notifications)===String([]) && "You have no notifications"} ></ListItemText>
                 </ListItem>
                 </MenuList>
             </Drawer>
