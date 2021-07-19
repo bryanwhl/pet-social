@@ -1,13 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
-import { IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
-    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, InputBase, Typography, Divider, Hidden } from '@material-ui/core';
+import { IconButton, AppBar, Toolbar, Grid, Badge, Popper, Grow,
+    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, Typography, Divider, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import SearchIcon from '@material-ui/icons/Search';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SettingsIcon from '@material-ui/icons/Settings';
 import SideBar from './SideBar';
@@ -16,12 +15,6 @@ import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { allUsernameQuery } from '../../queries.js';
-import { useQuery } from '@apollo/client';
-import {
-  Link,
-} from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import SearchBar from './SearchBar.js';
 
@@ -78,33 +71,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
     let history = useHistory();
 
     // data set up for notifications
-    const [numNotifications, setNumNotifications] = useState(0);
-    const notifications = [
-        {
-        text: "Bryan Wong liked your post.",
-        icon: <Avatar aria-label="bryan" className={classes.avatar}>
-                B
-                </Avatar>,
-        path: "/",
-        time: "45 minutes ago"
-        },
-        {
-        text: "Benedict Tan has commented on your post.",
-        icon: <Avatar aria-label="bryan" className={classes.avatar}>
-                B
-                </Avatar>,
-        path: "/",
-        time: "53 minutes ago"
-        },
-        {
-        text: "Brendan Lim has shared your post.",
-        icon: <Avatar aria-label="bryan" className={classes.avatar}>
-                B
-                </Avatar>,
-        path: "/",
-        time: "an hour ago"
-        }
-    ]    
+    const [numNotifications, setNumNotifications] = useState(0); 
 
     // state changes from clicking buttons
     const switchToProfile = () => {
@@ -145,8 +112,6 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
     // handles opening profile menu
     const [profileOpen, setProfileOpen] = useState(false);
     const [anchorProfileRef, setAnchorProfileRef] = useState(null);
-    const [searchText, setSearchText] = useState("");
-    const allUsers = useQuery(allUsernameQuery);
 
     const handleProfilePopper = (event) => {
         setAnchorProfileRef(event.currentTarget)
@@ -198,27 +163,6 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
         } else {
             setRightDrawerState('closed');
         }
-    }
-
-    const handleSearchChange = (event, value) => {
-      console.log(value)
-      setSearchText(value.username);
-    };
-
-    const handleSearchInputChange = (event, value) => {
-      console.log(value)
-      setSearchText(value);
-    };
-
-    const handleSubmitSearch = () => {
-      if (searchText[0] === '@') {
-        const resultString = searchText.slice(1);
-        setSearchText(resultString)
-      } else {
-        setSearchText(searchText)
-      }
-      console.log(searchText);
-      return "/profile?username=" + searchText;
     }
 
     return (
