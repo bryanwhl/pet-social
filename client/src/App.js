@@ -6,7 +6,8 @@ import { ThemeProvider, createMuiTheme, responsiveFontSizes } from '@material-ui
 import { useLazyQuery } from '@apollo/client'
 import { currentUserQuery } from './queries.js'
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-import { useHistory, withRouter } from "react-router-dom";
+import { useHistory, withRouter, BrowserRouter, useLocation } from "react-router-dom";
+import OtherUsersProfilePage from './components/profile/OtherUsersProfilePage.js'
 
 let customTheme = createMuiTheme({
   palette: {
@@ -91,14 +92,11 @@ function App({ client }) {
     <Router>
       <div className="App">
         <ThemeProvider theme = {customTheme}>
-          <Route exact path='/home'>
+          <Route path='/'>
             {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
           </Route>
           <Route exact path='/login'>
-            {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/home" /> }
-          </Route>
-          <Route exact path='/'>
-            <Redirect to="/login" />
+            {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/" /> }
           </Route>
         </ThemeProvider>
       </div>

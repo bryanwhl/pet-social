@@ -7,6 +7,7 @@ import LocalMallIcon from '@material-ui/icons/LocalMall';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const drawerWidth = 320;
 
@@ -24,14 +25,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountType, appState, setAppState }) => {
+const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountType }) => {
     
+    let history = useHistory();
+    let { path, url } = useRouteMatch();
+
     const switchToHome = () => {
-        setAppState("Home")
+        history.push('/home')
     }
     
     const switchToPlaygroups = () => {
-        setAppState("Playgroups")
+        history.push('/playgroups')
         closeLeftDrawer()
         setRightDrawerState("false")
     }
@@ -41,11 +45,11 @@ const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountTyp
     }
     
     const switchToShop = () => {
-        setAppState("Shop")
+        history.push('/shop')
     }
     
     const switchToSettings = () => {
-        setAppState("Settings")
+        history.push('/settings')
         closeLeftDrawer()
     }
 
@@ -54,21 +58,21 @@ const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountTyp
             text: "Home",
             icon: <HomeIcon/>,
             path: "/",
-            selected: (appState === "Home"),
+            selected: (url === "home"),
             onClick: switchToHome
         },
         {
             text: (accountType === "Personal") ? "Playgroups" : "Advertising",
             icon: (accountType === "Personal") ? <MapIcon /> : <MonetizationOnIcon />,
             path: "/",
-            selected: (appState === "Playgroups"),
+            selected: (url === "playgroups"),
             onClick: (accountType === "Personal") ? switchToPlaygroups : handleAdvertisingClick
         },
         {
             text: (accountType === "Personal") ? "Shop" : "Your Store",
             icon: <LocalMallIcon />,
             path: "/",
-            selected: (appState === "Shop"),
+            selected: (url === "shop"),
             divider: true,
             onClick: switchToShop
         },
@@ -76,7 +80,7 @@ const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountTyp
             text: "Settings",
             icon: <SettingsIcon />,
             path: "/",
-            selected: (appState === "Settings"),
+            selected: (url === "settings"),
             onClick: switchToSettings
         }
     ]

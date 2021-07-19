@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { IconButton, AppBar, Toolbar, Grid, TextField, Badge, Popper, Grow,
-    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, Typography, Divider, Hidden } from '@material-ui/core';
+    Paper, MenuList, ClickAwayListener, ListItem, ListItemIcon, ListItemText, Avatar, InputBase, Typography, Divider, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -15,7 +15,14 @@ import RightNotificationBar from './RightNotificationBar';
 import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
-import { displayName } from '../../utility.js'
+import { displayName } from '../../utility.js';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { allUsernameQuery } from '../../queries.js';
+import { useQuery } from '@apollo/client';
+import {
+  Link,
+} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 // image file path for Pet Social logo
 const LOGO_PATH = "http://localhost:4000/images/pet-social-logo.jpg"
@@ -36,16 +43,38 @@ const useStyles = makeStyles((theme) => ({
         width: '200px',
     },
     customizeToolbar: {
-        minHeight: 65
-    }
+        height: "4vh"
+    },
+    searchBarRoot: {
+      padding: '2px 12px',
+      display: 'flex',
+      alignItems: 'center',
+      width: 400,
+    },
+    input: {
+      marginLeft: theme.spacing(1),
+      fontSize:17,
+      flex: 1,
+    },
+    iconButton: {
+      padding: 10,
+    },
+    divider: {
+      height: 28,
+      margin: 4,
+    },
+    resize:{
+      fontSize:50
+    },
+
 }));
 
 // constructor function for TopBar
-// appState helps navigate the app, and goes one level deeper for SideBar to change the app state
-const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser }) => {
+const TopBar = ({ logout, user, client, getCurrentUser }) => {
 
     // const for all components
     const classes = useStyles();
+    let history = useHistory();
 
     // data set up for notifications
     const [numNotifications, setNumNotifications] = useState(0);
@@ -79,15 +108,15 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
 
     // state changes from clicking buttons
     const switchToProfile = () => {
-        setAppState("Profile")
+        history.push('/myprofile')
     }
 
     const switchToHome = () => {
-        setAppState("Home")
+        history.push('/home')
     }
 
     const switchToSettings = () => {
-        setAppState("Settings")
+        history.push('/settings')
         closeLeftDrawer()
     }
 
@@ -116,6 +145,8 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
     // handles opening profile menu
     const [profileOpen, setProfileOpen] = useState(false);
     const [anchorProfileRef, setAnchorProfileRef] = useState(null);
+    const [searchText, setSearchText] = useState("");
+    const allUsers = useQuery(allUsernameQuery);
 
     const handleProfilePopper = (event) => {
         setAnchorProfileRef(event.currentTarget)
@@ -169,21 +200,59 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
         }
     }
 
+    const handleSearchChange = (event, value) => {
+      console.log(value)
+      setSearchText(value.username);
+    };
+
+    const handleSearchInputChange = (event, value) => {
+      console.log(value)
+      setSearchText(value);
+    };
+
+    const handleSubmitSearch = () => {
+      if (searchText[0] === '@') {
+        const resultString = searchText.slice(1);
+        setSearchText(resultString)
+      } else {
+        setSearchText(searchText)
+      }
+      console.log(searchText);
+      return "/profile?username=" + searchText;
+    }
+
     return (
         <div className={classes.root}>
             <AppBar elevation="0" variant="outlined" className={classes.appBar}>
                 <Toolbar className={classes.customizeToolbar}>
-                    <Grid container spacing={1} alignItems="center" justify="flex-start" wrap="nowrap">
+                    <Grid container spacing={3} alignItems="center" justify="flex-start" wrap="nowrap">
                         <IconButton onClick={toggleLeftDrawer}>
                             <MenuIcon />
                         </IconButton>
                         <Grid item alignItems="center">
-                            <IconButton>
-                                <SearchIcon />
-                            </IconButton>
-                        </Grid>
-                        <Grid item alignItems="center">
-                            <TextField id="input-with-icon-grid" placeholder="Search"/>
+                          <Autocomplete
+                            id="custom-input-demo"
+                            freeSolo
+                            options={allUsers.data === undefined ? null : allUsers.data.allUsers}
+                            getOptionLabel={(option) => '@' + option.username}
+                            onChange={handleSearchChange}
+                            onInputChange={handleSearchInputChange}
+                            renderInput={(params) => (
+                              <div ref={params.InputProps.ref}>
+                                <Paper component="form" className={classes.searchBarRoot}>
+                                  <InputBase
+                                    className={classes.input}
+                                    placeholder="Search Users"
+                                    inputProps={{ 'aria-label': 'search pet social' }}
+                                    {...params.inputProps}
+                                  />
+                                  <IconButton component={Link} to={handleSubmitSearch} className={classes.iconButton} aria-label="search">
+                                    <SearchIcon />
+                                  </IconButton>
+                                </Paper>
+                              </div>
+                            )}
+                          />
                         </Grid>
                     </Grid>
                     <Hidden smDown>
@@ -239,7 +308,7 @@ const TopBar = ({ logout, user, appState, setAppState, client, getCurrentUser })
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} appState={appState} setAppState={setAppState} />
+            <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} />
             <RightNotificationBar drawerState={rightDrawerState === 'notification'} user={user} setNumNotifications={setNumNotifications} client={client} getCurrentUser={getCurrentUser} />
             <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} setNumChats={setNumChats} client={client} />
         </div>
