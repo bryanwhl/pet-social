@@ -3,13 +3,14 @@ import { MenuList, Avatar, ListItem, ListItemIcon, ListItemText } from '@materia
 import { makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 
-const drawerWidth = 260;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
   },
+  toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
   },
@@ -34,7 +35,7 @@ const RightChatBar = ({ drawerState, user }) => {
 
     const notifications = [
         {
-            text:"",
+            text:"You have received (5) new messages from Bryan Lim",
             icon: <Avatar aria-label="bryan" className={classes.avatar}>
                 B
             </Avatar>,
@@ -62,11 +63,8 @@ const RightChatBar = ({ drawerState, user }) => {
                     paper: classes.drawerPaper,
                 }}
             >       
-                <Divider />
-                <Divider />
-                <Divider />
-                <Divider />
-                <MenuList id="menu-list-grow">
+                <div className={classes.toolbar} />
+                <MenuList id="menu-list-grow" disablePadding>
                 <div className={classes.drawerContainer}>
                     {notifications.map(item => (
                         <ListItem

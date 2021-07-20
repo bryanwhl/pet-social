@@ -10,14 +10,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     // width: "90vmin",
     width: "100%",
-    marginTop: "30px"
+    marginTop: "10px"
   },
   input: {
     display: "none"
   },
   submit: {
     marginLeft: "auto"
-  }
+  },
 }));
 
 
@@ -91,7 +91,7 @@ const SubmitPost = ({user, displayName}) => {
   }
 
   return (
-    <div>
+    <div> 
       <form noValidate enctype="multipart/form-data" onSubmit={handleSubmit}>
         <Card className={classes.root}>
           <CardHeader

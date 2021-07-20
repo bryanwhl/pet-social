@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   containerGrid: {
       padding: "60px",
       width: "110vmin",
-  }
+  },
 }));
 
 const PostsContainer = ({ user }) => {

@@ -501,10 +501,8 @@ const Post = ({user, post, closePost}) => {
                             {post.comments.map(item => (
                                 <Comment user={user} post={post} comment={item} handleUserClick={handleUserClick}/>
                             ))}
-                            
                             </List>
                             <SubmitComment user={user} post={post}/>
-                            <Divider />
                         </MenuList>
                     </CardContent>
                 </Collapse>

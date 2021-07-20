@@ -13,13 +13,14 @@ import ClearIcon from '@material-ui/icons/Clear';
 import * as timeago from 'timeago.js';
 import ReceivedFriendRequests from '../profile/ReceivedFriendRequests.js';
 
-const drawerWidth = 260;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
   },
+  toolbar: theme.mixins.toolbar,
   drawerPaper: {
     paddingTop: 55,
     width: drawerWidth,
@@ -205,12 +206,8 @@ const RightNotificationBar = ({ drawerState, user, setNumNotifications, client, 
                 classes={{
                     paper: classes.drawerPaper,
                 }}
-            >       
-                <Divider />
-                <Divider />
-                <Divider />
-                <Divider />
-                <MenuList id="menu-list-grow">
+            >
+                <MenuList id="menu-list-grow" disablePadding>
                 <div className={classes.drawerContainer}>
                     {notifications.filter(notif => user.settings.likeNotification ? true : !["Post Like", "Comment Like"].includes(notif.notificationType))
                     .filter(notif => user.settings.commentNotification ? true : notif.notificationType !== "Post Comment").map(item => (

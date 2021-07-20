@@ -13,27 +13,11 @@ import {
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-      display: "flex"
-  },
-  appBar: {
-      zIndex: theme.zIndex.drawer + 2,
-  },
-  avatar: {
-      backgroundColor: red[500],
-  },
-  rightPopper: {
-      zIndex: theme.zIndex.drawer + 1,
-      width: '200px',
-  },
-  customizeToolbar: {
-      height: "4vh"
-  },
   searchBarRoot: {
-    padding: '2px 12px',
+    padding: '0px 12px',
     display: 'flex',
     alignItems: 'center',
-    width: 400,
+    width: "100%",
   },
   input: {
     marginLeft: theme.spacing(1),
