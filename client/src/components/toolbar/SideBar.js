@@ -9,7 +9,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { useHistory, useRouteMatch } from "react-router-dom";
 
-const drawerWidth = 280;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {

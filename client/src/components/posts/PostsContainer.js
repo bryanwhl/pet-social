@@ -11,7 +11,7 @@ import { displayName } from '../../utility.js'
 const useStyles = makeStyles((theme) => ({
   containerGrid: {
       padding: "60px",
-      width: "53vmax",
+      width: "45vmax",
       minWidth: "450px",
   },
 }));

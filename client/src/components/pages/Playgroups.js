@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 
 Geocode.setApiKey(process.env.REACT_APP_KEY);
 
-const drawerWidth = 280;
+const drawerWidth = 300;
 
 function loadScript(src, position, id) {
   if (!position) {

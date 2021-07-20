@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     },
     rightPopper: {
         zIndex: theme.zIndex.drawer + 1,
+        width: '200px',
+    },
+    customizeToolbar: {
+        height: "4vh"
     },
     searchBarRoot: {
       padding: '2px 12px',
@@ -43,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     },
     input: {
       marginLeft: theme.spacing(1),
-      fontSize: 17,
+      fontSize:17,
       flex: 1,
     },
     iconButton: {
@@ -54,11 +58,8 @@ const useStyles = makeStyles((theme) => ({
       margin: 4,
     },
     resize:{
-      fontSize: 50
+      fontSize:50
     },
-    customizeToolbar: {
-      minHeight: 55
-    }
 }));
 
 // constructor function for TopBar
@@ -178,7 +179,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                     <Hidden smDown>
                         <Grid container alignItems="center" justify="center" xs={0} md={0}>
                             <Grid item>
-                                <img src={LOGO_PATH} alt="Pet Social" width="158" height="50" onClick={switchToHome} style={{cursor: "pointer"}} />
+                                <img src={LOGO_PATH} alt="Pet Social" width="190" height="60" onClick={switchToHome} style={{cursor: "pointer"}} />
                             </Grid>
                         </Grid>
                     </Hidden>
@@ -228,7 +229,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                     </Grid>
                 </Toolbar>
             </AppBar>
-            <SideBar drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} />
+            <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} />
             <RightNotificationBar drawerState={rightDrawerState === 'notification'} user={user} setNumNotifications={setNumNotifications} client={client} getCurrentUser={getCurrentUser} />
             <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} />
         </div>
