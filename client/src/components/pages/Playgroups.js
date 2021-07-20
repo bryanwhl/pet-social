@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 
 Geocode.setApiKey(process.env.REACT_APP_KEY);
 
-const drawerWidth = 300;
+const drawerWidth = 280;
 
 function loadScript(src, position, id) {
   if (!position) {
@@ -247,7 +247,7 @@ const Playgroups = ({ user }) => {
             >
               <Toolbar />
               <div className={classes.drawerContainer}>
-                <List>
+                <List disablePadding>
                   <ListItem button onClick={handleClick}>
                     <ListItemIcon>
                       <AddIcon />
@@ -258,11 +258,11 @@ const Playgroups = ({ user }) => {
                     <List component="div" disablePadding>
                       <ListItem className={classes.nested}>
                         <ListItemText primary="Click this marker and select your desired Playgroup location:" />
-                        <ListItemSecondaryAction>
+                          
                           <ToggleButton edge="end" selected={newPlaygroup} onClick={handleNewPlaygroup}>
+                            
                             <LocationOnIcon color="secondary"/>
                           </ToggleButton>
-                        </ListItemSecondaryAction>
                       </ListItem>
                     </List>
                   </Collapse>
@@ -272,7 +272,7 @@ const Playgroups = ({ user }) => {
                   <ListItem>
                   <Autocomplete
                     id="google-map-demo"
-                    style={{ width: 300 }}
+                    style={{ width: 280 }}
                     getOptionLabel={(option) => (typeof option === 'string' ? option : option.description)}
                     filterOptions={(x) => x}
                     options={options}

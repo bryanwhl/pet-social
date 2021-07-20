@@ -15,7 +15,7 @@ import NotificationsSettings from './NotificationsSettings.js';
 import PrivacySettings from './PrivacySettings.js';
 import { red } from '@material-ui/core/colors';
 
-const drawerWidth = 300;
+const drawerWidth = 280;
 
 const useStyles = makeStyles((theme) => ({
     root: {

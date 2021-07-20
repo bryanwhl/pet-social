@@ -13,7 +13,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import * as timeago from 'timeago.js';
 import ReceivedFriendRequests from '../profile/ReceivedFriendRequests.js';
 
-const drawerWidth = 300;
+const drawerWidth = 280;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {

@@ -3,7 +3,7 @@ import { MenuList, Avatar, ListItem, ListItemIcon, ListItemText } from '@materia
 import { makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 
-const drawerWidth = 300;
+const drawerWidth = 280;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
