@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, Card, IconButton, CardContent, CardHeader, Button, makeStyles, 
-    CardActions, TextField, Container, Grid, Typography } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
+    CardActions, TextField, Typography } from '@material-ui/core';
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import VideocamIcon from '@material-ui/icons/Videocam';
 import { useMutation } from '@apollo/client';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
 import { submitPostQuery, getPostsQuery, UPLOAD_FILE } from '../../queries.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "75vmin",
-    margin: "20px",
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  avatar: {
-    backgroundColor: red[500],
+    // width: "90vmin",
+    width: "100%",
+    marginTop: "30px"
   },
   input: {
     display: "none"
@@ -101,73 +93,67 @@ const SubmitPost = ({user, displayName}) => {
   return (
     <div>
       <form noValidate enctype="multipart/form-data" onSubmit={handleSubmit}>
-      <Container className={classes.cardGrid}>
-          <Grid container justify="center">
-              <Grid item>
-                <Card className={classes.root}>
-                  <CardHeader
-                    avatar={<Avatar alt="Avatar" src={user.avatarPath} />}
-                    title={displayName(user)}
-                  />
-                  <CardContent>
-                    <TextField
-                      id="outlined-multiline-static"
-                      fullWidth
-                      label="Create a Post.."
-                      multiline
-                      rows={4}
-                      placeholder="How's your pet doing?"
-                      variant="outlined"
-                      onChange={handleChange('text')}
-                      error={error === true}
-                      helperText={error === true ? file === null ? "You must attach a file or a video!" : post.text === "" ? "Post cannot be empty!" : null : null}
-                      value={post.text}
-                    />
-                  </CardContent>
-                  <CardActions disableSpacing>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className={classes.input} 
-                      id="icon-button-file" 
-                      onChange={handleImageFileChange}  
-                    />
-                    <label htmlFor="icon-button-file">
-                      <IconButton aria-label="upload picture" component="span">
-                        <PhotoCamera />
-                      </IconButton>
-                    </label>
-                    <input 
-                      type="file" 
-                      accept="video/*" 
-                      className={classes.input} 
-                      id="icon-button-video" 
-                      onChange={handleVideoFileChange}  
-                    />
-                    <label htmlFor="icon-button-video">
-                      <IconButton aria-label="upload video" component="span">
-                        <VideocamIcon />
-                      </IconButton>
-                    </label>
-                    {post.postType === 'video' ? <Typography>
-                      Video File Attached
-                    </Typography> : post.postType === 'image' ? <Typography>
-                      Image File Attached
-                    </Typography> : null}
-                    <Button 
-                      type="submit"
-                      variant="contained" 
-                      color="primary" 
-                      className={classes.submit} 
-                    >
-                      Submit
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            </Grid>
-          </Container>
-        </form>
+        <Card className={classes.root}>
+          <CardHeader
+            avatar={<Avatar alt="Avatar" src={user.avatarPath} />}
+            title={displayName(user)}
+          />
+          <CardContent>
+            <TextField
+              id="outlined-multiline-static"
+              fullWidth
+              label="Create a Post.."
+              multiline
+              rows={4}
+              placeholder="How's your pet doing?"
+              variant="outlined"
+              onChange={handleChange('text')}
+              error={error === true}
+              helperText={error === true ? file === null ? "You must attach a file or a video!" : post.text === "" ? "Post cannot be empty!" : null : null}
+              value={post.text}
+            />
+          </CardContent>
+          <CardActions disableSpacing>
+            <input 
+              type="file" 
+              accept="image/*" 
+              className={classes.input} 
+              id="icon-button-file" 
+              onChange={handleImageFileChange}  
+            />
+            <label htmlFor="icon-button-file">
+              <IconButton aria-label="upload picture" component="span">
+                <PhotoCamera />
+              </IconButton>
+            </label>
+            <input 
+              type="file" 
+              accept="video/*" 
+              className={classes.input} 
+              id="icon-button-video" 
+              onChange={handleVideoFileChange}  
+            />
+            <label htmlFor="icon-button-video">
+              <IconButton aria-label="upload video" component="span">
+                <VideocamIcon />
+              </IconButton>
+            </label>
+            {post.postType === 'video' ? <Typography>
+              Video File Attached
+            </Typography> : post.postType === 'image' ? <Typography>
+              Image File Attached
+            </Typography> : null}
+            <Button 
+              type="submit"
+              variant="contained" 
+              color="primary" 
+              className={classes.submit} 
+            >
+              Submit
+            </Button>
+          </CardActions>
+        </Card>
+      </form>
     </div>
   )
 }

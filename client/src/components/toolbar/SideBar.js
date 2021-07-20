@@ -9,7 +9,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { useHistory, useRouteMatch } from "react-router-dom";
 
-const drawerWidth = 320;
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountType }) => {
     
     let history = useHistory();
-    let { path, url } = useRouteMatch();
+    let { url } = useRouteMatch();
 
     const switchToHome = () => {
         history.push('/home')

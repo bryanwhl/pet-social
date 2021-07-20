@@ -48,7 +48,8 @@ const useStyles = makeStyles((theme) => ({
         padding: "20px",
     },
     root: {
-        width: "75vmin",
+        width: "100%",
+        marginTop: "40px"
     },
     media: {
         height: 0,
@@ -368,183 +369,176 @@ const Post = ({user, post, closePost}) => {
     console.log(post.postType);
     return (
         <div>
-            <Container className={classes.cardGrid}>
-                <Grid container justify="center">
-                    <Grid item>
-                        <Card className={classes.root}>
-                            <CardHeader
-                                avatar={
-                                    <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
-                                }
-                                action={
-                                    <div>
-                                        <IconButton
-                                        ref={anchorOptionsRef}
-                                        aria-controls={open ? 'menu-list-grow' : undefined}
-                                        aria-haspopup="true"
-                                        onClick={handleOptionsToggle}
-                                        >
-                                            <MoreVertIcon />
-                                        </IconButton>
-                                        <Popper open={open} anchorEl={anchorOptionsRef.current} role={undefined} transition disablePortal>
-                                        {({ TransitionProps, placement }) => (
-                                            <Grow
-                                            {...TransitionProps}
-                                            style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+            <Card className={classes.root}>
+                <CardHeader
+                    avatar={
+                        <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
+                    }
+                    action={
+                        <div>
+                            <IconButton
+                            ref={anchorOptionsRef}
+                            aria-controls={open ? 'menu-list-grow' : undefined}
+                            aria-haspopup="true"
+                            onClick={handleOptionsToggle}
+                            >
+                                <MoreVertIcon />
+                            </IconButton>
+                            <Popper open={open} anchorEl={anchorOptionsRef.current} role={undefined} transition disablePortal>
+                            {({ TransitionProps, placement }) => (
+                                <Grow
+                                {...TransitionProps}
+                                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                                >
+                                <Paper>
+                                    <ClickAwayListener onClickAway={handleOptionsClose}>
+                                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                        {user.id===post.user.id && userMenuItems.map(item => (
+                                            <ListItem
+                                                button
                                             >
-                                            <Paper>
-                                                <ClickAwayListener onClickAway={handleOptionsClose}>
-                                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                                    {user.id===post.user.id && userMenuItems.map(item => (
-                                                        <ListItem
-                                                            button
-                                                        >
-                                                            <ListItemIcon onClick={item.onClick}>
-                                                                {item.icon}
-                                                            </ListItemIcon>
-                                                            <ListItemText primary={item.text} onClick={item.onClick} />
-                                                            {item.text!=="Edit Post" ? null : <Dialog open={openEditPost} aria-labelledby="form-dialog-title">
-                                                              <DialogTitle id="form-dialog-title">Edit Caption</DialogTitle>
-                                                              <DialogContent>
-                                                                <DialogContentText>
-                                                                  Please submit your new caption:
-                                                                </DialogContentText>
-                                                                <TextField
-                                                                  autoFocus
-                                                                  margin="dense"
-                                                                  id="name"
-                                                                  label="Email Address"
-                                                                  type="email"
-                                                                  fullWidth
-                                                                  defaultValue={post.text}
-                                                                  onChange={handleEditChange}
-                                                                />
-                                                              </DialogContent>
-                                                              <DialogActions>
-                                                                <Button onClick={handleCloseEditPost} color="primary">
-                                                                  Cancel
-                                                                </Button>
-                                                                <Button onClick={handleEditCaption} color="primary">
-                                                                  Submit
-                                                                </Button>
-                                                              </DialogActions>
-                                                            </Dialog>}
-                                                        </ListItem>
-                                                    ))}
-                                                    {user.id!==post.user.id && otherUserMenuItems.map(item => (
-                                                        <ListItem
-                                                            button
-                                                            key={item.text}
-                                                            onClick={handleOptionsClose}
-                                                        >
-                                                            <ListItemIcon>
-                                                                {item.icon}
-                                                            </ListItemIcon>
-                                                            <ListItemText primary={item.text}></ListItemText>
-                                                        </ListItem>
-                                                    ))}
-                                                </MenuList>
-                                                </ClickAwayListener>
-                                            </Paper>
-                                            </Grow>
-                                        )}
-                                        </Popper>
-                                    </div>
-                                }
-                                title={displayName(post.user)}
-                                subheader={timeago.format(post.date)}
-                                //subheader={convertDate(post.date)}
-                            />
-                                {post.postType === "image" ? <CardMedia
-                                    className={classes.media}
-                                    image={post.imageFilePath}
-                                    title="dogs"
-                                /> : <CardMedia className={classes.videoMedia}><video 
-                                src={post.imageFilePath}
-                                title="Video"
-                                controls
-                                height="100%"
-                                width="100%"
-                                controls
-                                >    
-                                </video></CardMedia>}
-                            <CardContent>
-                                <Typography variant="body2" component="p">
-                                    {post.text}
-                                </Typography>
-                            </CardContent>
-                            <CardActions disableSpacing>
-                                <IconButton aria-label="like" onClick={handleLikedToggle}>
-                                    <Badge color="secondary" badgeContent={post.likedBy.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
-                                            {liked === true ? <ThumbUpAltIcon color="secondary"/> : <ThumbUpAltIcon />} 
-                                    </Badge>
-                                </IconButton>
-                                <IconButton aria-label="comment" onClick={handleExpandClick}>
-                                    <Badge color="secondary" badgeContent={post.comments.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
-                                        <CommentIcon />
-                                    </Badge>
-                                </IconButton>
-                                <Tooltip title="Share this post (Coming Soon)">
-                                    <IconButton aria-label="share">
-                                        <ShareIcon />
-                                    </IconButton>
-                                </Tooltip>
-                                <Tooltip title={user.savedPosts.map(post => post.id).includes(post.id) ? "Unsave this post" : "Save this post"}>
-                                    <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
-                                        {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                                    </IconButton>
-                                </Tooltip>
-                            </CardActions>
-                            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                <CardContent>
-                                    <MenuList id="menu-list-grow">
-                                        <Divider />
-                                        <List>
-                                        {post.comments.map(item => (
-                                            <Comment user={user} post={post} comment={item} handleUserClick={handleUserClick}/>
+                                                <ListItemIcon onClick={item.onClick}>
+                                                    {item.icon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={item.text} onClick={item.onClick} />
+                                                {item.text!=="Edit Post" ? null : <Dialog open={openEditPost} aria-labelledby="form-dialog-title">
+                                                    <DialogTitle id="form-dialog-title">Edit Caption</DialogTitle>
+                                                    <DialogContent>
+                                                    <DialogContentText>
+                                                        Please submit your new caption:
+                                                    </DialogContentText>
+                                                    <TextField
+                                                        autoFocus
+                                                        margin="dense"
+                                                        id="name"
+                                                        label="Email Address"
+                                                        type="email"
+                                                        fullWidth
+                                                        defaultValue={post.text}
+                                                        onChange={handleEditChange}
+                                                    />
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                    <Button onClick={handleCloseEditPost} color="primary">
+                                                        Cancel
+                                                    </Button>
+                                                    <Button onClick={handleEditCaption} color="primary">
+                                                        Submit
+                                                    </Button>
+                                                    </DialogActions>
+                                                </Dialog>}
+                                            </ListItem>
                                         ))}
-                                        <ListItem>
-                                            <SubmitComment user={user} post={post}/>
-                                        </ListItem>
-                                        </List>
-                                        <Divider />
-                                    </MenuList>
-                                </CardContent>
-                            </Collapse>
-                        </Card>
-                    </Grid>
-                </Grid>
-            </Container>
-                    <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition disablePortal className={classes.popper}>
-                        {({ TransitionProps }) => (
-                        <Grow {...TransitionProps}>
-                            <Paper>
-                                <ClickAwayListener onClickAway={handleUserClose}>
-                                    <MenuList id="user-grow">
-                                        {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
-                                            <ListItemIcon>
-                                                {<PersonAddIcon />}
-                                            </ListItemIcon>
-                                            <Typography>{friendRequestText}</Typography>
-                                        </ListItem>}
-                                        {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
-                                        <ListItem button>
-                                            <ListItemIcon>
-                                                <PersonIcon/>
-                                            </ListItemIcon>
-                                            <Typography>View Profile (Coming soon)</Typography>
-                                        </ListItem>
+                                        {user.id!==post.user.id && otherUserMenuItems.map(item => (
+                                            <ListItem
+                                                button
+                                                key={item.text}
+                                                onClick={handleOptionsClose}
+                                            >
+                                                <ListItemIcon>
+                                                    {item.icon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={item.text}></ListItemText>
+                                            </ListItem>
+                                        ))}
                                     </MenuList>
                                     </ClickAwayListener>
-                            </Paper>
-                        </Grow>
-                        )}
-                    </Popper>
-            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
-                    {openSnackbar}
-                </Alert>
-            </Snackbar>
+                                </Paper>
+                                </Grow>
+                            )}
+                            </Popper>
+                        </div>
+                    }
+                    title={displayName(post.user)}
+                    subheader={timeago.format(post.date)}
+                    //subheader={convertDate(post.date)}
+                />
+                    {post.postType === "image" ? <CardMedia
+                        className={classes.media}
+                        image={post.imageFilePath}
+                        title="dogs"
+                    /> : <CardMedia className={classes.videoMedia}><video 
+                    src={post.imageFilePath}
+                    title="Video"
+                    controls
+                    height="100%"
+                    width="100%"
+                    controls
+                    >    
+                    </video></CardMedia>}
+                <CardContent>
+                    <Typography variant="body2" component="p">
+                        {post.text}
+                    </Typography>
+                </CardContent>
+                <CardActions disableSpacing>
+                    <IconButton aria-label="like" onClick={handleLikedToggle}>
+                        <Badge color="secondary" badgeContent={post.likedBy.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
+                                {liked === true ? <ThumbUpAltIcon color="secondary"/> : <ThumbUpAltIcon />} 
+                        </Badge>
+                    </IconButton>
+                    <IconButton aria-label="comment" onClick={handleExpandClick}>
+                        <Badge color="secondary" badgeContent={post.comments.length} anchorOrigin={{vertical: 'bottom',horizontal: 'right',}}>
+                            <CommentIcon />
+                        </Badge>
+                    </IconButton>
+                    <Tooltip title="Share this post (Coming Soon)">
+                        <IconButton aria-label="share">
+                            <ShareIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={user.savedPosts.map(post => post.id).includes(post.id) ? "Unsave this post" : "Save this post"}>
+                        <IconButton className={classes.bookmark} aria-label="bookmark" onClick={handleSavedToggle}>
+                            {saved === true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                        </IconButton>
+                    </Tooltip>
+                </CardActions>
+                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                    <CardContent>
+                        <MenuList id="menu-list-grow">
+                            <Divider />
+                            <List>
+                            {post.comments.map(item => (
+                                <Comment user={user} post={post} comment={item} handleUserClick={handleUserClick}/>
+                            ))}
+                            
+                            </List>
+                            <SubmitComment user={user} post={post}/>
+                            <Divider />
+                        </MenuList>
+                    </CardContent>
+                </Collapse>
+            </Card>
+            <Popper className={classes.popper} open={openUserPopper} anchorEl={userAnchor} placement={'bottom'} transition disablePortal className={classes.popper}>
+                {({ TransitionProps }) => (
+                <Grow {...TransitionProps}>
+                    <Paper>
+                        <ClickAwayListener onClickAway={handleUserClose}>
+                            <MenuList id="user-grow">
+                                {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <ListItem button onClick={handleFriendRequestClick}>
+                                    <ListItemIcon>
+                                        {<PersonAddIcon />}
+                                    </ListItemIcon>
+                                    <Typography>{friendRequestText}</Typography>
+                                </ListItem>}
+                                {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
+                                <ListItem button>
+                                    <ListItemIcon>
+                                        <PersonIcon/>
+                                    </ListItemIcon>
+                                    <Typography>View Profile (Coming soon)</Typography>
+                                </ListItem>
+                            </MenuList>
+                            </ClickAwayListener>
+                    </Paper>
+                </Grow>
+                )}
+            </Popper>
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+            {openSnackbar}
+        </Alert>
+        </Snackbar>
         </div>
     )
 }

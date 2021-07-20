@@ -5,21 +5,17 @@ import { submitCommentQuery, getPostsQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
+    formControl: {
+        width: "100%"
+    },
     textField: {
-        display: 'flex',
-        alignItems: 'start',
-        justifyContent: 'center',
         marginTop: 10,
-        paddingRight: 24,
-        width: "68vmin"
+        width: "100%"
     },
     button: {
-        display: 'flex',
-        alignItems: 'start',
-        justifyContent: 'center',
-        width: "64vmin",
-        paddingRight: 20,
+        width: "100%",
         marginTop: 10,
+        marginBottom: 10
     },
 }));
 
@@ -59,7 +55,7 @@ const SubmitComment = ({user, post}) => {
 
     return (
         <div>
-            <FormControl>
+            <FormControl className={classes.formControl}>
                 <TextField
                     id="outlined-multiline-static"
                     label="Write a comment..."
@@ -78,7 +74,6 @@ const SubmitComment = ({user, post}) => {
                     color="primary"
                     endIcon={<SendIcon />}
                     className={classes.button}
-                    
                     onClick={handleSubmit}
                 >
                     Submit
