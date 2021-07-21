@@ -14,15 +14,15 @@ import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as timeago from 'timeago.js';
 
-const drawerWidth = 320;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
   },
+  toolbar: theme.mixins.toolbar,
   drawerPaper: {
-    paddingTop: 55,
     width: drawerWidth,
   },
   root: {
@@ -61,7 +61,7 @@ const RightChatBar = ({ drawerState, user, setNumChats, client }) => {
 
     const notifications = [
         {
-            text:"",
+            text:"You have received (5) new messages from Bryan Lim",
             icon: <Avatar aria-label="bryan" className={classes.avatar}>
                 B
             </Avatar>,
@@ -89,15 +89,8 @@ const RightChatBar = ({ drawerState, user, setNumChats, client }) => {
                     paper: classes.drawerPaper,
                 }}
             >       
-                <Divider />
-                <Divider />
-                <Divider />
-                <Divider />
-                <MenuList id="menu-list-grow">
-                    <ListItem button onClick={handleAddChat}>
-                        <ListItemIcon><AddIcon/></ListItemIcon>
-                        <ListItemText primary={"Create chat"} />
-                    </ListItem>
+                <div className={classes.toolbar} />
+                <MenuList id="menu-list-grow" disablePadding>
                 <div className={classes.drawerContainer}>
                     {chats.map(item => (
                         <ListItem

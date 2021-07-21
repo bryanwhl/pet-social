@@ -2,34 +2,20 @@ import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Divider from'@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import Badge from '@material-ui/core/Badge';
-import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
-import AddIcon from '@material-ui/icons/Add';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import AddPet from './AddPet.js'
 import Pet from './Pet.js'
 import ProfileTabs from './ProfileTabs.js'
-import FriendList from './FriendList.js'
-import { useMutation, useLazyQuery, useQuery } from '@apollo/client'
-import { getUserProfileQuery, currentUserQuery, UPLOAD_FILE, editAvatarQuery } from '../../queries.js'
+import { useQuery } from '@apollo/client'
+import { getUserProfileQuery } from '../../queries.js'
 import TopBar from '../toolbar/TopBar.js'
 import {
   useLocation,
@@ -47,27 +33,6 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
       padding: theme.spacing(2),
-    },
-    input: {
-      display: "none"
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-    },
-    avatar: {
-      backgroundColor: red[500],
-      width: theme.spacing(20),
-      height: theme.spacing(20),
-    },
-    card: {
-      minWidth: 240
-    },
-    media: {
-      paddingTop: '100%', // 16:9
-    },
-    dialog: {
-      width: "75vmin"
     },
     emptyBio: {
       ...theme.typography.button,

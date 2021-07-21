@@ -5,9 +5,8 @@ import { red } from '@material-ui/core/colors'
 import { ThemeProvider, createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 import { useLazyQuery } from '@apollo/client'
 import { currentUserQuery } from './queries.js'
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-import { useHistory, withRouter, BrowserRouter, useLocation } from "react-router-dom";
-import OtherUsersProfilePage from './components/profile/OtherUsersProfilePage.js'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 let customTheme = createMuiTheme({
   palette: {
