@@ -189,13 +189,13 @@ const AccountSettings = ({ user, logout }) => {
             <Typography variant="h6" gutterBottom>
                 Your Account
             </Typography>
-            <Typography variant="body1" gutterBottom>
+            <Typography variant="body2" gutterBottom>
                 Signed in as {user.username} ({email})
             </Typography>
-            <Typography variant="body1" gutterBottom>
+            <Typography variant="body2" gutterBottom>
                 Account Type: {user.accountType} Account
             </Typography>
-            <Typography variant="body1" gutterBottom>
+            <Typography variant="body2" gutterBottom>
                 Joined: {convertDate(user.registeredDate)}
             </Typography>
             <ListItem>

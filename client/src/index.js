@@ -3,13 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { from, ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from '@apollo/client'
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split } from '@apollo/client'
 import { setContext } from 'apollo-link-context'
 import { createUploadLink } from 'apollo-upload-client'
-import { RetryLink } from 'apollo-link-retry';
 import { getMainDefinition } from 'apollo-utilities';
-import { extractFiles } from 'extract-files';
-import { ApolloLink } from 'apollo-link';
 import { WebSocketLink } from '@apollo/client/link/ws'
 
 const isFile = value => (

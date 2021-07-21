@@ -9,15 +9,15 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { useHistory, useRouteMatch } from "react-router-dom";
 
-const drawerWidth = 320;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
   },
+  toolbar: theme.mixins.toolbar,
   drawerPaper: {
-    paddingTop: 7,
     width: drawerWidth,
   },
   root: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountType }) => {
     
     let history = useHistory();
-    let { path, url } = useRouteMatch();
+    let { url } = useRouteMatch();
 
     const switchToHome = () => {
         history.push('/home')
@@ -98,14 +98,8 @@ const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountTyp
                     paper: classes.drawerPaper,
                 }}
             >
-                <div className={classes.drawerHeader}>
-                <IconButton onClick={closeLeftDrawer}>
-                    {<ChevronLeftIcon />}
-                </IconButton>
-                </div>                
-                <Divider />
-                <div className={classes.drawerContainer}>
-                <List>
+                <div className={classes.toolbar} />
+                <List disablePadding>
                     {sidebarItems.map(item => (
                         <ListItem
                             button
@@ -118,8 +112,7 @@ const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountTyp
                             <ListItemText primary={item.text}></ListItemText>
                         </ListItem>
                     ))}
-                </List>           
-                </div>
+                </List>     
             </Drawer>
         </div>
     )

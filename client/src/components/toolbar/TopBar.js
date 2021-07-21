@@ -60,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
     resize:{
       fontSize:50
     },
-
 }));
 
 // constructor function for TopBar
