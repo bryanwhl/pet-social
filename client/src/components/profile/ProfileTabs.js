@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Post from '../posts/Post.js'
 import { useLazyQuery } from '@apollo/client'
 import { getPostByIdQuery } from '../../queries.js'
+import playButton from './playbutton.jpg'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -96,7 +97,7 @@ const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {
                 {user.posts.map(item => (
                     <Grid item style={{cursor: "pointer"}} onClick={() => handleOpenPost(item)}>
                       <Card className={classes.card}>
-                        <CardMedia className={classes.media} image={item.imageFilePath} title="Post"/>
+                        <CardMedia className={classes.media} image={item.postType === 'video' ? playButton : item.imageFilePath} title="Post"/>
                       </Card>
                     </Grid>
                 ))}
@@ -112,7 +113,7 @@ const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {
                 {user.savedPosts.map(item => (
                     <Grid item style={{cursor: "pointer"}} onClick={() => handleOpenPost(item)}>
                       <Card className={classes.card}>
-                        <CardMedia className={classes.media} image={item.imageFilePath} title="Post"/>
+                        <CardMedia className={classes.media} image={item.postType === 'video' ? playButton : item.imageFilePath} title="Post"/>
                       </Card>
                     </Grid>
                 ))}
