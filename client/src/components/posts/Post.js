@@ -5,7 +5,7 @@ import {Grid, Container, Card, IconButton,
     Grow, Paper, ClickAwayListener, 
     MenuList, Popper, ListItem, Avatar,
     ListItemIcon, ListItemText, Collapse,
-    Divider, List, Button, ListItemSecondaryAction} from '@material-ui/core';
+    Divider, List, Button, ButtonBase, ListItemSecondaryAction} from '@material-ui/core';
 import Badge from '@material-ui/core/Badge';
 import MuiAlert from '@material-ui/lab/Alert';
 import ShareIcon from '@material-ui/icons/Share';
@@ -372,7 +372,9 @@ const Post = ({user, post, closePost}) => {
             <Card className={classes.root}>
                 <CardHeader
                     avatar={
-                        <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
+                        <ButtonBase disableRipple disableTouchRipple>
+                            <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
+                        </ButtonBase>
                     }
                     action={
                         <div>

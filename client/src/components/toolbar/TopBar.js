@@ -70,7 +70,10 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
     let history = useHistory();
 
     // data set up for notifications
-    const [numNotifications, setNumNotifications] = useState(0); 
+    const [numNotifications, setNumNotifications] = useState(0);
+    
+    //data set up for chats
+    const [numChats, setNumChats] = useState(0);
 
     // state changes from clicking buttons
     const switchToProfile = () => {
@@ -173,7 +176,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                             <MenuIcon />
                         </IconButton>
                         <Grid item alignItems="center">
-                          <SearchBar />
+                          <SearchBar user={user} type={"Top"}/>
                         </Grid>
                     </Grid>
                     <Hidden smDown>
@@ -185,7 +188,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                     </Hidden>
                     <Grid container spacing={1} alignItems="center" justify="flex-end" wrap="nowrap">
                         <IconButton onClick={handleRightDrawerChat}>
-                            <Badge badgeContent={1} color="secondary">
+                            <Badge badgeContent={numChats} color="secondary">
                                 <ChatIcon />
                             </Badge>
                         </IconButton>
@@ -231,7 +234,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
             </AppBar>
             <SideBar position="relative" drawerState={leftDrawerState} closeLeftDrawer={closeLeftDrawer} setRightDrawerState={setRightDrawerState} accountType={user.accountType} />
             <RightNotificationBar drawerState={rightDrawerState === 'notification'} user={user} setNumNotifications={setNumNotifications} client={client} getCurrentUser={getCurrentUser} />
-            <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} />
+            <RightChatBar drawerState={rightDrawerState === 'chat'} user={user} setNumChats={setNumChats} client={client} />
         </div>
     )
 }

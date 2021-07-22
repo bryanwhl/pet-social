@@ -104,6 +104,11 @@ export const currentUserQuery=gql`
         }
       }
     }
+    chats {
+      users {
+        id
+      }
+    }
     registeredDate
     accountType
     avatarPath
@@ -153,6 +158,133 @@ export const getNotificationsQuery=gql`
     comment {
       id
     }
+   }
+ }
+`
+
+export const addChatQuery=gql`
+ mutation ($users: [ID!]!, $name: String!) {
+   addChat (users: $users, name: $name) {
+     id
+     users{
+       id
+       username
+       name {
+        givenName
+        familyName
+       }
+       settings {
+        familyNameFirst
+       }
+       avatarPath
+     }
+     messages {
+      id
+      user {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      date
+      text
+      isEdited
+      isSeen
+    }
+   }
+ }
+`
+
+export const addMessageQuery=gql`
+ mutation ($user: ID!, $chat: ID!, $text: String!) {
+   addMessage (user: $user, chat: $chat, text: $text) {
+    id
+   }
+ }
+`
+
+export const getChatsQuery=gql`
+ query ($id: ID!) {
+   getChats (id: $id) {
+    id
+    users {
+      id
+      username
+      name {
+        givenName
+        familyName
+      }
+      settings {
+        familyNameFirst
+      }
+      avatarPath
+    }
+    messages {
+      id
+      user {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      date
+      text
+      isEdited
+      isSeen
+    }
+    name
+   }
+ }
+`
+
+export const getChatByIdQuery=gql`
+ query ($id: ID!) {
+   getChatById (id: $id) {
+    id
+    users {
+      id
+      username
+      name {
+        givenName
+        familyName
+      }
+      settings {
+        familyNameFirst
+      }
+      avatarPath
+    }
+    messages {
+      id
+      user {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      date
+      text
+      isEdited
+      isSeen
+    }
+    name
    }
  }
 `
@@ -477,6 +609,16 @@ export const deletePetQuery=gql`
 export const deleteNotificationQuery=gql`
   mutation ($id: ID!) {
     deleteNotification(
+      id: $id
+    ) {
+      id
+    }
+  }
+`
+
+export const deleteChatQuery=gql`
+  mutation ($id: ID!) {
+    deleteChat(
       id: $id
     ) {
       id

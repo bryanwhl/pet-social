@@ -1,4 +1,4 @@
-import { Drawer, Divider } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import { MenuList, Avatar, ListItem, ListItemIcon, ListItemText, Tooltip, IconButton, ListItemSecondaryAction } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -232,7 +232,7 @@ const RightNotificationBar = ({ drawerState, user, setNumNotifications, client, 
                     ))}
                 </div>
                 <ListItem>
-                    <ListItemText primary={String(notifications)===String([]) && "You have no notifications"}></ListItemText>
+                    <ListItemText primary={String(notifications)===String([]) && "You have no notifications"} ></ListItemText>
                 </ListItem>
                 </MenuList>
             </Drawer>

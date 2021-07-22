@@ -102,6 +102,86 @@ export const COMMENT_LIKED= gql`
   }
 `
 
+export const CREATE_CHAT= gql`
+  subscription onCreateChat($id: ID!) {
+    createChat(id: $id) {
+      id
+      users {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      messages {
+        id
+        user {
+          id
+          username
+          name {
+            givenName
+            familyName
+          }
+          settings {
+            familyNameFirst
+          }
+          avatarPath
+        }
+        date
+        text
+        isEdited
+        isSeen
+      }
+      name
+    }
+  }
+`
+
+export const SEND_MESSAGE= gql`
+  subscription onSendMessage($id: ID!) {
+    sendMessage(id: $id) {
+      id
+      users {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      messages {
+        id
+        user {
+          id
+          username
+          name {
+            givenName
+            familyName
+          }
+          settings {
+            familyNameFirst
+          }
+          avatarPath
+        }
+        date
+        text
+        isEdited
+        isSeen
+      }
+      name
+    }
+  }
+`
+
 export const FRIEND_REQUEST= gql`
   subscription onFriendRequestReceived($id: ID!) {
     friendRequestReceived(id: $id) {
@@ -186,6 +266,14 @@ export const DELETE_NOTIF= gql`
       toUser {
         id
       }
+    }
+  }
+`
+
+export const DELETE_CHAT= gql`
+  subscription onDeleteChat($id: ID!) {
+    deleteChat(id: $id) {
+      id
     }
   }
 `

@@ -1,5 +1,5 @@
 const {createServer} = require('http')
-const { ApolloServer, gql, buildSchemaFromTypeDefinitions, UserInputError, AuthenticationError, PubSub } = require('apollo-server-express')
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server-express')
 const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
@@ -10,6 +10,8 @@ const Comment = require('./models/comment.js')
 const Playgroup = require('./models/playgroup.js')
 const FriendRequest = require('./models/friendRequest.js')
 const Notification = require('./models/notification.js')
+const Chat = require('./models/chat.js')
+const Message = require('./models/message.js')
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
@@ -144,11 +146,14 @@ const typeDefs = gql`
         id: ID!
         users: [User!]!
         messages: [Message]!
+        name: String!
     }
     type Message {
         id: ID!
         user: User!
+        chat: Chat!
         date: Date!
+        text: String!
         isEdited: Boolean!
         isSeen: Boolean!
     }
@@ -196,6 +201,8 @@ const typeDefs = gql`
         findPet(id: ID!): Pet
         getPlaygroup: [Playgroup]!
         getNotifications(id: ID!): [Notification]!
+        getChats(id: ID!): [Chat]!
+        getChatById(id: ID!): Chat!
     }
     type Mutation {
         addUser(
@@ -247,6 +254,15 @@ const typeDefs = gql`
             id: ID!
             username: String!
         ): User
+        addChat(
+            users: [ID!]!
+            name: String!
+        ): Chat
+        addMessage(
+            user: ID!
+            chat: ID!
+            text: String!
+        ): Chat
         deleteUser(
             id: ID!
             password: String!
@@ -274,6 +290,9 @@ const typeDefs = gql`
         deleteNotification(
             id: ID!
         ): Notification
+        deleteChat(
+            id: ID!
+        ): Chat
         login(
             username: String!
             password: String!
@@ -356,10 +375,13 @@ const typeDefs = gql`
         postLiked(id: ID!): Notification!
         postComment(id: ID!): Notification!
         commentLiked(id: ID!): Notification!
+        createChat(id: ID!): Chat!
+        sendMessage(id: ID!): Chat!
         friendRequestReceived(id: ID!): Notification!
         friendRequestInteracted(id: ID!): FriendRequest!
         deleteFriendSub(id: ID!): User!
         deleteNotif(id: ID!): Notification!
+        deleteChat(id: ID!): Chat!
     }
 `
 
@@ -478,6 +500,22 @@ const resolvers = {
             return (await root.populate('comment').execPopulate()).comment
         },
     },
+    Chat: {
+        users: async (root) => {
+            return (await root.populate('users').execPopulate()).users
+        },
+        messages: async (root) => {
+            return (await root.populate('messages').execPopulate()).messages
+        },
+    },
+    Message: {
+        user: async (root) => {
+            return User.findById(root.user).exec()
+        },
+        chat: async (root) => {
+            return Chat.findById(root.chat).exec()
+        }
+    },
     Query: {
         allUsers: () => User.find({}),
         getPosts: () => Post.find({}),
@@ -488,6 +526,8 @@ const resolvers = {
         findPet: (root, args) => Pet.findById(args.id),
         getPlaygroup: () => Playgroup.find({}),
         getNotifications: (root, args) => Notification.find({toUser: args.id}),
+        getChats: (root, args) => Chat.find({"users": args.id}),
+        getChatById: (root, args) => Chat.findById(args.id),
         getUserProfile: (root, args) => User.findOne({username: args.username})
     },
     Mutation: {
@@ -656,6 +696,40 @@ const resolvers = {
             }
 
             return post;
+        },
+        addChat: async (root, args) => {
+            const newChat = new Chat ({
+                users: args.users,
+                messages: [],
+                name: args.name,
+            })
+            const saveChat = await newChat.save()
+            for (let i = 0; i < args.users.length; i++) {
+                const user = await User.findById(args.users[i]).exec()
+                user.chats = user.chats.concat(saveChat.id)
+                user.save()
+            }
+            pubsub.publish('CREATE_CHAT', {createChat: newChat})
+
+            return newChat
+        },
+        addMessage: async (root, args) => {
+            const newMessage = new Message ({
+                user: args.user,
+                chat: args.chat,
+                date: new Date(),
+                text: args.text,
+                isEdited: false,
+                isSeen: false
+            })
+            const saveMessage = await newMessage.save()
+            
+            const chat = await Chat.findById(args.chat).exec()
+            chat.messages = chat.messages.concat(saveMessage.id)
+            chat.save()
+            pubsub.publish('SEND_MESSAGE', {sendMessage: chat})
+            
+            return chat
         },
         deletePlaygroup: async (root, args) => {
             Playgroup.findByIdAndDelete(args.id, function (err, docs) {
@@ -905,6 +979,28 @@ const resolvers = {
 
             return notification
         },
+        deleteChat: async (root, args) => {
+            const chat = await Chat.findById(args.id).exec();
+            if (!chat) {
+                return null
+            }
+
+            Message.deleteMany({chat: args.id}).exec()
+            
+            Chat.findByIdAndDelete(args.id, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                    console.log("Deleted : ", docs);
+                }
+            })
+
+            User.updateMany({chats: args.id}, {$pull: {chats: args.id}}).exec()
+            pubsub.publish('DELETE_CHAT', {deleteChat: chat})
+
+            return chat
+        },
         login: async (root, args) => {
             if ( args.username === "" ) {
                 throw new UserInputError("Username cannot be empty")
@@ -1146,6 +1242,20 @@ const resolvers = {
                         return String(payload.commentLiked.toUser) === variables.id
                     })
         },
+        createChat: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['CREATE_CHAT']),
+                    (payload, variables) => {
+                        return payload.createChat.users.includes(variables.id)
+                    })
+        },
+        sendMessage: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['SEND_MESSAGE']),
+                    (payload, variables) => {
+                        return payload.sendMessage.users.includes(variables.id)
+                    })
+        },
         friendRequestReceived: {
             subscribe: withFilter (
                     () => pubsub.asyncIterator(['FRIEND_REQUEST']),
@@ -1172,6 +1282,13 @@ const resolvers = {
                     () => pubsub.asyncIterator(['DELETE_NOTIF']),
                     (payload, variables) => {
                         return String(payload.deleteNotif.toUser) === variables.id
+                    })
+        },
+        deleteChat: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['DELETE_CHAT']),
+                    (payload, variables) => {
+                        return payload.deleteChat.users.includes(variables.id)
                     })
         }
     }

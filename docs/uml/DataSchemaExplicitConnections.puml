@@ -55,11 +55,13 @@ class Notification {
 
 class Chat {
     id: ID!
+    name: String!
 }
 
 class Message {
     id: ID!
     date: Date!
+    text: String!
     isEdited: Boolean!
     isSeen: Boolean!
 }
@@ -119,6 +121,7 @@ Chat --> "2..*" User: users >
 Chat --> "*" Message: messages >
 
 Message --> "1" User: user >
+Message --> "1" Chat: chat >
 
 Pet --> "1..*" User: owners >
 
