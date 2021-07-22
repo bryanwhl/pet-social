@@ -28,6 +28,31 @@ let customTheme = createMuiTheme({
       main: "#ff9800",
     }
   },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '*': {
+          'scrollbar-width': 'thin',
+        },
+        overflowY: "auto",
+        margin: 0,
+        padding: 0,
+        listStyle: "none",
+        height: "100%",
+        '*::-webkit-scrollbar': {
+          width: '0.4em',
+        },
+        '*::-webkit-scrollbar-track': {
+          boxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+          webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)'
+        },
+        '*::-webkit-scrollbar-thumb': {
+          backgroundColor: '#F39991',
+          borderRadius: "10px"
+        }
+      }
+    }
+  },
   typography: {
     fontSize: 16,
     fontFamily: [

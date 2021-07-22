@@ -55,6 +55,7 @@ class Notification {
 
 class Chat {
     id: ID!
+    name: String!
 }
 
 class Message {
@@ -120,6 +121,7 @@ Chat --> "2..*" User: users >
 Chat --> "*" Message: messages >
 
 Message --> "1" User: user >
+Message --> "1" Chat: chat >
 
 Pet --> "1..*" User: owners >
 

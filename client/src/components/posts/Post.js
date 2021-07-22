@@ -372,7 +372,9 @@ const Post = ({user, post, closePost}) => {
             <Card className={classes.root}>
                 <CardHeader
                     avatar={
-                        <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
+                        <ButtonBase disableRipple disableTouchRipple>
+                            <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
+                        </ButtonBase>
                     }
                     action={
                         <div>

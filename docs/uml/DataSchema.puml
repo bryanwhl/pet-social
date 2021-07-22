@@ -81,11 +81,13 @@ class Chat {
     id: ID!
     users: [User!]!
     messages: [Message]!
+    name: String!
 }
 
 class Message {
     id: ID!
     user: User!
+    chat: Chat!
     date: Date!
     text: String!
     isEdited: Boolean!

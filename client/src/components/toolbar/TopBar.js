@@ -176,7 +176,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                             <MenuIcon />
                         </IconButton>
                         <Grid item alignItems="center">
-                          <SearchBar />
+                          <SearchBar user={user} type={"Top"}/>
                         </Grid>
                     </Grid>
                     <Hidden smDown>
