@@ -149,7 +149,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
     }
 
     // handles opening and closing of right drawer
-    const [rightDrawerState, setRightDrawerState] = useState('notification');
+    const [rightDrawerState, setRightDrawerState] = useState('closed');
 
     const handleRightDrawerNotification = () => {
         if (rightDrawerState === 'closed' || rightDrawerState === 'chat') {
@@ -176,7 +176,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
                             <MenuIcon />
                         </IconButton>
                         <Grid item alignItems="center">
-                          <SearchBar user={user} type={"Top"}/>
+                          <SearchBar user={user} history={history} type={"Top"}/>
                         </Grid>
                     </Grid>
                     <Hidden smDown>

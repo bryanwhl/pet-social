@@ -117,7 +117,7 @@ function App({ client }) {
       <div className="App">
         <ThemeProvider theme = {customTheme}>
           <Route path='/'>
-            {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
+            {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} currentUser={currentUser} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
           </Route>
           <Route exact path='/login'>
             {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/" /> }

@@ -50,16 +50,12 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
     const [profileData, setProfileData] = useState(null);
 
     const history = useHistory();
-
-    const [appState, setAppState] = useState("Profile");
-
     const logout = () => {
       setUser(null);
       localStorage.clear()
       sessionStorage.clear()
       client.clearStore()
       //client.resetStore() //This causes cache problems
-      //setAppState("Signin") //change route
       history.push("/login");
     }
 
@@ -108,7 +104,7 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
 
     return (
       <CssBaseline>
-      <TopBar logout={logout} user={user} appState={appState} setAppState={setAppState} client={client} getCurrentUser={getCurrentUser} />
+      <TopBar logout={logout} user={user} client={client} getCurrentUser={getCurrentUser} />
         <Toolbar />
         <div className={classes.root}>
           <Box width={0.3} bgcolor="grey" boxShadow={2}>

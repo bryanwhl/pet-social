@@ -9,9 +9,9 @@ import { red } from '@material-ui/core/colors';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { allUsernameQuery } from '../../queries.js';
 import { useQuery } from '@apollo/client';
-import {
-  Link,
-} from "react-router-dom";
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   searchBarRoot: {
@@ -33,25 +33,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchBar = ( {user, type, addChatFriend} ) => {
+const SearchBar = ( {user, type, history, addChatFriend} ) => {
 
   const classes = useStyles();
   const [searchText, setSearchText] = useState("");
+  const [open, setOpen] = useState(false);
 
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const allUsers = useQuery(allUsernameQuery);
 
   const handleSearchChange = (event, value) => {
     console.log(value)
-    setSearchText(value.username);
-  };
-
-  const handleSearchInputChange = (event, value) => {
-    console.log(value)
-    setSearchText(value);
+    if (value!==null && value.username!==null && value.username!==undefined) {
+      setSearchText(value.username);
+    } else {
+      setSearchText('');
+    }
   };
 
   const handleSubmitSearch = () => {
+    if (searchText==='') {
+      handleClick();
+      return;
+    }
     if (searchText[0] === '@') {
       const resultString = searchText.slice(1);
       setSearchText(resultString)
@@ -59,7 +74,8 @@ const SearchBar = ( {user, type, addChatFriend} ) => {
       setSearchText(searchText)
     }
     console.log(searchText);
-    return "/profile?username=" + searchText;
+    const finalString = '/profile?username=' + searchText
+    history.push(finalString)
   }
 
   const handleAddChat = () => {
@@ -85,28 +101,43 @@ const SearchBar = ( {user, type, addChatFriend} ) => {
     <div>
       <Autocomplete
         id="custom-input-demo"
-        freeSolo
         options={allUsers.data === undefined ? null : type==="Top" ? allUsers.data.allUsers : user.friends}
         getOptionLabel={(option) => '@' + option.username}
         onChange={handleSearchChange}
-        onInputChange={handleSearchInputChange}
         onKeyDown={handleKeyDown}
         clearOnEscape={type==="Chat"}
         renderInput={(params) => (
           <div ref={params.InputProps.ref}>
-            <Paper component="form" className={classes.searchBarRoot}>
+            <Paper className={classes.searchBarRoot}>
               <InputBase
                 className={classes.input}
                 placeholder={type==="Top" ? "Search All Users" : "Search Friends"}
                 inputProps={{ 'aria-label': 'search pet social' }}
                 {...params.inputProps}
               />
-              <IconButton component={Link} to={type==="Top" && handleSubmitSearch} onClick={type==="Chat" && handleAddChat} className={classes.iconButton} aria-label="search">
+              <IconButton onClick={type==="Chat" ? handleAddChat : handleSubmitSearch} className={classes.iconButton} aria-label="search">
                 {type==="Top" ? <SearchIcon /> : <AddIcon />}
               </IconButton>
             </Paper>
           </div>
         )}
+      />
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={open}
+        autoHideDuration={4000}
+        onClose={handleClose}
+        message="Please select a valid username!"
+        action={
+          <React.Fragment>
+            <IconButton size="small" aria-label="close" color="secondary" onClick={handleClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </React.Fragment>
+        }
       />
     </div>
   )

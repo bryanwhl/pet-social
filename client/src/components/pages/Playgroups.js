@@ -247,7 +247,7 @@ const Playgroups = ({ user }) => {
             >
               <Toolbar />
               <div className={classes.drawerContainer}>
-                <List disablePadding>
+                <List>
                   <ListItem button onClick={handleClick}>
                     <ListItemIcon>
                       <AddIcon />
