@@ -207,7 +207,7 @@ const RightNotificationBar = ({ drawerState, user, setNumNotifications, client, 
                     paper: classes.drawerPaper,
                 }}
             >
-                <MenuList id="menu-list-grow" disablePadding>
+                <MenuList id="menu-list-grow">
                 <div className={classes.drawerContainer}>
                     {notifications.filter(notif => user.settings.likeNotification ? true : !["Post Like", "Comment Like"].includes(notif.notificationType))
                     .filter(notif => user.settings.commentNotification ? true : notif.notificationType !== "Post Comment").map(item => (

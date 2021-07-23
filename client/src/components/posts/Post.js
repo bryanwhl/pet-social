@@ -386,7 +386,7 @@ const Post = ({user, post, closePost}) => {
                             >
                                 <MoreVertIcon />
                             </IconButton>
-                            <Popper open={open} anchorEl={anchorOptionsRef.current} role={undefined} transition disablePortal>
+                            <Popper open={open} anchorEl={anchorOptionsRef.current} role={undefined} transition placement={post.postType==="video" ? "top" : "bottom"} disablePortal modifiers={post.postType==="video" ? {flip: {enabled: false}} : {}}>
                             {({ TransitionProps, placement }) => (
                                 <Grow
                                 {...TransitionProps}
@@ -458,7 +458,6 @@ const Post = ({user, post, closePost}) => {
                     {post.postType === "image" ? <CardMedia
                         className={classes.media}
                         image={post.imageFilePath}
-                        title="dogs"
                     /> : <CardMedia className={classes.videoMedia}><video 
                     src={post.imageFilePath}
                     title="Video"

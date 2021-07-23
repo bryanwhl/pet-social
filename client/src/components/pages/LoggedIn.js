@@ -13,7 +13,7 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-ro
 import OtherUsersProfilePage from '../profile/OtherUsersProfilePage.js'
 
 
-const LoggedIn = ({setUser, client, user, getCurrentUser}) => {
+const LoggedIn = ({setUser, client, user, currentUser, getCurrentUser}) => {
 
   const history = useHistory();
 
@@ -32,8 +32,11 @@ const LoggedIn = ({setUser, client, user, getCurrentUser}) => {
       <CssBaseline />
       <TopBar logout={logout} user={user} client={client} getCurrentUser={getCurrentUser} />
       <Switch>
+        <Route exact path='/'>
+          <Redirect to="/home" />
+        </Route>
         <Route exact path='/profile'>
-          {(user !== null) ? <OtherUsersProfilePage setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
+          {(user !== null || currentUser.data !== undefined) ? <OtherUsersProfilePage setUser={setUser} client={client} user={user} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
         </Route>
         <Route exact path='/home'>
           {(user !== null) ?<PostsContainer user={user}/> : <Redirect to="/login" /> }
