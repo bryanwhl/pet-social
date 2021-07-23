@@ -11,7 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import React, { useState, useEffect } from 'react';
 import { useQuery, useLazyQuery, useMutation, useSubscription } from '@apollo/client'
 import { getChatsQuery, addChatQuery } from '../../queries.js';
-import { CREATE_CHAT, DELETE_CHAT, SEND_MESSAGE } from '../../subscriptions.js';
+import { CREATE_CHAT, DELETE_CHAT, SEND_MESSAGE, DELETE_MESSAGE } from '../../subscriptions.js';
 import { displayName, convertTime } from '../../utility.js'
 import Chat from './Chat.js'
 import SearchBar from './SearchBar.js'
@@ -122,6 +122,13 @@ const RightChatBar = ({ drawerState, user, setNumChats, client }) => {
         variables: {id: user.id},
         onSubscriptionData: ({ subscriptionData }) => {
           updateMessageCacheWith(subscriptionData.data.sendMessage)
+        }
+    })
+
+    useSubscription(DELETE_MESSAGE, {
+        variables: {id: user.id},
+        onSubscriptionData: ({ subscriptionData }) => {
+          updateMessageCacheWith(subscriptionData.data.deleteMessage)
         }
     })
 

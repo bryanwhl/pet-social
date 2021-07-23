@@ -293,6 +293,10 @@ const typeDefs = gql`
         deleteChat(
             id: ID!
         ): Chat
+        deleteMessage(
+            chat: ID!
+            message: ID!
+        ): Chat
         login(
             username: String!
             password: String!
@@ -382,6 +386,7 @@ const typeDefs = gql`
         deleteFriendSub(id: ID!): User!
         deleteNotif(id: ID!): Notification!
         deleteChat(id: ID!): Chat!
+        deleteMessage(id: ID!): Chat!
     }
 `
 
@@ -1001,6 +1006,19 @@ const resolvers = {
 
             return chat
         },
+        deleteMessage: async (root, args) => {
+            await Chat.updateMany({_id: args.chat}, {$pull: {messages: args.message}}).exec()
+            const chat = await Chat.findById(args.chat).exec();
+            
+            Message.findByIdAndDelete(args.message, function (err, docs) {
+                if (err) {
+                    console.log(err)
+                }
+            })
+            pubsub.publish('DELETE_MESSAGE', {deleteMessage: chat})
+
+            return chat
+        },
         login: async (root, args) => {
             if ( args.username === "" ) {
                 throw new UserInputError("Username cannot be empty")
@@ -1289,6 +1307,13 @@ const resolvers = {
                     () => pubsub.asyncIterator(['DELETE_CHAT']),
                     (payload, variables) => {
                         return payload.deleteChat.users.includes(variables.id)
+                    })
+        },
+        deleteMessage: {
+            subscribe: withFilter (
+                    () => pubsub.asyncIterator(['DELETE_MESSAGE']),
+                    (payload, variables) => {
+                        return payload.deleteMessage.users.includes(variables.id)
                     })
         }
     }
