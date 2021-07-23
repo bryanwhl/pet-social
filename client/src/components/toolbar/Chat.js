@@ -22,13 +22,15 @@ import MenuList from '@material-ui/core/MenuList'
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper'
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
 import SendIcon from '@material-ui/icons/Send';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { displayName, convertTime } from '../../utility.js'
 import { Avatar } from '@material-ui/core';
 import { useQuery, useLazyQuery, useMutation, useSubscription } from '@apollo/client'
-import { getChatsQuery, deleteChatQuery, addMessageQuery, getChatByIdQuery } from '../../queries.js';
+import { getChatsQuery, deleteChatQuery, addMessageQuery, getChatByIdQuery, deleteMessageQuery } from '../../queries.js';
 
 const drawerWidth = 300;
 
@@ -74,13 +76,23 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: "2px",
         paddingLeft: "10px",
         paddingRight: "10px",
-        backgroundColor: red[100]
+        backgroundColor: red[100],
+        zIndex: theme.zIndex.drawer + 1,
     },
     otherMessage: {
         paddingTop: "4px",
         paddingBottom: "2px",
         paddingLeft: "10px",
         paddingRight: "10px",
+        zIndex: theme.zIndex.drawer + 1,
+    },
+    selectedMessage: {
+        paddingTop: "4px",
+        paddingBottom: "2px",
+        paddingLeft: "10px",
+        paddingRight: "10px",
+        backgroundColor: red[200],
+        zIndex: theme.zIndex.drawer + 1,
     }
 }));
 
@@ -92,11 +104,13 @@ const Chat = ({user, chatId, client}) => {
     const scrollRef = useRef(null)
     const [openDelete, setOpenDelete] = useState(false)
     const [message, setMessage] = useState("")
+    const [selectedMessage, setSelectedMessage] = useState(false)
     const anchorOptionsRef = React.useRef(null);
     const prevOpen = React.useRef(open);
 
     const chatResponse = useQuery(getChatByIdQuery, {variables: {id: chatId}})
     const [addMessage] = useMutation(addMessageQuery, {refetchQueries: {query: getChatsQuery, variables: {id: user.id}}})
+    const [deleteMessage] = useMutation(deleteMessageQuery, {refetchQueries: {query: getChatsQuery, variables: {id: user.id}}})
     const [deleteChat] = useMutation(deleteChatQuery, {refetchQueries: {query: getChatsQuery, variables: {id: user.id}}})
 
     useEffect(() => {
@@ -139,6 +153,7 @@ const Chat = ({user, chatId, client}) => {
 
     const handleOpenDelete = () => {
         setOpenDelete(true)
+        setSelectedMessage(false)
     }
     
     const handleCloseDelete = () => {
@@ -148,6 +163,7 @@ const Chat = ({user, chatId, client}) => {
     const handleDeleteChat = () => {
         setOpen(false)
         setOpenDelete(false)
+        setSelectedMessage(false)
         deleteChat({variables: {id: chat.id}})
     }
 
@@ -160,12 +176,29 @@ const Chat = ({user, chatId, client}) => {
             addMessage({variables: {user: user.id, chat: chat.id, text: message}})
         }
         setMessage("")
+        setSelectedMessage(false)
     }
 
     const handleKeyDown = (event) => {
         if (event.keyCode === 13) {
             handleSubmit()
         }
+    }
+
+    const handleSelectMessage = (message) => {
+        if (message.user.id === user.id) {
+            setSelectedMessage(message)
+        }
+    }
+    
+    const handleDeleteMessage = () => {
+        deleteMessage({variables: {chat: chat.id, message: selectedMessage.id}})
+        setSelectedMessage(false)
+    }
+
+    const handleMessageClickAway = () => {
+        console.log("Clickaway")
+        setSelectedMessage(false)
     }
 
     return (
@@ -177,7 +210,12 @@ const Chat = ({user, chatId, client}) => {
                 subheader={"Online status"}
                 action={
                     <div>
-
+                        {selectedMessage && <Tooltip title="Delete selected message">
+                            {selectedMessage && 
+                            <IconButton onClick={handleDeleteMessage}>
+                                <DeleteIcon/>
+                            </IconButton>}
+                        </Tooltip>}
                     <IconButton
                         ref={anchorOptionsRef}
                         aria-controls={open ? 'menu-list-grow' : undefined}
@@ -212,7 +250,7 @@ const Chat = ({user, chatId, client}) => {
                         {chat && chat.messages.map(message => (
                             <Grid container justify={message.user.id===user.id ? "flex-end" : "flex-start"}>
                                 <Grid item className={classes.message}>
-                                    <Paper className={message.user.id===user.id ? classes.ownMessage : classes.otherMessage} ref={scrollRef}>
+                                    <Paper className={message.id===selectedMessage.id ? classes.selectedMessage : message.user.id===user.id ? classes.ownMessage : classes.otherMessage} ref={scrollRef} onClick={() => handleSelectMessage(message)}>
                                         <ListItemText primary={message.text} />
                                         <ListItemText secondary={convertTime(message.date).slice(0, -3)} align="right"/>
                                     </Paper>

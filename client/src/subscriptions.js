@@ -277,3 +277,43 @@ export const DELETE_CHAT= gql`
     }
   }
 `
+
+export const DELETE_MESSAGE= gql`
+  subscription onDeleteMessage($id: ID!) {
+    deleteMessage(id: $id) {
+      id
+      users {
+        id
+        username
+        name {
+          givenName
+          familyName
+        }
+        settings {
+          familyNameFirst
+        }
+        avatarPath
+      }
+      messages {
+        id
+        user {
+          id
+          username
+          name {
+            givenName
+            familyName
+          }
+          settings {
+            familyNameFirst
+          }
+          avatarPath
+        }
+        date
+        text
+        isEdited
+        isSeen
+      }
+      name
+    }
+  }
+`

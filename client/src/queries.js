@@ -626,6 +626,17 @@ export const deleteChatQuery=gql`
   }
 `
 
+export const deleteMessageQuery=gql`
+  mutation ($chat: ID!, $message: ID!) {
+    deleteMessage(
+      chat: $chat
+      message: $message
+    ) {
+      id
+    }
+  }
+`
+
 export const deleteCommentQuery=gql`
   mutation ($id: ID!, $post: ID!) {
     deleteComment(
