@@ -77,14 +77,12 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: "10px",
         paddingRight: "10px",
         backgroundColor: red[100],
-        zIndex: theme.zIndex.drawer + 1,
     },
     otherMessage: {
         paddingTop: "4px",
         paddingBottom: "2px",
         paddingLeft: "10px",
         paddingRight: "10px",
-        zIndex: theme.zIndex.drawer + 1,
     },
     selectedMessage: {
         paddingTop: "4px",
@@ -92,7 +90,6 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: "10px",
         paddingRight: "10px",
         backgroundColor: red[200],
-        zIndex: theme.zIndex.drawer + 1,
     }
 }));
 
