@@ -1328,9 +1328,6 @@ const server = new ApolloServer({
     subscriptions: {
         path: '/subscriptions'
     },
-    onConnect(connectionParams, webSocket, context) {
-      console.log('Connected!')
-    },
     context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null
         if (auth && auth.toLowerCase().startsWith('bearer ')) {
