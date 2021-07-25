@@ -532,7 +532,7 @@ const Post = ({user, post, closePost}) => {
                                     <ListItemIcon>
                                         <PersonIcon/>
                                     </ListItemIcon>
-                                    <Typography>View Profile (Coming soon)</Typography>
+                                    <Typography>View Profile</Typography>
                                 </ListItem>
                             </MenuList>
                             </ClickAwayListener>
