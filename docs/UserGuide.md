@@ -64,14 +64,14 @@ A short description of the icons that are used in this User Guide.
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.3 [Sharing a Post (Coming Soon)](#243-sharing-a-post-coming-soon) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.4 [Saving a Post](#244-saving-a-post) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.5 [Commenting on a Post](#245-commenting-on-a-post) <br>
-   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.6 [Liking a Comment (Coming Soon)](#246-liking-a-comment-coming-soon) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.6 [Liking a Comment](#246-liking-a-comment) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.7 [Replying to a comment (Coming Soon)](#247-replying-to-a-comment-coming-soon) <br>
-   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.8 [Deleting a Comment (Coming Soon)](#248-deleting-a-comment-coming-soon) <br>
-   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.9 [Deleting a Post (Coming Soon)](#249-deleting-a-post-coming-soon) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.8 [Deleting a Comment](#248-deleting-a-comment) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.9 [Deleting a Post](#249-deleting-a-post) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.10 [Receive Notifications from Post (Coming Soon)](#2410-receive-notifications-from-post-coming-soon) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.11 [Hide Posts from User/Block User (Coming Soon)](#2411-hide-posts-from-userblock-user-coming-soon) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.12 [Reporting a Post (Coming Soon)](#2412-reporting-a-post-coming-soon) <br>
-   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.13 [Editing a Post (Coming Soon)](#2413-editing-a-post-coming-soon) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.4.13 [Editing a Post](#2413-editing-a-post) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.4.14 [Viewing a Tagged Post (Coming Soon)](#2414-viewing-a-tagged-post-coming-soon) <br>
    2.5 [Friends](#25-friends) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.5.1 [Sending a Friend Request](#251-sending-a-friend-request) <br>
@@ -81,10 +81,14 @@ A short description of the icons that are used in this User Guide.
    2.6 [Playgroups](#26-playgroups) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.6.1 [Viewing nearby Playgroups](#261-viewing-nearby-playgroups) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.6.2 [Creating a Playgroup](#262-creating-a-playgroup) <br>
-   &nbsp;&nbsp;&nbsp;&nbsp; 2.6.3 [Playgroup Page, Members, and Admins (Coming Soon)](#263-playgroup-page-members-and-admins-coming-soon) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.6.3 [Playgroup Page and Members](#263-playgroup-page-and-members) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.6.4 [Editing Playgroup Details (Coming Soon)](#264-editing-playgroup-details-coming-soon) <br>
-   2.7 [Chats (Coming Soon)](#27-chats-coming-soon) <br>
-   2.8 [Notifications (Coming Soon)](#28-notifications-coming-soon) <br>
+   2.7 [Chats](#27-chats) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.7.1 [Creating a Chat](#271-creating-a-chat) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.7.2 [Sending a Message](#272-sending-a-message) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.7.3 [Deleting a Chat](#273-deleting-a-chat) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.7.4 [Deleting a Message](#274-deleting-a-message) <br>
+   2.8 [Notifications](#28-notifications) <br>
    2.9 [Shop (Coming Soon)](#29-shop-coming-soon) <br>
    2.10 [Customisation Settings (Coming Soon)](#210-customisation-settings-coming-soon) <br>
 
@@ -405,7 +409,14 @@ How To:
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
-### 2.4.6 Liking a Comment (Coming Soon)
+### 2.4.6 Liking a Comment
+
+You can like comments.
+
+How To:
+
+- Go to any comment.
+- Click on the `Like` icon on the right.
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
@@ -415,11 +426,27 @@ How To:
 
 <div style="page-break-after: always;"></div>
 
-### 2.4.8 Deleting a Comment (Coming Soon)
+### 2.4.8 Deleting a Comment
+
+You can delete comments.
+
+How To:
+
+- Go to your comment.
+- Click on the `More Options` icon on the right.
+- Click on the `Delete` option.
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
-### 2.4.9 Deleting a Post (Coming Soon)
+### 2.4.9 Deleting a Post
+
+You can delete posts.
+
+How To:
+
+- Go to your post.
+- Click on the `More Options` icon on the top-right.
+- Click on the `Delete Post` option.
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
@@ -437,7 +464,16 @@ How To:
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
-### 2.4.13 Editing a Post (Coming Soon)
+### 2.4.13 Editing a Post
+
+You can edit your post captions.
+
+How To:
+
+- Go to your post.
+- Click on the `More Options` icon on the top-right.
+- Click on the `Edit Post` option.
+- Edit your **Caption** and click on `Submit`
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
@@ -557,7 +593,14 @@ How To:
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
-### 2.6.3 Playgroup Page, Members, and Admins (Coming Soon)
+### 2.6.3 Playgroup Page and Members
+
+Join or view a Playgroup.
+
+How To:
+
+- At the `Playgroups` tab, click on the `Marker` of a playgroup
+- Click `Join Playgroup` or `Leave Playgroup` to join or leave the playgroup.
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
@@ -566,15 +609,80 @@ How To:
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 <div style="page-break-after: always;"></div>
 
-## 2.7 Chats (Coming Soon)
+## 2.7 Chats
 
-Chat with other users individually or in a group chat.
+Chat with other users.
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
-## 2.8 Notifications (Coming Soon)
+### 2.7.1 Creating a Chat
+
+Create a chat with other users.
+
+How To:
+
+- Navigate to `Chats` on the top-right taskbar.
+- Click on `Create chat`.
+- Search for your friends or enter their **Username** in the search bar.
+- Click on the `Add Icon` to add the friend.
+- Click on `Create Chat`.
+
+| :warning: | You may only create chats with your friends |
+| --------- | ------------------------------------------- |
+
+<hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
+
+### 2.7.2 Sending a Message
+
+Send a message in the chat.
+
+How To:
+
+- In the chat menu, click on the `Write a message...` textbox.
+- Enter your **Message**.
+- Press `Enter` on your keyboard or the `Send` icon to send.
+
+<hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
+
+### 2.7.3 Deleting a Chat
+
+Deletes the chat.
+
+How To:
+
+- In the chat menu, click on the `More Options` icon on the top-right.
+- Click on `Delete Chat`.
+- Click on `Delete Chat` to confirm deletion.
+
+| :warning: | Deleting the chat permanantly deletes the chat for all users |
+| --------- | ------------------------------------------------------------ |
+
+<hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
+
+### 2.7.4 Deleting a Message
+
+Deletes a message.
+
+How To:
+
+- In the chat menu, click on your `Message`.
+- Click on `Delete` Icon on the top-right.
+
+<hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
+
+## 2.8 Notifications
 
 View Notifications on User activities
+
+You will receive notifications when the following actions occur:
+
+- You receive a friend request
+- Another user likes your post
+- Another user likes your comment
+- Another user comments on your post
+
+| :bulb: | You can open the incoming friend request, or corresponding post from the notification tab directly. |
+| ------ | --------------------------------------------------------------------------------------------------- |
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
@@ -601,7 +709,7 @@ Customise your display, notification and privacy settings.
 **Q**: How do I report a bug or give feedback for the application?
 
 **A**: You are welcome to raise a new issue [_here_](https://github.com/bryanwhl/pet-social/issues) on our project repository.
-Do include as much detail as you can on the bug along with any screenshots on how you came across the problem. We also look forward to hearing from you if you have any suggestions to improve our app! If you are testing the app as part of a user feedback session, please provide your feedback on the form or to the developers directly!
+Do be as detailed as you can in the report along with any screenshots on how you came across the problem. We also look forward to hearing from you if you have any suggestions to improve our app! If you are testing the app as part of a user feedback session, please provide your feedback on the form or to the developers directly!
 
 <div style="page-break-after: always;"></div>
 
@@ -647,14 +755,14 @@ Do include as much detail as you can on the bug along with any screenshots on ho
 | Sharing a Post (Coming soon)                  |
 | Saving a Post                                 |
 | Commenting on a Post                          |
-| Liking a Comment (Coming Soon)                |
+| Liking a Comment                              |
 | Replying to a Comment (Coming Soon)           |
-| Deleting a Comment (Coming Soon)              |
-| Deleting a Post (Coming Soon)                 |
+| Deleting a Comment                            |
+| Deleting a Post                               |
 | Receive Notifications from Post (Coming Soon) |
 | Hide Post/Block User (Coming Soon)            |
 | Reporting a Post (Coming Soon)                |
-| Editing a Post (Coming Soon)                  |
+| Editing a Post                                |
 | Viewing a Tagged Post (Coming Soon)           |
 
 **Friend Features:**
@@ -668,11 +776,20 @@ Do include as much detail as you can on the bug along with any screenshots on ho
 
 **Playgroup Features:**
 
-| Action                                           |
-| ------------------------------------------------ |
-| Viewing nearby Playgroups                        |
-| Creating a Playgroup                             |
-| PLaygroup Page, Members, and Admin (Coming Soon) |
-| Editing Playgroup details (Coming Soon)          |
+| Action                                  |
+| --------------------------------------- |
+| Viewing nearby Playgroups               |
+| Creating a Playgroup                    |
+| Playgroup Page and Members              |
+| Editing Playgroup details (Coming Soon) |
+
+**Chat Features:**
+
+| Action             |
+| ------------------ |
+| Creating a Chat    |
+| Sending a Message  |
+| Deleting a Chat    |
+| Deleting a Message |
 
 **More Features coming soon**
