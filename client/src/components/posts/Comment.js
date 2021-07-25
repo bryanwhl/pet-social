@@ -111,7 +111,7 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
                 divider="true"
                 alignItems="flex-start"
             >
-                <ListItemIcon onClick={handleUserClick(comment.user.id)}>
+                <ListItemIcon onClick={handleUserClick(comment.user)}>
                     <ButtonBase disableRipple disableTouchRipple>
                         <Avatar src={comment.user.avatarPath} />
                     </ButtonBase>

@@ -12,8 +12,8 @@ import Divider from'@material-ui/core/Divider';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import Badge from '@material-ui/core/Badge';
-import Pet from './Pet.js'
-import ProfileTabs from './ProfileTabs.js'
+import OtherUsersPet from './OtherUsersPet.js'
+import OtherUsersProfileTabs from './OtherUsersProfileTabs.js'
 import { useQuery } from '@apollo/client'
 import { getUserProfileQuery } from '../../queries.js'
 import TopBar from '../toolbar/TopBar.js'
@@ -37,6 +37,10 @@ const useStyles = makeStyles((theme) => ({
     emptyBio: {
       ...theme.typography.button,
       padding: theme.spacing(1),
+    },
+    avatar: {
+      width: theme.spacing(18),
+      height: theme.spacing(18),
     },
   }));
 
@@ -87,20 +91,11 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
       setPetMode(null)
       setProfileTab(newValue);
     };
-
-    const handlePetClick = () => {
-      setPetOpen(!petOpen);
-    };
    
     const handlePet = (item) => () => {
       setPet(item.id)
       setPetMode(false);
     };
-
-    const handleFriendsClick = () => {
-      setPet(null)
-      setPetMode(null)
-    }
 
     return (
       <CssBaseline>
@@ -149,7 +144,7 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
                     Posts
                   </Typography>
                 </Box>
-                <Box width={1} onClick={handleFriendsClick} style={{cursor: "pointer"}}>
+                <Box width={1}>
                   <Typography variant="h6" align="center" >
                     {profileData ? profileData.friends.length : null}
                   </Typography>
@@ -158,12 +153,6 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
                   </Typography>
                 </Box>
               </Box>
-              {/* <List >
-                <ListItem button onClick={getUserProfile.data ? getUserProfile.data.pets.length===0 ? handleAddPet : handlePetClick : null}>
-                    <ListItemIcon>{getUserProfile.data ? getUserProfile.data.pets.length===0 ? <AddIcon/> : petOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/> : null}</ListItemIcon>
-                    <ListItemText primary={getUserProfile.data ? getUserProfile.data.pets.length===0 ? "Add Pet" : "Your Pets" : null}/>
-                </ListItem>
-              </List> */}
               <Collapse in={profileData ? profileData.pets.length!==0 : null && petOpen} timeout="auto" unmountOnExit>
                 <List>
                     {profileData ? profileData.pets.map(item => (
@@ -177,17 +166,13 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
                             <ListItemText primary={item.name}></ListItemText>
                         </ListItem>
                     )) : null}
-                    {/* <ListItem button onClick={handleAddPet} selected={petMode===true}>
-                      <ListItemIcon><AddIcon/></ListItemIcon>
-                      <ListItemText primary="Add Pet"></ListItemText>
-                    </ListItem> */}
                 </List>           
               </Collapse>
             </Grid>
           </Box>
           <Box width={1} marginLeft={'5vw'}>
-            {(petMode===null && profileData!==null) && <ProfileTabs user={profileData} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
-            {(petMode===false) && profileData!==null && <Pet user={profileData} petId={pet} setPetId={setPet} setPetMode={setPetMode}/>}
+            {(petMode===null && profileData!==null) && <OtherUsersProfileTabs user={profileData} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
+            {(petMode===false) && profileData!==null && <OtherUsersPet user={profileData} petId={pet} setPetId={setPet} setPetMode={setPetMode}/>}
           </Box>
         </div>
       </CssBaseline>
