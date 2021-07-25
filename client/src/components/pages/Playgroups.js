@@ -95,7 +95,7 @@ const center = {
 }
 
 const mapStyle = {
-    width: "100vw",
+    width: "100%",
     height: "100vh",
 }
 

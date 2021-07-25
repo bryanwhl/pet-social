@@ -983,6 +983,7 @@ export const getPostsQuery=gql`
         id
         user {
           id
+          username
           name {
             givenName
             familyName

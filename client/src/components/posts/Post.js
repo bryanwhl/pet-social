@@ -37,7 +37,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import { useHistory } from "react-router-dom";
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -87,12 +87,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Post = ({user, post, closePost}) => {
     const classes = useStyles();
-
+    let history = useHistory();
+    
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [snackbarSeverity, setSnackbarSeverity] = useState("success")
     const [error, setError] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const [openUser, setOpenUser] = React.useState(false);
+    const [openUsername, setOpenUsername] = React.useState("");
     const [openUserPopper, setOpenUserPopper] = React.useState(false);
     const [friendRequestText, setFriendRequestText] = React.useState(false);
     const anchorOptionsRef = React.useRef(null);
@@ -211,7 +213,8 @@ const Post = ({user, post, closePost}) => {
     }
 
     const handleUserClick = (targetUser) => (event) => {
-        setOpenUser(targetUser)
+        setOpenUser(targetUser.id)
+        setOpenUsername(targetUser.username)
         setError(null)
         setOpenUserPopper(true);
         setUserAnchor(event.currentTarget);
@@ -366,6 +369,10 @@ const Post = ({user, post, closePost}) => {
       prevOpen.current = open;
     }, [open]);
 
+    const handleViewProfileClick = () => {
+      history.push("/profile?username=" + openUsername)
+    }
+
     console.log(post.postType);
     return (
         <div>
@@ -373,7 +380,7 @@ const Post = ({user, post, closePost}) => {
                 <CardHeader
                     avatar={
                         <ButtonBase disableRipple disableTouchRipple>
-                            <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user.id)} />
+                            <Avatar src={post.user.avatarPath} onClick={handleUserClick(post.user)} />
                         </ButtonBase>
                     }
                     action={
@@ -521,11 +528,11 @@ const Post = ({user, post, closePost}) => {
                                     <Typography>{friendRequestText}</Typography>
                                 </ListItem>}
                                 {(user.id !== openUser && !user.friends.map(friend => friend.id).includes(openUser)) && <Divider />}
-                                <ListItem button>
+                                <ListItem button onClick={handleViewProfileClick}>
                                     <ListItemIcon>
                                         <PersonIcon/>
                                     </ListItemIcon>
-                                    <Typography>View Profile (Coming soon)</Typography>
+                                    <Typography>View Profile</Typography>
                                 </ListItem>
                             </MenuList>
                             </ClickAwayListener>

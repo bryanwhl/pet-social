@@ -1328,7 +1328,6 @@ const server = new ApolloServer({
     subscriptions: {
         path: '/subscriptions'
     },
-    
     context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null
         if (auth && auth.toLowerCase().startsWith('bearer ')) {
