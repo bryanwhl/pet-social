@@ -9,18 +9,26 @@ import { displayName } from '../../utility.js';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Divider from'@material-ui/core/Divider';
-import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { List, ListItem, ListItemIcon, ListItemText, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import EditIcon from '@material-ui/icons/Edit';
 import Badge from '@material-ui/core/Badge';
 import OtherUsersPet from './OtherUsersPet.js'
 import OtherUsersProfileTabs from './OtherUsersProfileTabs.js'
 import { useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client';
 import { getUserProfileQuery } from '../../queries.js'
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import TopBar from '../toolbar/TopBar.js'
 import {
   useLocation,
   useHistory
 } from "react-router-dom";
+import { currentUserQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -45,13 +53,17 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
-    const classes=useStyles();
+    const classes = useStyles();
+    const [openSnackbar, setOpenSnackbar] = useState(null)
+    const [error, setError] = useState(null);
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success")
     const [petOpen, setPetOpen] = useState(false);
     const [petMode, setPetMode] = useState(null);
     const [pet, setPet] = useState(null)
     const [profileTab, setProfileTab] = useState(0);
     const [profileBadge, setProfileBadge] = useState(true);
     const [profileData, setProfileData] = useState(null);
+    const [friendRequestText, setFriendRequestText] = useState(false);
 
     const history = useHistory();
     const logout = () => {
@@ -72,7 +84,7 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
 
     console.log(query.get("username"))
 
-    const { data, loading, error } = useQuery(getUserProfileQuery, {variables: {username: query.get("username")}})
+    const { data, loading } = useQuery(getUserProfileQuery, {variables: {username: query.get("username")}})
 
     useEffect(() => {
       console.log(data)
@@ -82,9 +94,23 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
       }
     }, [data])
 
-    if (loading) {
-      return <p>Loading...</p>;
-    }
+    const [ sendFriendRequest,  sendFriendRequestResponse ] = useMutation(sendFriendRequestQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
+
+    const [ retractFriendRequest,  retractFriendRequestResponse ] = useMutation(retractFriendRequestQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
+
+    const [ acceptFriendRequest,  acceptFriendRequestResponse ] = useMutation(acceptFriendRequestQuery, {
+        onError: (error) => {
+          setError(error.graphQLErrors[0].message)
+         }, refetchQueries: [{query: currentUserQuery}]
+    })
 
     const handleProfileTabChange = (event, newValue) => {
       setPet(null)
@@ -96,6 +122,82 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
       setPet(item.id)
       setPetMode(false);
     };
+
+
+
+    const handleFriendRequestClick = () => {
+      if (friendRequestText === "Add as Friend") {
+        sendFriendRequest({variables: {from: user.id, to: profileData.id}})
+      } else if (friendRequestText === "Retract Friend Request") {
+        retractFriendRequest({variables: {from: user.id, to: profileData.id}})
+      } else if (friendRequestText === "Accept Friend Request") {
+        acceptFriendRequest({variables: {from: profileData.id, to: user.id}})
+      }
+    }
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(null)
+    }
+
+    const handleOpenSnackbar = (input, severity) => {
+        setOpenSnackbar(input)
+        setSnackbarSeverity(severity)
+    }
+
+    useEffect(() => {
+      if (data) {
+          if (user.sentFriendRequests.map(request => request.toUser.id).includes(data.getUserProfile.id)) {
+              setFriendRequestText("Retract Friend Request")
+          } else if (user.receivedFriendRequests.map(request => request.fromUser.id).includes(data.getUserProfile.id)) {
+              setFriendRequestText("Accept Friend Request")
+          } else {
+              setFriendRequestText("Add as Friend")
+          }
+      }
+    }, [data])
+
+    useEffect(() => {
+      if (retractFriendRequestResponse.data) {
+          if (!error) {
+              handleOpenSnackbar("Friend Request Retracted", "success")
+              setFriendRequestText("Add as Friend")
+          } else {
+              handleOpenSnackbar(error, "error")
+          }
+      }
+    }, [retractFriendRequestResponse.data])
+
+    useEffect(() => {
+      if (sendFriendRequestResponse.data) {
+          if (!error) {
+              handleOpenSnackbar("Friend Request Sent", "success")
+              setFriendRequestText("Retract Friend Request")
+          } else {
+              handleOpenSnackbar(error, "error")
+          }
+      }
+    }, [sendFriendRequestResponse.data])
+
+    useEffect(() => {
+      if (acceptFriendRequestResponse.data) {
+          if (!error) {
+              handleOpenSnackbar("Friend Request Accepted", "success")
+              setFriendRequestText(false)
+          } else {
+              handleOpenSnackbar(error, "error")
+          }
+      }
+    }, [acceptFriendRequestResponse.data])
+
+    useEffect(() => {
+      if (error) {
+          handleOpenSnackbar(error, "error")
+      }
+    }, [error])
+
+    if (loading) {
+      return <p>Loading...</p>;
+    }
 
     return (
       <CssBaseline>
@@ -153,27 +255,41 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
                   </Typography>
                 </Box>
               </Box>
-              <Collapse in={profileData ? profileData.pets.length!==0 : null && petOpen} timeout="auto" unmountOnExit>
-                <List>
-                    {profileData ? profileData.pets.map(item => (
-                        <ListItem
-                            button
-                            key={item.id}
-                            selected={pet===item.id}
-                            onClick={handlePet(item)}
-                        >
-                            <ListItemIcon><Avatar alt="Pet Avatar" src={item.picturePath} /></ListItemIcon>
-                            <ListItemText primary={item.name}></ListItemText>
-                        </ListItem>
-                    )) : null}
-                </List>           
-              </Collapse>
+              <List>
+                  {(profileData && friendRequestText != false && user.id !== profileData.id && !user.friends.map(friend => friend.id).includes(profileData.id)) && <ListItem button onClick={handleFriendRequestClick}>
+                      <ListItemIcon>
+                          {<PersonAddIcon />}
+                      </ListItemIcon>
+                      <Typography>{friendRequestText}</Typography>
+                  </ListItem>}
+                  {profileData && profileData.pets.length !== 0 ? <ListItem>
+                    <ListItemText primary="Pets:" />
+                  </ListItem> : <ListItem>
+                    <ListItemText primary="No pet listed" />
+                  </ListItem>}
+                  {profileData ? profileData.pets.map(item => (
+                      <ListItem
+                          button
+                          key={item.id}
+                          selected={pet===item.id}
+                          onClick={handlePet(item)}
+                      >
+                          <ListItemIcon><Avatar alt="Pet Avatar" src={item.picturePath} /></ListItemIcon>
+                          <ListItemText primary={item.name}></ListItemText>
+                      </ListItem>
+                  )) : null}
+              </List>           
             </Grid>
           </Box>
           <Box width={1} marginLeft={'5vw'}>
             {(petMode===null && profileData!==null) && <OtherUsersProfileTabs user={profileData} profileTab={profileTab} handleProfileTabChange={handleProfileTabChange}/>}
             {(petMode===false) && profileData!==null && <OtherUsersPet user={profileData} petId={pet} setPetId={setPet} setPetMode={setPetMode}/>}
           </Box>
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+            {openSnackbar}
+        </Alert>
+        </Snackbar>
         </div>
       </CssBaseline>
     )
