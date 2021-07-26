@@ -241,7 +241,7 @@ Tests are run with the `npm run test` script in the root directory. The tests ve
 
 The picture above shows a screenshot of the latest test run using the `npm run test` command.
 
-The test scripts are found in the `_tests_` folder in `graphqlTest.js`.
+The test scripts are found in the `_tests_` folder in the project repository’s root folder.
 
 This form of integration testing ensures the interactions and functions between the server and database run as intended. These tests are run before each pull request to minimise code regression. Any changes that affect the interactions between the server and database can be quickly identified and fixed.
 
