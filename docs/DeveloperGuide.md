@@ -92,6 +92,8 @@ The central repository that we perform continuous integration on is at the follo
 1. If no further updates are required for the pull request, that developer will merge the pull request into the `main` branch
 1. Before starting on your next feature, run `git checkout main` to switch to the main branch locally. Run `git pull` to obtain the latest codebase. Repeat step 1
 
+Bugs found in Pet Social are raised as an Issue on the GitHub Issue Tracker. This allows us to keep track of all bugs in a consolidated manner.
+
 ### Automated Checks
 
 Currently, upon every Pull request, two checks will be done automatically on Github:
@@ -239,7 +241,7 @@ Tests are run with the `npm run test` script in the root directory. The tests ve
 
 The picture above shows a screenshot of the latest test run using the `npm run test` command.
 
-The test scripts are found in the `_tests_` folder in `graphqlTest.js`.
+The test scripts are found in the `_tests_` folder in the project repository’s root folder.
 
 This form of integration testing ensures the interactions and functions between the server and database run as intended. These tests are run before each pull request to minimise code regression. Any changes that affect the interactions between the server and database can be quickly identified and fixed.
 
