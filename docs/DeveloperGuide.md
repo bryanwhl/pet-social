@@ -191,13 +191,15 @@ If 'Remember Me' is selected during sign in, the token will be saved to the brow
 
 ### Arrange Playgroup Meetup
 
+A Playgroup is a pet gathering event with a specified location and time. It is a new concept that we have designed for pet owners to organize a meeting in-person for them to socialize with other pet owners.
+
 ![Playgroup Meetup](uml/PlaygroupMeetupActivity.png)
 
-Playgroup Meetups can be suggested on the Playgroup. Upon agreement among the members, the meetup date is set. Else, new dates are suggested.
+Playgroup Meetups can be organized on the Playgroup tab of the website. The meetup date is set by the organizer, and anyone from the public who is free and keen to join can simply click the "Join" button on the playgroup marker located on the google map interface. Eventually, functionalities will be implemented in the playgroup system for members of the playgroup to suggest meetup dates and communicate with each other through a Group Chat function.
 
 ## Testing
 
-Our application follows the Model-View-Controller(MVC) model. The model being the MongoDB Database, the view being the User Interface, and the controller being the frontend logic with React states and backend logic with Apollo Client and mongoose.
+Our application follows the Model-View-Controller(MVC) model. The model being the MongoDB Database, the view being the User Interface, and the controller being the frontend logic with React states and backend logic with Apollo Client and Mongoose.
 
 We divided our testing into two sections: Model and Controller Testing, as well as View testing.
 
@@ -211,6 +213,14 @@ The backend model/controller testing is done with Jest - a JavaScript Testing Fr
 
 The `supertest` npm package is used along with Jest to help us write tests for testing GraphQL requests.
 
+The primary purpose to use Jest is to test our /graphql endpoint to ensure that the server is returning the correct data when given a query. To do this, we populated our database with sample data that will be tested.
+
+Some of the functionalities that our test cases check for are as follows:
+
+1. No duplication in usernames in our database allowed, else error code 400 is returned from the server
+1. '@' symbol is required for all e-mail fields when signing up, else error code 400 is returned from the server
+1. Database is returning results as intended when a users fetching query is called
+
 Tests are run with the `npm run test` script in the root directory. The tests verify the expected response codes and data (successful request) or error messages (unsuccessful request) are actually returned from the database and server. When it does not, Jest provides detailed and contextual error messages to pinpoint the nature of the error easily.
 
 ![Example test run](uml/test-result.png)
@@ -223,7 +233,14 @@ This form of integration testing ensures the interactions and functions between 
 
 ### View Testing
 
-The frontend view testing is done with hands on user testing on a high-fidelity artifact - a working prototype of the application.
+Two types of testing are done for the "View" element of our application: Jest testing and hands-on user testing. 
+
+For the Jest testing portion, we concentrate on testing utility functions that are used for the frontend of the application. These utility functions include:
+
+1. `convertDate()` function: Converting unix value to datetime value,
+2. `displayName()` function: Displaying the user's family name and given name in the correct order as customized by the user in his/her settings page
+
+The frontend view testing is also done with hands on user testing on a high-fidelity artifact - a working prototype of the application.
 
 For milestone 2, the link to the live deployment of the application is sent with a user feedback form to a large pool of users. This large-scale testing includes both pet owners and non-pet owners with a focus on usability and user experience. The feedback is collected on a [Google Form](https://forms.gle/KHhQLmau7aoJbxTH8), with two parts to the form: a semi-guided section which asks the tester to perform an action without explicit instructions on how to perform it, followed by independent testing where the user can refer to the comprehensive [User Guide](https://github.com/bryanwhl/pet-social/blob/main/docs/UserGuide.md) and spend time to evaluate the overall function and intuitivity of the application. The testers are asked to rate ease of use as well as report any bugs.
 
