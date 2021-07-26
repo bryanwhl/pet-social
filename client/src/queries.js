@@ -391,6 +391,7 @@ export const getPostByIdQuery=gql`
 export const getUserProfileQuery=gql`
   query ($username: String!) {
     getUserProfile(username: $username) {
+      id
       username
       email
       profileBio
