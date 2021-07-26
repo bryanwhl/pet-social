@@ -92,6 +92,8 @@ The central repository that we perform continuous integration on is at the follo
 1. If no further updates are required for the pull request, that developer will merge the pull request into the `main` branch
 1. Before starting on your next feature, run `git checkout main` to switch to the main branch locally. Run `git pull` to obtain the latest codebase. Repeat step 1
 
+Bugs found in Pet Social are raised as an Issue on the GitHub Issue Tracker. This allows us to keep track of all bugs in a consolidated manner.
+
 ### Automated Checks
 
 Currently, upon every Pull request, two checks will be done automatically on Github:
