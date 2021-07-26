@@ -49,3 +49,18 @@ test("fetch users", (done) => {
       done();
     });
 });
+
+test("fetch all posts", (done) => {
+  request
+    .post("/graphql")
+    .send({
+      query: "{ getPostsQuery{id} }",
+    })
+    .set("Accept", "application/json")
+    .expect("Content-Type", /json/)
+    .expect(200)
+    .end(function (err, res) {
+      expect(res.body).toBeInstanceOf(Object);
+      done();
+    });
+});
