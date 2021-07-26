@@ -78,6 +78,7 @@ A short description of the icons that are used in this User Guide.
    &nbsp;&nbsp;&nbsp;&nbsp; 2.5.2 [Retracting a Friend Request](#252-retracting-a-friend-request) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.5.3 [Accepting a Friend Request](#253-accepting-a-friend-request) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.5.4 [Dismissing a Friend Request](#254-dismissing-a-friend-request) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.5.5 [Removing a Friend](#255-removing-a-friend) <br>
    2.6 [Playgroups](#26-playgroups) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.6.1 [Viewing nearby Playgroups](#261-viewing-nearby-playgroups) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.6.2 [Creating a Playgroup](#262-creating-a-playgroup) <br>
@@ -89,6 +90,7 @@ A short description of the icons that are used in this User Guide.
    &nbsp;&nbsp;&nbsp;&nbsp; 2.7.3 [Deleting a Chat](#273-deleting-a-chat) <br>
    &nbsp;&nbsp;&nbsp;&nbsp; 2.7.4 [Deleting a Message](#274-deleting-a-message) <br>
    2.8 [Notifications](#28-notifications) <br>
+   &nbsp;&nbsp;&nbsp;&nbsp; 2.8.1 [Notification Settings](#281-notification-settings) <br>
    2.9 [Shop (Coming Soon)](#29-shop-coming-soon) <br>
    2.10 [Customisation Settings (Coming Soon)](#210-customisation-settings-coming-soon) <br>
 
@@ -128,6 +130,8 @@ Like most other social media platforms, you will use with Pet Social with an acc
 
 Create an account for Pet Social
 
+![Create Account](userGuidePictures/Signup.png)
+
 How To:
 
 - From Sign In Page, navigate to Sign Up page by clicking `Don't have an account? Sign Up`.
@@ -146,6 +150,8 @@ How To:
 
 Sign in to your Pet Social account.
 
+![Sign In](userGuidePictures/Signin.png)
+
 How To:
 
 - At Sign In page, key in **Username** and **Password**.
@@ -162,6 +168,8 @@ How To:
 ### 2.1.3 Changing your Email
 
 Change the email linked with your Pet Social account.
+
+![Change Email](userGuidePictures/ChangeEmail.png)
 
 How To:
 
@@ -180,6 +188,8 @@ How To:
 ### 2.1.4 Changing your Password
 
 Change your account's Password.
+
+![Change Password](userGuidePictures/ChangePassword.png)
 
 How To:
 
@@ -204,6 +214,8 @@ How To:
 
 Delete your Pet Social account and all data within it permenantly.
 
+![Delete Account](userGuidePictures/DeleteAccount.png)
+
 How To:
 
 - Navigate to `Settings` from the left taskbar or top-right account popper.
@@ -226,6 +238,8 @@ As a user, you have many options to edit and customise your profile!
 
 Edits your account profile picture.
 
+![Edit Profile Picture](userGuidePictures/ProfilePicture.png)
+
 How To:
 
 - Navigate to `Profile` from the top-right account popper.
@@ -240,6 +254,8 @@ How To:
 ### 2.2.2 Edit your profile biography
 
 Edits your account profile biography.
+
+![Edit Profile Bio](userGuidePictures/EditBio.png)
 
 How To:
 
@@ -259,6 +275,8 @@ How To:
 
 Changes the order to display your name: Given name first or Family name first.
 
+![Change Name Order](userGuidePictures/NameOrder.png)
+
 How To:
 
 - Navigate to `Settings` from the left taskbar or top-right account popper.
@@ -276,10 +294,12 @@ You can add your pets to Pet Social as well!
 
 Adds a pet with you as the owner.
 
+![Add Pet](userGuidePictures/AddPet.png)
+
 How To:
 
 - Navigate to `Profile` from the top-right account popper.
-- Click on `Your Pets`.
+- Click on `Your Pets` (if you have not added any pets skip this step).
 - Click on `Add Pet`.
 - Fill in your pet's **Name, Breed, Gender,** and **Date of Birth**.
 - Click `Add Pet`.
@@ -292,6 +312,8 @@ How To:
 ### 2.3.2 Adding Owners
 
 Adds other users on Pet Social as an owner of your pet.
+
+![Add Owners](userGuidePictures/AddOwner.png)
 
 How To:
 
@@ -311,6 +333,8 @@ How To:
 
 You may remove yourself as the owner of a pet.
 
+![Remove Self as Owner](userGuidePictures/RemoveSelfAsOwner.png)
+
 How To:
 
 - Navigate to `Profile` from the top-right account popper.
@@ -327,6 +351,8 @@ How To:
 ### 2.3.4 Deleting a Pet
 
 Permenantly delete a pet.
+
+![Delete Pet](userGuidePictures/DeletePet.png)
 
 How To:
 
@@ -351,6 +377,8 @@ You may post photos or videos of your pets!
 
 Adds a post with a picture or video.
 
+![Add Post](userGuidePictures/AddPost.png)
+
 How To:
 
 - Go to the top of the Home Page.
@@ -371,6 +399,8 @@ How To:
 
 I like you, you like me, we're a happy family hey!
 
+![Like Post](userGuidePictures/LikePost.png)
+
 How To:
 
 - Go to any post.
@@ -386,6 +416,8 @@ How To:
 
 You can save a post and view it later.
 
+![Save Post](userGuidePictures/SavePost.png)
+
 How To:
 
 - Go to any post.
@@ -400,6 +432,8 @@ How To:
 
 You can comment on posts.
 
+![Comment Post](userGuidePictures/AddComment.png)
+
 How To:
 
 - Go to any post.
@@ -412,6 +446,8 @@ How To:
 ### 2.4.6 Liking a Comment
 
 You can like comments.
+
+![Like Comment](userGuidePictures/LikeComment.png)
 
 How To:
 
@@ -428,7 +464,9 @@ How To:
 
 ### 2.4.8 Deleting a Comment
 
-You can delete comments.
+You can delete your own comments.
+
+![Delete Comment](userGuidePictures/DeleteComment.png)
 
 How To:
 
@@ -440,7 +478,9 @@ How To:
 
 ### 2.4.9 Deleting a Post
 
-You can delete posts.
+You can delete your own posts.
+
+![Delete Post](userGuidePictures/DeletePost.png)
 
 How To:
 
@@ -468,6 +508,8 @@ How To:
 
 You can edit your post captions.
 
+![Edit Post](userGuidePictures/EditPost.png)
+
 How To:
 
 - Go to your post.
@@ -493,6 +535,8 @@ You can add other users as friends on Pet Social!
 
 Sends a Friend Request.
 
+![Send Friend](userGuidePictures/AddFriend.png)
+
 How To:
 
 - On any post or comment, click on a user's `Avatar`.
@@ -503,6 +547,8 @@ How To:
 ### 2.5.2 Retracting a Friend Request
 
 Retracts a sent Friend Request.
+
+![Retract Friend](userGuidePictures/RetractFriend.png)
 
 How To:
 
@@ -525,6 +571,8 @@ OR
 
 Accepts a Friend Request from another user.
 
+![Accept Friend](userGuidePictures/AcceptFriend.png)
+
 How To:
 
 - On the post or comment of a user who has sent you a friend request, click on the user's `Avatar`.
@@ -537,11 +585,19 @@ OR
 - Click on `Received Friend Requests`.
 - Click on the `Accept` icon.
 
+OR
+
+- Navigate to `Notifications` tab from the topbar.
+- Click on the `Friend Request` Notification
+- Click on the `Accept` icon.
+
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
 ### 2.5.4 Dismissing a Friend Request
 
 Dismisses a Friend Request from another user.
+
+![Dismiss Friend](userGuidePictures/DismissFriend.png)
 
 How To:
 
@@ -550,8 +606,31 @@ How To:
 - Click on `Received Friend Requests`.
 - Click on the `Dismiss` icon.
 
+OR
+
+- Navigate to `Notifications` tab from the topbar.
+- Click on the `Friend Request` Notification
+- Click on the `Dismiss` icon.
+
 | :bulb: | This would not notify the other user you have rejected the request |
 | ------ | ------------------------------------------------------------------ |
+
+<hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
+
+### 2.5.5 Removing a Friend
+
+I don't friend you anymore.
+
+![Delete Friend](userGuidePictures/DeleteFriend.png)
+
+How To:
+
+- Navigate to `Profile` from the top-right account popper.
+- Click on `Friends`.
+- Click on the `Delete` icon for the user you want to unfriend.
+
+| :bulb: | This would not notify the other user you have removed them as your friend |
+| ------ | ------------------------------------------------------------------------- |
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 <div style="page-break-after: always;"></div>
@@ -566,6 +645,8 @@ You can view nearby playgroups or create your own!
 
 See the location of nearby playgroups
 
+![View Playgroup](userGuidePictures/ViewPlaygroup.png)
+
 How To:
 
 - Navigate to `Playgroups` from the left taskbar.
@@ -579,6 +660,8 @@ How To:
 ### 2.6.2 Creating a Playgroup
 
 Creates a Playgroup.
+
+![Create Playgroup](userGuidePictures/AddPlaygroup.png)
 
 How To:
 
@@ -596,6 +679,8 @@ How To:
 ### 2.6.3 Playgroup Page and Members
 
 Join or view a Playgroup.
+
+![Playgroup Page](userGuidePictures/PlaygroupPage.png)
 
 How To:
 
@@ -619,6 +704,8 @@ Chat with other users.
 
 Create a chat with other users.
 
+![Create Chat](userGuidePictures/CreateChat.png)
+
 How To:
 
 - Navigate to `Chats` on the top-right taskbar.
@@ -636,6 +723,8 @@ How To:
 
 Send a message in the chat.
 
+![Send Message](userGuidePictures/SendMessage.png)
+
 How To:
 
 - In the chat menu, click on the `Write a message...` textbox.
@@ -647,6 +736,8 @@ How To:
 ### 2.7.3 Deleting a Chat
 
 Deletes the chat.
+
+![Delete Chat](userGuidePictures/DeleteChat.png)
 
 How To:
 
@@ -662,6 +753,8 @@ How To:
 ### 2.7.4 Deleting a Message
 
 Deletes a message.
+
+![Delete Message](userGuidePictures/DeleteMessage.png)
 
 How To:
 
@@ -683,6 +776,20 @@ You will receive notifications when the following actions occur:
 
 | :bulb: | You can open the incoming friend request, or corresponding post from the notification tab directly. |
 | ------ | --------------------------------------------------------------------------------------------------- |
+
+<hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
+
+### 2.8.1 Notification Settings
+
+Change which notifications you want to receive.
+
+![Notification Settings](userGuidePictures/NotificationSettings.png)
+
+How To:
+
+- Navigate to `Settings` Page.
+- Click on `Notifications` tab on the left.
+- Toggle the `Sliders` for the notification type you wish to receive.
 
 <hr style="border:0.5px solid darkorange; background-color: darkorange"> </hr>
 
