@@ -3,10 +3,14 @@ hide circle
 skinparam classAttributeIconSize 0
 
 class App 
+class LoggedIn
+class LoggedOut
 class ProfilePage
+class OtherUsersProfilePage
 class ProfileTabs
 class FriendList
 class Pet
+class OtherUsersPet
 class AddPet
 class SettingsPage
 class PostsContainer
@@ -29,19 +33,25 @@ class SideBar
 class RightNotificationBar
 class RightChatBar
 class Notifications
+class Message
 
-App -->"1" Login
-App -->"1" Signup
-App -->"1" ResetPassword
-App -->"1" PostsContainer
-App -->"1" ProfilePage
-App -->"1" SettingsPage
-App -->"1" Playgroups
-App -->"1" Shop
+App -->"1" LoggedIn
+App -->"1" LoggedOut
+
+LoggedOut -->"1" Login
+LoggedOut -->"1" Signup
+LoggedOut -->"1" ResetPassword
+LoggedIn -->"1" PostsContainer
+LoggedIn -->"1" ProfilePage
+LoggedIn -->"1" OtherUsersProfilePage
+LoggedIn -->"1" SettingsPage
+LoggedIn -->"1" Playgroups
+LoggedIn -->"1" Shop
 ProfilePage --> "1" ProfileTabs
 ProfilePage --> "1" FriendList
 ProfilePage --> "1" Pet
 ProfilePage --> "1" AddPet
+OtherUsersProfilePage --> "1" OtherUsersPet
 ProfileTabs --> "1" Post
 Playgroups --> "1" PlaygroupForm
 Playgroups --> "1" PlaygroupInfo
@@ -56,6 +66,9 @@ TopBar --> "1" SideBar
 TopBar --> "1" RightNotificationBar
 TopBar --> "1" RightChatBar
 TopBar --> "1" Notifications
+Notifications --> "0...1" FriendList
+Notifications --> "0...1" Post
 RightChatBar --> "0...*" Chat
-App --> "1" TopBar
+Chat --> "0...*" Message
+LoggedIn --> "1" TopBar
 @enduml

@@ -40,6 +40,7 @@ information.
 - [Implementation](#implementation)
   - [Sign Up and Password Encryption](#sign-up-and-password-encryption)
   - [Sign In and Token Authentication](#sign-in-and-token-authentication)
+  - [Notifications and Subscription](#notifications-and-subscription)
   - [Arrange Playgroup Meetup](#arrange-playgroup-meetup)
 - [Testing](#testing)
   - [Model/Controller Testing](#modelcontroller-testing)
@@ -94,12 +95,11 @@ The central repository that we perform continuous integration on is at the follo
 ### Automated Checks
 
 Currently, upon every Pull request, two checks will be done automatically on Github:
+
 1. GitGuardian Security check
 1. Github Pages check
 
 The GitGuardian Security check will ensure that we have not posted any of our secret API or encryption keys onto GitHub. The GitHub Pages check will ensure that our [GitHub Pages](https://bryanwhl.github.io/pet-social/) continues to work fine upon the Pull request.
-
-
 
 ## Design
 
@@ -189,6 +189,18 @@ Every time a user logs in, a token will be generated and saved to the browser's 
 
 If 'Remember Me' is selected during sign in, the token will be saved to the browser's `localStorage`. Upon reloading the application, this token will be retrieved and verified for automatic sign in. If no valid token is present, the original sign in screen is rendered. `localStorage` is cleared when the user logs out.
 
+### Notifications and Subscription
+
+Notifications and Chats in Pet Social are implemented using subscriptions, an operation type of `GraphQL` along with query and mutation types.
+
+Unlike queries and mutations, subscriptions does not make HTTP requests to the server. Rather, after an application makes a subscription, it starts to listen to the server. When there are changes on the server, a notification is sent to all _subscribers_ of the subscription.
+
+It is not efficient to constantly poll the server for changes using repeated HTTP requests, therefore subscriptions use `WebSockets` for communications. The `WebSocket API` allows the browser to receive event-driven responses from the server without polling.
+
+The `WebSocket` connection is set up at `ws://localhost:4000/subscriptions`, and this link is added to the `ApolloClient` to handle subscription requests. Communication happends using the publish-subscribe principle. When there is a change in the server, a notification about the operation is published to all subscribers using the `PubSub` interface's method `publish`.
+
+Corresponding subscriptions' resolvers will register the change and return a suitable object to the client. When `subscriptionData` is received on the client, the cache is updated using `writeCache` for the corresponding query where data has been changed. This change is finally reflected on the UI.
+
 ### Arrange Playgroup Meetup
 
 A Playgroup is a pet gathering event with a specified location and time. It is a new concept that we have designed for pet owners to organize a meeting in-person for them to socialize with other pet owners.
@@ -233,7 +245,7 @@ This form of integration testing ensures the interactions and functions between 
 
 ### View Testing
 
-Two types of testing are done for the "View" element of our application: Jest testing and hands-on user testing. 
+Two types of testing are done for the "View" element of our application: Jest testing and hands-on user testing.
 
 For the Jest testing portion, we concentrate on testing utility functions that are used for the frontend of the application. These utility functions include:
 
@@ -244,7 +256,9 @@ The frontend view testing is also done with hands on user testing on a high-fide
 
 For milestone 2, the link to the live deployment of the application is sent with a user feedback form to a large pool of users. This large-scale testing includes both pet owners and non-pet owners with a focus on usability and user experience. The feedback is collected on a [Google Form](https://forms.gle/KHhQLmau7aoJbxTH8), with two parts to the form: a semi-guided section which asks the tester to perform an action without explicit instructions on how to perform it, followed by independent testing where the user can refer to the comprehensive [User Guide](https://github.com/bryanwhl/pet-social/blob/main/docs/UserGuide.md) and spend time to evaluate the overall function and intuitivity of the application. The testers are asked to rate ease of use as well as report any bugs.
 
-For milestone 3, the live deployment will be sent with another feedback form. However, this round of user feedback would be more targeted - focusing on actual pet owners for acceptance testing, evaluating if the application and its features meet the needs and requirements of the end users.
+Using the user feedback from milestone 2, we have made many UI improvements including more readable fonts and intuitive tooltips.
+
+For milestone 3, the live deployment was sent with another feedback form to a smaller group of targeted users (mostly pet owners). This round of user feedback focuses on actual pet owners for acceptance testing, evaluating if the application and its features meet the needs and requirements of the end users. The feedback is collected on another [Google Form](https://forms.gle/E7pkxWBFJAeCXVKQ6), with two parts to the form: a feature feedback section which asks the tester to evaluate specific features of Pet Social, followed by product feedback where the user can refer to the comprehensive [User Guide](https://github.com/bryanwhl/pet-social/blob/main/docs/UserGuide.md) and spend time to evaluate the overall function and usability of the whole application. The testers were again asked to report any bugs.
 
 ## Product scope
 
@@ -277,13 +291,16 @@ Pet Social will be the first to implement such features in an integrated applica
 | v1.0    | Pet Social User       | post photos                                        | share my experiences and memories with my pets       |
 | v1.0    | Pet Social User       | comment on posts                                   | reply to posts that I enjoy                          |
 | v2.0    | Pet Owner             | add other users as friends                         | connect more easily with each other on the platform  |
-| v2.0    | Pet Social User       | chat with other users on the platform              | easily communicate without leaving Pet Social        |
-| v2.0    | Pet Social User       | view notifications                                 | quickly see events pertaining to me                  |
-| v2.0    | Pet Owner             | form playgroups with fellow pet owners             | our pets can play together                           |
-| v3.0    | Pet Services Provider | join the platform                                  | advertise and sell my products and services          |
-| v3.0    | Pet Services Provider | advertise my products and services                 | I can market my products to bigger audiences         |
-| v3.0    | Pet Social User       | adjust UI settings such as font size and dark mode | configure my experience to my preferences            |
-| v3.0    | Pet owner             | have friend suggestions                            | connect with others who have similar interests as me |
+| v2.0    | Pet Owner             | add my pet to the platform                         | share my pet's profile                               |
+| v2.0    | Pet Owner             | view and create nearby playgroups                  | find pet owners nearby for a meetup                  |
+| v3.0    | Pet Social User       | chat with other users on the platform              | easily communicate without leaving Pet Social        |
+| v3.0    | Pet Social User       | view notifications                                 | quickly see events pertaining to me                  |
+| v3.0    | Pet Owner             | form playgroups with fellow pet owners             | our pets can play together                           |
+| v3.0    | Pet Social User       | search for other users on the platform             | connect with other users                             |
+| v4.0    | Pet Services Provider | join the platform                                  | advertise and sell my products and services          |
+| v4.0    | Pet Services Provider | advertise my products and services                 | I can market my products to bigger audiences         |
+| v4.0    | Pet Social User       | adjust UI settings such as font size and dark mode | configure my experience to my preferences            |
+| v4.0    | Pet owner             | have friend suggestions                            | connect with others who have similar interests as me |
 
 ### Non-Functional Requirements
 
