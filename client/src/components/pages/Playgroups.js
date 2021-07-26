@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, ListItemSecondaryAction, FormControl, ListSubheader, Button, Divider, List, ListItem, ListItemText, Drawer, Toolbar, ListItemIcon } from '@material-ui/core';
+import { makeStyles, ListItemSecondaryAction, FormControl, ListSubheader, Button, Snackbar, IconButton, Divider, List, ListItem, ListItemText, Drawer, Toolbar, ListItemIcon } from '@material-ui/core';
 import { GoogleMap, useLoadScript, InfoWindow, Marker } from "@react-google-maps/api";
 import { v4 as uuidv4 } from 'uuid';
 import "@reach/combobox/styles.css";
@@ -20,6 +20,7 @@ import Geocode from "react-geocode";
 import { useQuery } from '@apollo/client';
 import { getPlaygroupsQuery } from '../../queries.js';
 import { useState, useEffect } from 'react';
+import CloseIcon from '@material-ui/icons/Close';
 
 Geocode.setApiKey(process.env.REACT_APP_KEY);
 
@@ -119,8 +120,16 @@ const Playgroups = ({ user }) => {
     const [tempMarker, setTempMarker] = React.useState(null);
     const [selected, setSelected] = React.useState(null);
     const [newPlaygroup, setNewPlaygroup] = React.useState(false);
-
+    const [openSnackbar, setOpenSnackbar] = useState(true);
     const playgroups = useQuery(getPlaygroupsQuery);
+
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpenSnackbar(false);
+    };
 
     useEffect(() => {
       if (playgroups.data) {
@@ -394,6 +403,23 @@ const Playgroups = ({ user }) => {
                     </div>
                 </InfoWindow>) : null}
             </GoogleMap>
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              open={openSnackbar}
+              autoHideDuration={4000}
+              onClose={handleClose}
+              message="Please refresh if the map is not loading!"
+              action={
+                <React.Fragment>
+                  <IconButton size="small" aria-label="close" color="secondary" onClick={handleClose}>
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </React.Fragment>
+              }
+            />
         </div>
     );
 }
