@@ -4,6 +4,15 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const path = require('path')
+const fs = require('fs')
+const cors = require('cors')
+const { withFilter } = require('graphql-subscriptions');
+const {
+    GraphQLScalarType,
+    Kind
+  } = require('graphql')
+
 const User = require('./models/user.js')
 const Post = require('./models/post.js')
 const Comment = require('./models/comment.js')
@@ -12,19 +21,11 @@ const FriendRequest = require('./models/friendRequest.js')
 const Notification = require('./models/notification.js')
 const Chat = require('./models/chat.js')
 const Message = require('./models/message.js')
-const path = require('path')
-const fs = require('fs')
-const cors = require('cors')
-const pubsub = new PubSub()
-const { withFilter } = require('graphql-subscriptions');
-
 const Pet = require('./models/pet.js')
+const pubsub = new PubSub()
+
 require('dotenv').config({path: `${__dirname}/.env`});
 
-const {
-    GraphQLScalarType,
-    Kind
-  } = require('graphql')
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -590,7 +591,6 @@ const resolvers = {
             }
 
             const owners = [args.owner]
-            console.log(owners)
             const newPet = new Pet({
                 ...args,
                 owners: owners
@@ -611,11 +611,9 @@ const resolvers = {
             return owner
         },
         uploadFile: async (parent, {file}) => {
-            console.log("reached");
             const { createReadStream, filename } = await file;
 
             console.log(filename);
-            console.log("here")
             const { ext } = path.parse(filename)
             const randomName = generateRandomString(12) + ext
             console.log(randomName);
@@ -741,9 +739,6 @@ const resolvers = {
                 if (err) {
                     console.log(err)
                 }
-                else {
-                    console.log("Deleted : ", docs);
-                }
             })
         },
         joinPlaygroup: async (root, args) => {
@@ -762,9 +757,6 @@ const resolvers = {
                 if (err) {
                     console.log(err)
                 }
-                else {
-                    console.log("Deleted : ", docs);
-                }
             })
             Post.updateOne({_id: args.post}, {$pull: {comments: args.id}}).exec()
             post = await Post.findById(args.post).exec()
@@ -779,9 +771,6 @@ const resolvers = {
             Post.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
                     console.log(err)
-                }
-                else {
-                    console.log("Deleted : ", docs);
                 }
             })
             User.updateOne({_id: args.userID}, {$pull: {post: args.id}}).exec()
@@ -907,9 +896,6 @@ const resolvers = {
                 if (err) {
                     console.log(err)
                 }
-                else {
-                    console.log("Deleted : ", docs);
-                }
             })
         },
         deleteFriend: async (root, args) => {
@@ -960,9 +946,6 @@ const resolvers = {
                 if (err) {
                     console.log(err)
                 }
-                else {
-                    console.log("Deleted : ", docs);
-                }
             })
 
             return user
@@ -976,9 +959,6 @@ const resolvers = {
             Notification.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
                     console.log(err)
-                }
-                else {
-                    console.log("Deleted : ", docs);
                 }
             })
 
@@ -995,9 +975,6 @@ const resolvers = {
             Chat.findByIdAndDelete(args.id, function (err, docs) {
                 if (err) {
                     console.log(err)
-                }
-                else {
-                    console.log("Deleted : ", docs);
                 }
             })
 
@@ -1322,7 +1299,6 @@ const resolvers = {
 const app = express()
 
 const server = new ApolloServer({
-    //uploads: false,
     typeDefs,
     resolvers,
     subscriptions: {
@@ -1348,10 +1324,6 @@ app.use(cors())
 const httpServer = createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-// app.listen({port: 4000}, () => {
-//     console.log(`Server ready at http://localhost:4000`)
-//     console.log(`Subscriptions ready at ws://localhost:4000/graphql`)
-// })
 
 httpServer.listen(4000, () => {
     console.log(`🚀 Server ready at http://localhost:${4000}${server.graphqlPath}`)
