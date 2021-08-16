@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -57,7 +56,6 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [error, setError] = useState(null);
     const [snackbarSeverity, setSnackbarSeverity] = useState("success")
-    const [petOpen, setPetOpen] = useState(false);
     const [petMode, setPetMode] = useState(null);
     const [pet, setPet] = useState(null)
     const [profileTab, setProfileTab] = useState(0);
@@ -66,12 +64,13 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
     const [friendRequestText, setFriendRequestText] = useState(false);
 
     const history = useHistory();
+
+    // Logs out and redirect to /login
     const logout = () => {
       setUser(null);
       localStorage.clear()
       sessionStorage.clear()
       client.clearStore()
-      //client.resetStore() //This causes cache problems
       history.push("/login");
     }
 
@@ -82,49 +81,50 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
 
     let query = useLocationQuery();
 
-    console.log(query.get("username"))
-
     const { data, loading } = useQuery(getUserProfileQuery, {variables: {username: query.get("username")}})
 
+    // Sets profile data
     useEffect(() => {
-      console.log(data)
       if (data) {
         setProfileData(data.getUserProfile);
-        console.log(data.getUserProfile)
       }
     }, [data])
 
+    // Query for sending friend request
     const [ sendFriendRequest,  sendFriendRequestResponse ] = useMutation(sendFriendRequestQuery, {
         onError: (error) => {
           setError(error.graphQLErrors[0].message)
          }, refetchQueries: [{query: currentUserQuery}]
     })
 
+    // Query for retracting friend request
     const [ retractFriendRequest,  retractFriendRequestResponse ] = useMutation(retractFriendRequestQuery, {
         onError: (error) => {
           setError(error.graphQLErrors[0].message)
          }, refetchQueries: [{query: currentUserQuery}]
     })
 
+    // Query for accepting friend request
     const [ acceptFriendRequest,  acceptFriendRequestResponse ] = useMutation(acceptFriendRequestQuery, {
         onError: (error) => {
           setError(error.graphQLErrors[0].message)
          }, refetchQueries: [{query: currentUserQuery}]
     })
 
+    // Sets profile tab
     const handleProfileTabChange = (event, newValue) => {
       setPet(null)
       setPetMode(null)
       setProfileTab(newValue);
     };
    
+    // Handles pet tab change
     const handlePet = (item) => () => {
       setPet(item.id)
       setPetMode(false);
     };
 
-
-
+    // Chooses the query depending on the friendship status
     const handleFriendRequestClick = () => {
       if (friendRequestText === "Add as Friend") {
         sendFriendRequest({variables: {from: user.id, to: profileData.id}})
@@ -144,6 +144,7 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
         setSnackbarSeverity(severity)
     }
 
+    // Sends friend requests
     useEffect(() => {
       if (data) {
           if (user.sentFriendRequests.map(request => request.toUser.id).includes(data.getUserProfile.id)) {
@@ -256,7 +257,7 @@ const OtherUsersProfilePage = ({setUser, client, user, getCurrentUser}) => {
                 </Box>
               </Box>
               <List>
-                  {(profileData && friendRequestText != false && user.id !== profileData.id && !user.friends.map(friend => friend.id).includes(profileData.id)) && <ListItem button onClick={handleFriendRequestClick}>
+                  {(profileData && friendRequestText !== false && user.id !== profileData.id && !user.friends.map(friend => friend.id).includes(profileData.id)) && <ListItem button onClick={handleFriendRequestClick}>
                       <ListItemIcon>
                           {<PersonAddIcon />}
                       </ListItemIcon>

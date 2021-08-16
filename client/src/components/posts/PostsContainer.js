@@ -2,7 +2,6 @@ import React from 'react'
 import Post from './Post.js'
 import SubmitPost from './SubmitPost.js'
 import { Grid, makeStyles, Container } from '@material-ui/core';
-import { red, blue } from '@material-ui/core/colors';
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client'
 import { getPostsQuery } from '../../queries.js'
@@ -18,12 +17,13 @@ const useStyles = makeStyles((theme) => ({
 
 const PostsContainer = ({ user }) => {
 
-  const allPosts = useQuery(getPostsQuery)//} //,{fetchPolicy: "no-cache"});
+  // Queries all public posts
+  const allPosts = useQuery(getPostsQuery);
 
+  // State variable to store all posts queried
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    console.log(allPosts)
     if (allPosts.data) {
       console.log(allPosts.data);
       let outputArr = allPosts.data.getPosts.slice().sort((a, b) => {return b.date - a.date}); 

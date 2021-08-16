@@ -22,9 +22,11 @@ const useStyles = makeStyles((theme) => ({
 const SubmitComment = ({user, post}) => {
     const classes = useStyles();
 
+    // Setting parameters for API call
     const [comment, setComment] = React.useState({post: post.id, user: user.id, text: ""});
     const [error, setError] = React.useState(null);
 
+    // GraphQL API call
     const [ submitComment, submitCommentResult ] = useMutation(submitCommentQuery, {
         refetchQueries: [{query: getPostsQuery}],
         options: {awaitRefetchQueries: true}
@@ -37,6 +39,7 @@ const SubmitComment = ({user, post}) => {
         }
     };
 
+    // Submits the comment to the server
     const handleSubmit = (event) => {
         event.preventDefault();
         if (comment.text === "") {
@@ -51,7 +54,7 @@ const SubmitComment = ({user, post}) => {
             }
         });
         setComment({post: post.id, user: user.id, text: ""});
-    } // edit this function
+    }
 
     return (
         <div>

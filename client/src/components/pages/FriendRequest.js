@@ -14,16 +14,9 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 300,
     },
-    media: {
-        height: 0,
-        paddingTop: '90.25%', // 16:9
-    },
-    bookmark: {
-        marginLeft: 'auto',
-    },
     avatar: {
         backgroundColor: red[500],
-    },
+    }
 }));
 
 const FriendRequest = () => {

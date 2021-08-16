@@ -51,10 +51,12 @@ function Copyright() {
 const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrentUser }) => {
     const classes = useStyles();
 
+    // State variables for Login screen
     const [error, setError] = useState(null);
     const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe"));
     const [details, setDetails] = useState({username:"", password:"", remember:false});
 
+    // Queries for login screen
     const [ login, loginResult ] = useMutation(loginQuery, {
       onError: (error) => {
         console.log(error.graphQLErrors[0].message)
@@ -96,7 +98,6 @@ const Login = ({ switchToHome, switchToSignup, switchToResetPassword, getCurrent
       sessionStorage.setItem('user-token', rememberMe)
       getCurrentUser()
       setRememberMe(false)
-      // switchToHome();
     }
 
     return (

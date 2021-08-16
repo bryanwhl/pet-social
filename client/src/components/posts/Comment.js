@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import {Grid, Container, Card, IconButton, 
-    CardMedia, CardContent, Typography, 
-    CardHeader, makeStyles, CardActions, 
-    Grow, Paper, ClickAwayListener, 
-    MenuList, Popper, ListItem, Avatar,
-    ListItemIcon, ListItemText, ButtonBase, Collapse,
-    Divider, List, ListItemSecondaryAction} from '@material-ui/core';
+import { IconButton, Typography, makeStyles, 
+    Grow, Paper, ClickAwayListener, Popper, ListItem, Avatar,
+    ListItemIcon, ListItemText, ButtonBase, List} from '@material-ui/core';
 import Badge from '@material-ui/core/Badge';
-import MuiAlert from '@material-ui/lab/Alert';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ReplyIcon from '@material-ui/icons/Reply';
@@ -18,10 +13,6 @@ import { displayName } from '../../utility.js';
 import { deleteCommentQuery, getPostsQuery, likeCommentQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 const useStyles = makeStyles((theme) => ({
     popper: {
         zIndex: theme.zIndex.drawer + 2,
@@ -31,13 +22,13 @@ const useStyles = makeStyles((theme) => ({
 const Comment = ({ user, post, comment, handleUserClick }) => {
     const classes = useStyles();
 
+    // State variables for comment
     const [anchorEl, setAnchorEl] = useState(null);
     const [open, setOpen] = useState(false);
     const [liked, setLiked] = useState(false);
-
     const [edit, setEdit] = useState(false);
-    const [text, setText] = useState(comment.text);
 
+    // Queries for comment
     const [ deleteComment, deleteCommentResult ] = useMutation(deleteCommentQuery, {
         refetchQueries: [{query: getPostsQuery}],
     })
@@ -60,13 +51,9 @@ const Comment = ({ user, post, comment, handleUserClick }) => {
         setEdit(true)
         setOpen(false)
     }
-    
-    const handleCloseEdit = () => {
-        setEdit(false)
-    }
 
+    // Calls the delete comment query
     const handleDelete = () => {
-        console.log(comment.id, post.id)
         deleteComment({variables: {id: comment.id, post: post.id}})
         setOpen(false)
         setAnchorEl(false)

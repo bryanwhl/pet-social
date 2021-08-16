@@ -25,6 +25,7 @@ function Alert(props) {
 
 const AccountSettings = ({ user, logout }) => {
 
+    // Account Settings State Variables
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [confirmPassword, setConfirmPassword] = useState("");
     const [email, setEmail] = useState(user.email)
@@ -36,6 +37,7 @@ const AccountSettings = ({ user, logout }) => {
     const [openPassword, setOpenPassword] = useState(false);
     const [passwordDetails, setPasswordDetails] = useState({oldPassword: "", newPassword: "", confirmPassword: ""})
 
+    // Queries for Account Settings
     const [ editFamilyNameFirst, editFamilyNameFirstResponse ] = useMutation(editFamilyNameFirstQuery, {
         onError: (error) => {
             console.log(error.graphQLErrors[0])

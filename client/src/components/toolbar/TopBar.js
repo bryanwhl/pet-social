@@ -13,7 +13,6 @@ import SideBar from './SideBar';
 import RightNotificationBar from './RightNotificationBar';
 import RightChatBar from './RightChatBar';
 import { makeStyles } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
 import { displayName } from '../../utility.js';
 import { useHistory } from "react-router-dom";
 import SearchBar from './SearchBar.js';
@@ -29,53 +28,29 @@ const useStyles = makeStyles((theme) => ({
     appBar: {
         zIndex: theme.zIndex.drawer + 2,
     },
-    avatar: {
-        backgroundColor: red[500],
-    },
     rightPopper: {
         zIndex: theme.zIndex.drawer + 1,
         width: '200px',
     },
     customizeToolbar: {
         height: "4vh"
-    },
-    searchBarRoot: {
-      padding: '2px 12px',
-      display: 'flex',
-      alignItems: 'center',
-      width: 400,
-    },
-    input: {
-      marginLeft: theme.spacing(1),
-      fontSize:17,
-      flex: 1,
-    },
-    iconButton: {
-      padding: 10,
-    },
-    divider: {
-      height: 28,
-      margin: 4,
-    },
-    resize:{
-      fontSize:50
-    },
+    }
 }));
 
-// constructor function for TopBar
+// Constructor function for TopBar
 const TopBar = ({ logout, user, client, getCurrentUser }) => {
 
-    // const for all components
+    // Const for all components
     const classes = useStyles();
     let history = useHistory();
 
-    // data set up for notifications
+    // Data set up for notifications
     const [numNotifications, setNumNotifications] = useState(0);
     
-    //data set up for chats
+    // Data set up for chats
     const [numChats, setNumChats] = useState(0);
 
-    // state changes from clicking buttons
+    // State changes from clicking buttons
     const switchToProfile = () => {
         history.push('/myprofile')
     }
@@ -89,7 +64,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
         closeLeftDrawer()
     }
 
-    // top right profile menu drop bar options
+    // Top right profile menu drop bar options
     const profileItems = [
         {
             text: "Profile",
@@ -111,7 +86,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
         }
     ]
 
-    // handles opening profile menu
+    // Handles opening profile menu
     const [profileOpen, setProfileOpen] = useState(false);
     const [anchorProfileRef, setAnchorProfileRef] = useState(null);
 
@@ -135,7 +110,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
         }
     }
 
-    // handles opening and closing of left drawer
+    // Handles opening and closing of left drawer
     const [leftDrawerState, setLeftDrawerState] = useState(false);
 
     const toggleLeftDrawer = () => {
@@ -148,7 +123,7 @@ const TopBar = ({ logout, user, client, getCurrentUser }) => {
         setLeftDrawerState(false);
     }
 
-    // handles opening and closing of right drawer
+    // Handles opening and closing of right drawer
     const [rightDrawerState, setRightDrawerState] = useState('closed');
 
     const handleRightDrawerNotification = () => {

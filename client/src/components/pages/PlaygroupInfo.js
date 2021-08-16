@@ -1,5 +1,5 @@
 import React from 'react'
-import { ListSubheader, Divider, Button, CardHeader, Typography, Card, CardContent, CardActions, ListItem, TextField, makeStyles } from '@material-ui/core';
+import { Divider, Button, CardHeader, Typography, Card, CardContent, CardActions, makeStyles } from '@material-ui/core';
 import { deletePlaygroupQuery, getPlaygroupsQuery, joinPlaygroupQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
 import { convertDate, convertTime } from '../../utility.js';
@@ -7,11 +7,7 @@ import { convertDate, convertTime } from '../../utility.js';
 const useStyles = makeStyles((theme) => ({
   container: {
     maxWidth: "270px"
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
+  }
 }));
 
 const PlaygroupInfo = ({ playgroup, user }) => {

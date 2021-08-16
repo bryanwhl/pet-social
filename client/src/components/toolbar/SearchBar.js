@@ -5,11 +5,9 @@ import { IconButton,
 import AddIcon from '@material-ui/icons/Add';
 import SearchIcon from '@material-ui/icons/Search';
 import { makeStyles } from '@material-ui/core/styles';
-import { red } from '@material-ui/core/colors';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { allUsernameQuery } from '../../queries.js';
 import { useQuery } from '@apollo/client';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -34,8 +32,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SearchBar = ( {user, type, history, addChatFriend} ) => {
-
   const classes = useStyles();
+
+  // State variables for Search Bar
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -51,6 +50,7 @@ const SearchBar = ( {user, type, history, addChatFriend} ) => {
     setOpen(false);
   };
 
+  // Queries to get all usernames
   const allUsers = useQuery(allUsernameQuery);
 
   const handleSearchChange = (event, value) => {
@@ -62,6 +62,7 @@ const SearchBar = ( {user, type, history, addChatFriend} ) => {
     }
   };
 
+  // Submit search query and navigate to profile
   const handleSubmitSearch = () => {
     if (searchText==='') {
       handleClick();

@@ -46,23 +46,10 @@ const useStyles = makeStyles((theme) => ({
     input: {
       display: "none"
     },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-    },
     avatar: {
       backgroundColor: red[500],
       width: theme.spacing(20),
       height: theme.spacing(20),
-    },
-    card: {
-      minWidth: 240
-    },
-    media: {
-      paddingTop: '100%', // 16:9
-    },
-    dialog: {
-      width: "75vmin"
     },
     emptyBio: {
       ...theme.typography.button,
@@ -71,7 +58,9 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const ProfilePage = ({ user, getCurrentUser }) => {
-    const classes=useStyles();
+    const classes = useStyles();
+
+    // State variables for profile page screen
     const [petOpen, setPetOpen] = useState(false);
     const [petMode, setPetMode] = useState(null);
     const [friendOpen, setFriendOpen] = useState(false);
@@ -82,6 +71,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
     const [profileBio, setProfileBio] = useState(user.profileBio);
     const [edittedBio, setEdittedBio] = useState(user.profileBio);
 
+    // Queries for profile page screen
     const [ editProfileBio ] = useMutation(editProfileBioQuery, {refetchQueries: [{query: currentUserQuery}]})
     const [ editAvatar ] = useMutation(editAvatarQuery, {refetchQueries: [{query: currentUserQuery}]})
     const [ uploadFile, uploadFileResponse ] = useMutation(UPLOAD_FILE, {refetchQueries: [{query: currentUserQuery}]})
@@ -98,6 +88,7 @@ const ProfilePage = ({ user, getCurrentUser }) => {
       uploadFile({variables: {file}});
     }
     
+    // Handles change in profile tab
     const handleProfileTabChange = (event, newValue) => {
       setPet(null)
       setPetMode(null)

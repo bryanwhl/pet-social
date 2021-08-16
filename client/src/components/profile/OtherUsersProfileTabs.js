@@ -47,17 +47,16 @@ function TabPanel(props) {
     media: {
       paddingTop: '100%', // 16:9
     },
-    dialog: {
-      width: "75vmin"
-    },
   }));
 
 const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {
-    const classes=useStyles();
+    const classes = useStyles();
     
+    // State for post open/close
     const [postOpen, setPostOpen] = useState(false);
     const [backdropPost, setBackdropPost] = useState(null);
 
+    // Get user posts query
     const [getQueryPost, queryPost] = useLazyQuery(getPostByIdQuery, {
         fetchPolicy: "no-cache"
     })
@@ -68,6 +67,7 @@ const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {
         }
     }, [queryPost.data])
 
+    // Set profile posts open and close
     const handleOpenPost = (item) => {
         setPostOpen(true);
         const id = item.id
@@ -80,44 +80,44 @@ const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {
     };
 
     return (
-        <div>
-            <Tabs
-              value={profileTab}
-              onChange={handleProfileTabChange}
-              indicatorColor="primary"
-              textColor="primary"
-              centered
-            >
-              <Tab label="Posts" />
-              <Tab label="Tagged" />
-            </Tabs>
-            <TabPanel value={profileTab} index={0}>
-              <Grid container spacing={2} justify="center">
-                {user.posts.map(item => (
-                    <Grid item style={{cursor: "pointer"}} onClick={() => handleOpenPost(item)}>
-                      <Card className={classes.card}>
-                        <CardMedia className={classes.media} image={item.postType === 'video' ? playButton : item.imageFilePath} title="Post"/>
-                      </Card>
-                    </Grid>
-                ))}
-              </Grid>
-            </TabPanel>
-            <TabPanel value={profileTab} index={1}>
-              <Grid container spacing={2} justify="center">
-                Tagged Posts Coming Soon
-              </Grid>
-            </TabPanel>
-            <Dialog onClose={handleClosePost} open={postOpen} scroll={"body"} fullWidth
-            PaperProps={{
-                style: {
-                backgroundColor: 'transparent',
-                boxShadow: 'none',
-                maxWidth: "75vmin"
-                },
-            }}>
-                {backdropPost && <Post user={user} post={backdropPost} closePost={handleClosePost}/>}
-            </Dialog>
-        </div>
+      <div>
+          <Tabs
+            value={profileTab}
+            onChange={handleProfileTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            <Tab label="Posts" />
+            <Tab label="Tagged" />
+          </Tabs>
+          <TabPanel value={profileTab} index={0}>
+            <Grid container spacing={2} justify="center">
+              {user.posts.map(item => (
+                  <Grid item style={{cursor: "pointer"}} onClick={() => handleOpenPost(item)}>
+                    <Card className={classes.card}>
+                      <CardMedia className={classes.media} image={item.postType === 'video' ? playButton : item.imageFilePath} title="Post"/>
+                    </Card>
+                  </Grid>
+              ))}
+            </Grid>
+          </TabPanel>
+          <TabPanel value={profileTab} index={1}>
+            <Grid container spacing={2} justify="center">
+              Tagged Posts Coming Soon
+            </Grid>
+          </TabPanel>
+          <Dialog onClose={handleClosePost} open={postOpen} scroll={"body"} fullWidth
+          PaperProps={{
+              style: {
+              backgroundColor: 'transparent',
+              boxShadow: 'none',
+              maxWidth: "75vmin"
+              },
+          }}>
+              {backdropPost && <Post user={user} post={backdropPost} closePost={handleClosePost}/>}
+          </Dialog>
+      </div>
     )
 }
 

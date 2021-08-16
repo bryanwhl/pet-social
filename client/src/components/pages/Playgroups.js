@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, ListItemSecondaryAction, FormControl, ListSubheader, Button, Snackbar, IconButton, Divider, List, ListItem, ListItemText, Drawer, Toolbar, ListItemIcon } from '@material-ui/core';
+import { makeStyles, Snackbar, IconButton, Divider, List, ListItem, ListItemText, Drawer, Toolbar, ListItemIcon } from '@material-ui/core';
 import { GoogleMap, useLoadScript, InfoWindow, Marker } from "@react-google-maps/api";
 import { v4 as uuidv4 } from 'uuid';
 import "@reach/combobox/styles.css";
@@ -22,10 +22,12 @@ import { getPlaygroupsQuery } from '../../queries.js';
 import { useState, useEffect } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 
+// Set google maps API key
 Geocode.setApiKey(process.env.REACT_APP_KEY);
 
 const drawerWidth = 300;
 
+// Load google maps script
 function loadScript(src, position, id) {
   if (!position) {
     return;
@@ -45,10 +47,6 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       marginLeft: 70,
     },
-    mapContainerStyle: {
-      width: "100vw",
-      height: "94vh"
-    },
     drawerContainer: {
         overflow: 'auto',
     },
@@ -60,23 +58,6 @@ const useStyles = makeStyles((theme) => ({
     drawerPaper: {
       width: drawerWidth,
       marginTop: -4,
-    },
-    searchBarRoot: {
-      padding: '2px 4px',
-      display: 'flex',
-      alignItems: 'center',
-      width: 400,
-    },
-    iconButton: {
-      padding: 10,
-    },
-    divider: {
-      height: 28,
-      margin: 4,
-    },
-    input: {
-      marginLeft: theme.spacing(1),
-      flex: 1,
     },
     icon: {
       color: theme.palette.text.secondary,
@@ -90,16 +71,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+// Sets center on load
 const center = {
     lat: 1.3314930427408092,
     lng: 103.80778265368694
 }
 
+// Set map dimension
 const mapStyle = {
     width: "100%",
     height: "100vh",
 }
 
+// Generate new unique id for marker
 const generateNewID = () => {
     const newID = uuidv4();
     return newID;
@@ -133,7 +117,6 @@ const Playgroups = ({ user }) => {
 
     useEffect(() => {
       if (playgroups.data) {
-        console.log(playgroups.data)
         setAllPlaygroups(playgroups.data.getPlaygroup)
       }
       setSelected(null);
@@ -299,8 +282,6 @@ const Playgroups = ({ user }) => {
                         (response) => {
                           const { lat, lng } = response.results[0].geometry.location;
                           panTo({lat: lat, lng: lng});
-                          console.log(lat);
-                          console.log(lng);
                         },
                         (error) => {
                           console.error(error);
