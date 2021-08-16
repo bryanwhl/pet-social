@@ -21,10 +21,12 @@ function Alert(props) {
 
 const ReceivedFriendRequests = ({ user, receivedDialog, handleCloseReceivedRequests }) => {
 
+    // State variables for received friend requests
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [snackbarSeverity, setSnackbarSeverity] = useState("success")
     const [error, setError] = useState(null);
 
+    // Queries for received friend requests
     const [ retractFriendRequest,  retractFriendRequestResponse ] = useMutation(retractFriendRequestQuery, {
         onError: (error) => {
           setError(error.graphQLErrors[0].message)

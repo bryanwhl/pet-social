@@ -25,21 +25,24 @@ const SubmitPost = ({user, displayName}) => {
 
   const classes = useStyles();
 
-  const [uploadFile, uploadFileResult] = useMutation(UPLOAD_FILE, {
-    // onCompleted: data => {
-    //   // console.log("we are here!! " + data)
-    //   console.log("after upload")
-    //   setPost({ ...post, imageFilePath: data });
-    // }
-  })
+  // Uploads the attached file onto the server
+  const [uploadFile, uploadFileResult] = useMutation(UPLOAD_FILE)
 
+  // Submits the post onto the server
   const [ submitPost, submitPostResult ] = useMutation(submitPostQuery, {
     refetchQueries: [{query: getPostsQuery}],
   })
 
+  // Set post parameters from API call
   const [post, setPost] = useState({user:"", imageFilePath:"", text:"", postType:"", privacy:"public"});
+
+  // Variable to hold the file attached by the user
   const [file, setFile] = useState(null);
+
+  // Set error state
   const [error, setError] = useState(false);
+
+  // Submits the post to the server
   useEffect(() => {
     if ( post.imageFilePath !== "" ) {
       console.log(post);
@@ -51,6 +54,7 @@ const SubmitPost = ({user, displayName}) => {
     }
   }, [post.imageFilePath])
 
+  // After image is uploaded, set the url onto imageFilePath variable
   useEffect(() => {
     if ( uploadFileResult.data ) {
       setPost({ ...post, imageFilePath: uploadFileResult.data.uploadFile.url });
@@ -58,6 +62,7 @@ const SubmitPost = ({user, displayName}) => {
     }
   }, [uploadFileResult.data])
 
+  // Handling of file uploads
   const handleVideoFileChange = (event) => {
     let inputFile = event.target.files[0]
     console.log("File successfully tagged!")

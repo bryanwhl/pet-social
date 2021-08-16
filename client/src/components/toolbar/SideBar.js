@@ -1,11 +1,10 @@
-import { Drawer, IconButton, Divider } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import HomeIcon from '@material-ui/icons/Home';
 import MapIcon from '@material-ui/icons/Map';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import SettingsIcon from '@material-ui/icons/Settings';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { useHistory, useRouteMatch } from "react-router-dom";
 
@@ -30,24 +29,29 @@ const SideBar = ({ drawerState, closeLeftDrawer, setRightDrawerState, accountTyp
     let history = useHistory();
     let { url } = useRouteMatch();
 
+    // Navigate to home
     const switchToHome = () => {
         history.push('/home')
     }
     
+    // Navigate to playgroups
     const switchToPlaygroups = () => {
         history.push('/playgroups')
         closeLeftDrawer()
         setRightDrawerState("false")
     }
     
+    // Navigate to advertising
     const handleAdvertisingClick = () => {
         console.log('Navigate to advertising')
     }
     
+    // Navigate to shop
     const switchToShop = () => {
         history.push('/shop')
     }
     
+    // Navigate to settings
     const switchToSettings = () => {
         history.push('/settings')
         closeLeftDrawer()

@@ -7,10 +7,13 @@ import { useMutation } from '@apollo/client'
 import { editLikeNotificationQuery, editCommentNotificationQuery, currentUserQuery, editShareNotificationQuery } from '../../queries.js'
 
 const NotificationsSettings = ( {user} ) => {
+
+    // State variables for Notification Settings
     const [likeNotificationState, setLikeNotificationState] = useState(user.settings.likeNotification);
     const [commentNoficiationState, setCommentNoficiationState] = useState(user.settings.commentNotification);
     const [shareNotificationState, setShareNotificationState] = useState(user.settings.shareNotification);
 
+    // Queries for Notification Settings
     const [ editLikeNotification ] = useMutation(editLikeNotificationQuery, {refetchQueries: [{query: currentUserQuery}]})
     const [ editCommentNotification ] = useMutation(editCommentNotificationQuery, {refetchQueries: [{query: currentUserQuery}]})
     const [ editShareNotification ] = useMutation(editShareNotificationQuery, {refetchQueries: [{query: currentUserQuery}]})

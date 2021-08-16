@@ -31,15 +31,8 @@ const useStyles = makeStyles((theme) => ({
       marginTop: "5vh",
       zIndex: 1,
     },
-    paper: {
-      padding: theme.spacing(2),
-    },
     input: {
       display: "none"
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
     },
     avatar: {
       width: theme.spacing(15),
@@ -48,15 +41,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddPet = ({ user, setPet, setPetMode, getCurrentUser }) => {
-    const classes=useStyles();
+    const classes = useStyles();
 
+    // Sets the avatar image file path
     const [avatarPath, setAvatarPath] = useState("")
     const [error, setError] = useState(null)
+    // Sets the pet profile badge
     const [profileBadge, setProfileBadge] = useState(true);
+    // Sets the pet details
     const [details, setDetails] = useState({name:"", gender:"", breed:"", dateOfBirth:null});
 
+    // Enumeration for genders
     const genders = ["Male", "Female", "Other"]
 
+    // Query for adding pets to the server
     const [ addPet, addPetResponse ] = useMutation(addPetQuery, {
       onError: (error) => {
         setError(error.graphQLErrors[0].message)

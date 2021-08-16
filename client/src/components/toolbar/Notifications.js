@@ -11,6 +11,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Notifications = () => {
   const classes = useStyles();
+
+  // State variables for Notifications
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 

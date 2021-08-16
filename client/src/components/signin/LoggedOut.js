@@ -1,12 +1,9 @@
 import React from 'react'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Login from './Login.js'
 import Signup from './Signup.js'
 import ResetPassword from './ResetPassword.js'
 import { useHistory } from "react-router-dom";
-import { withRouter } from 'react-router-dom'
-import { currentUserQuery } from '../../queries.js'
-import { useLazyQuery } from '@apollo/client'
 
 const LoggedOut = ({ getCurrentUser }) => {
 
@@ -14,16 +11,22 @@ const LoggedOut = ({ getCurrentUser }) => {
 
   const history = useHistory();
 
+  // Routes to /home after login
   const switchToHome = () => {
     history.push("/home")
   }
 
+  // Changes to sign up screen
   const switchToSignup = () => {
     setAppState("Signup")
   }
+
+  // Changes to sign in screen
   const switchToSignin = () => {
     setAppState("Signin")
   }
+
+  // Switch to reset password screen
   const switchToResetPassword = () => {
     setAppState("Reset Password")
   }

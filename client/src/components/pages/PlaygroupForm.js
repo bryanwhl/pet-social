@@ -12,31 +12,29 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: 270,
-  },
+  }
 }));
 
 const PlaygroupForm = ({user, meetingLocation}) => {
     const classes = useStyles();
 
+    // State variables for playgroup form
     const [playgroup, setPlaygroup] = React.useState({playgroupAdmin: user.id, name:"", description:"", meetingLat: meetingLocation[0], meetingLng: meetingLocation[1], meetingDate:"",});
     const [error, setError] = React.useState(false);
 
+    // Query for submitting new playgroup
     const [ submitPlaygroup, submitPlaygroupResult ] = useMutation(submitPlaygroupQuery, {
         refetchQueries: [{query: getPlaygroupsQuery}],
     })
-
-    console.log(meetingLocation);
 
     const handleChange = (prop) => (event) => {
         setPlaygroup({ ...playgroup, [prop]: event.target.value });
         setError(false);
     };
 
+    // Submits the add playgroup form
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(playgroup.name);
-        console.log(playgroup.meetingDate);
-        console.log(playgroup.description);
 
         if (playgroup.name === "") {
             setError(true);

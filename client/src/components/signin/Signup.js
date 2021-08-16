@@ -55,12 +55,14 @@ function Alert(props) {
 const Signup = ({ switchToSignin }) => {
     const classes = useStyles();
 
+    // State variables for signup screen
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
     const [details, setDetails] = useState({givenName:"", familyName:"", username:"", password:"", confirmPassword:"", accountType:"", email:""});
     const buttonText = (success) ? "Back to Sign In" : "Sign up"
 
+    // Queries for signup screen
     const [ createUser, createUserResponse ] = useMutation(addUserQuery, {
       onError: (error) => {
         setError(error.graphQLErrors[0].message)

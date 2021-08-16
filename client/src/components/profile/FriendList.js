@@ -18,13 +18,12 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import BackspaceIcon from '@material-ui/icons/Backspace';
-import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import SendIcon from '@material-ui/icons/Send';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { displayName, convertDate } from '../../utility.js';
 import { useMutation } from '@apollo/client'
-import { currentUserQuery, deleteFriendQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js'
+import { currentUserQuery, deleteFriendQuery, retractFriendRequestQuery } from '../../queries.js'
 import ReceivedFriendRequests from './ReceivedFriendRequests.js';
 
 function Alert(props) {
@@ -45,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
 const FriendList = ({ user }) => {
     const classes=useStyles();
 
+    // Sets UI states for friend list
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [snackbarSeverity, setSnackbarSeverity] = useState("success")
     const [error, setError] = useState(null);
@@ -53,6 +53,7 @@ const FriendList = ({ user }) => {
     const [sentDialog, setSentDialog] = useState(false)
     const [receivedDialog, setReceivedDialog] = useState(false)
 
+    // Sets delete or retract friend request queries
     const [ deleteFriend, deleteFriendResponse ] = useMutation(deleteFriendQuery, {refetchQueries: [{query: currentUserQuery}]})
     const [ retractFriendRequest,  retractFriendRequestResponse ] = useMutation(retractFriendRequestQuery, {
         onError: (error) => {
@@ -103,6 +104,7 @@ const FriendList = ({ user }) => {
         setDeleteDialog(false)
     };
     
+    // API call for deleting friend request
     const handleConfirmDelete = () => {
         deleteFriend({variables: {id: user.id, friend: selectedFriend.id}})
         setDeleteDialog(false)

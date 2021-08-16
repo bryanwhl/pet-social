@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {Grid, Container, Card, IconButton, 
+import {Card, IconButton, 
     CardMedia, CardContent, Typography, 
     CardHeader, makeStyles, CardActions, 
     Grow, Paper, ClickAwayListener, 
@@ -14,7 +14,6 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import CommentIcon from '@material-ui/icons/Comment';
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
-import { red, blue } from '@material-ui/core/colors';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ReportIcon from '@material-ui/icons/Report';
@@ -27,10 +26,9 @@ import SubmitComment from './SubmitComment.js'
 import Comment from './Comment.js'
 import Tooltip from '@material-ui/core/Tooltip';
 import * as timeago from 'timeago.js';
-import { displayName, convertDate } from '../../utility.js';
+import { displayName } from '../../utility.js';
 import { editPostCaptionQuery, getPostsQuery, likePostQuery, savePostQuery, currentUserQuery, deletePostQuery, sendFriendRequestQuery, retractFriendRequestQuery, acceptFriendRequestQuery } from '../../queries.js';
 import { useMutation } from '@apollo/client';
-import { id } from 'date-fns/locale';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -44,9 +42,6 @@ function Alert(props) {
 }
 
 const useStyles = makeStyles((theme) => ({
-    cardGrid: {
-        padding: "20px",
-    },
     root: {
         width: "100%",
         marginTop: "40px"
@@ -63,23 +58,6 @@ const useStyles = makeStyles((theme) => ({
     bookmark: {
         marginLeft: 'auto',
     },
-    avatarRed: {
-        backgroundColor: red[500],
-    },
-    avatarBlue: {
-        backgroundColor: blue[500],
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        flex: 1,
-    },
-    iconButton: {
-        padding: 10,
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-    },
     popper: {
         zIndex: theme.zIndex.drawer + 1,
     },
@@ -89,6 +67,7 @@ const Post = ({user, post, closePost}) => {
     const classes = useStyles();
     let history = useHistory();
     
+    // State variables for posts
     const [openSnackbar, setOpenSnackbar] = useState(null)
     const [snackbarSeverity, setSnackbarSeverity] = useState("success")
     const [error, setError] = React.useState(null);
@@ -127,6 +106,7 @@ const Post = ({user, post, closePost}) => {
         }
     });
 
+    // Queries for posts
     const [ likePost, likePostResult ] = useMutation(likePostQuery, {
         refetchQueries: [{query: getPostsQuery}],
     })
@@ -159,6 +139,7 @@ const Post = ({user, post, closePost}) => {
         refetchQueries: [{query: getPostsQuery}],
     })
 
+    // Handling of state variables
     const handleCloseSnackbar = () => {
         setOpenSnackbar(null)
     }
@@ -174,21 +155,10 @@ const Post = ({user, post, closePost}) => {
 
     const handleOptionsToggle = () => {
       setOpen((prevOpen) => !prevOpen);
-      console.log("Options popper is toggling now!")
-      console.log("value after toggle: " + prevOpen)
     };
-  
-    // const handleOptionsClose = (event) => {
-    //   if (anchorOptionsRef.current && anchorOptionsRef.current.contains(event.target)) {
-    //     return;
-    //   }
-  
-    //   setOpen(false);
-    // };
 
     const handleOptionsClose = () => {
       setOpen(false);
-      console.log("Options popper is closing now!")
     };
 
     const handleLikedToggle = () => {
@@ -236,21 +206,16 @@ const Post = ({user, post, closePost}) => {
     }
 
     const handleDelete = () => {
-        console.log(user.id, post.id)
         deletePost({variables: {id: post.id, userID: user.id}})
         handleOptionsClose()
-        // setOpen(false)
-        // setAnchorEl(false)
     }
 
     const handleOpenEditPost = () => {
       setOpenEditPost(true);
-      console.log("Edit Post Dialog is opening now!")
     };
   
     const handleCloseEditPost = () => {
       setOpenEditPost(false);
-      console.log("Edit Post Dialog is closing now!")
     };
 
     const handleEditCaption = (event) => {
@@ -372,8 +337,7 @@ const Post = ({user, post, closePost}) => {
     const handleViewProfileClick = () => {
       history.push("/profile?username=" + openUsername)
     }
-
-    console.log(post.postType);
+    
     return (
         <div>
             <Card className={classes.root}>

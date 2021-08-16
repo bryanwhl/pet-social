@@ -39,10 +39,6 @@ const useStyles = makeStyles((theme) => ({
     input: {
       display: "none"
     },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-    },
     avatar: {
       backgroundColor: red[500],
       width: theme.spacing(15),
@@ -60,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 const Pet = ({ user, petId, setPetId, setPetMode }) => {
   const classes=useStyles();
 
+  // State variables for Pet screen
   const [profileBadge, setProfileBadge] = useState(true);
   const [addOwner, setAddOwner] = useState("")
   const [openOwner, setOpenOwner] = useState(false)
@@ -71,17 +68,20 @@ const Pet = ({ user, petId, setPetId, setPetMode }) => {
   const [getPet, getPetResponse] = useLazyQuery(getPetByIdQuery, {
     fetchPolicy: "no-cache"
   })
+
+  // Pet Queries
   const [ addPetOwner, addPetOwnerResponse ] = useMutation(addPetOwnerQuery, {
     onError: (error) => {
-        console.log(error.graphQLErrors[0])
+      console.log(error.graphQLErrors[0])
       setError(error.graphQLErrors[0].message)
-     }
-    })
+    }
+  })
   const [ deleteOwner ] = useMutation(deleteOwnerQuery, {refetchQueries: [{query: currentUserQuery}], options: {awaitRefetchQueries: true}})
   const [ deletePet ] = useMutation(deletePetQuery, {refetchQueries: [{query: currentUserQuery}], options: {awaitRefetchQueries: true}})
   const [ editPetPicture, editPetPictureResponse ] = useMutation(editPetPictureQuery)
   const [ uploadFile, uploadFileResponse ] = useMutation(UPLOAD_FILE)
 
+  // Upload pet image file
   useEffect(() => {
     if ( uploadFileResponse.data ) {
       editPetPicture({variables: {id: pet.id, picturePath: uploadFileResponse.data.uploadFile.url}})
@@ -122,6 +122,7 @@ const handleCloseSnackbar = () => {
   setOpenSnackbar(null)
 }
 
+// Handles state change for Pet screen
 const handleOpenSnackbar = (input) => {
   console.log(input)
   setOpenSnackbar(input)
@@ -181,150 +182,150 @@ const handleAvatarChange = (event) => {
   uploadFile({variables: {file}});
 }
 
-    return (
-        <div>
-            <CssBaseline>
-                {(pet) &&
-                  <Grid container className={classes.root} spacing={1}>
-                    <Grid>
-                      <input accept="image/*" className={classes.input} id="change-pet-avatar" type="file" onChange={handleAvatarChange} />
-                      <label htmlFor="change-pet-avatar">
-                      <IconButton aria-label="change profile picture" component="span" onMouseEnter={() => setProfileBadge(false)} onMouseLeave={() => setProfileBadge(true)}>
-                      <Badge
-                        invisible={profileBadge}
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right',
-                        }}
-                        badgeContent={<EditIcon/>}
-                      >
-                      <Avatar alt="Avatar" src={pet.picturePath} className={classes.avatar}>
-                          {pet.name[0]}
-                      </Avatar>
-                      </Badge>
-                      </IconButton>
-                      </label>
-                    </Grid>
-                    <Grid item xs>
-                        <Typography variant="h4" gutterBottom>
-                          {pet.name}
-                        </Typography>
-                        <Typography variant="h5">
-                          {pet.gender}{" "}{pet.breed}
-                        </Typography>
-                        <Typography variant="body1">
-                          Born: {convertDate(pet.dateOfBirth)}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography variant="h5">Owners</Typography>
-                      <List>
-                      {pet.owners.map(item => (
-                          <ListItem item style={{cursor: "pointer"}} button>
-                            <ListItemAvatar>
-                              <Avatar alt={"Owner Avatar"} src={item.avatarPath}/>
-                            </ListItemAvatar>
-                            <ListItemText>
-                              {displayName(item)}{item.id===user.id && " (You)"}
-                            </ListItemText>
-                          </ListItem>
-                      ))}
-                      <ListItem button onClick={handleOpenOwner}>
-                        <ListItemIcon><AddIcon/></ListItemIcon>
-                        <ListItemText primary="Add Owner"></ListItemText>
-                      </ListItem>
-                      </List>
-                      <Tooltip title="Cannot remove only owner. You may want delete the pet instead" disableHoverListener={pet.owners.length!==1} disableTouchListener={pet.owners.length!==1}>
-                        <Grid>
-                          <Button className={classes.button} variant="contained" color="primary" onClick={ handleOpenRemoveOwner } disabled={pet.owners.length===1}>Remove self as owner</Button>
-                        </Grid>
-                      </Tooltip>
-                        <Grid>
-                          <Button className={classes.button} variant="contained" color="primary" onClick={ handleOpenDeletePet }>Delete Pet</Button>
-                        </Grid>
-                    </Grid>
+  return (
+      <div>
+          <CssBaseline>
+              {(pet) &&
+                <Grid container className={classes.root} spacing={1}>
+                  <Grid>
+                    <input accept="image/*" className={classes.input} id="change-pet-avatar" type="file" onChange={handleAvatarChange} />
+                    <label htmlFor="change-pet-avatar">
+                    <IconButton aria-label="change profile picture" component="span" onMouseEnter={() => setProfileBadge(false)} onMouseLeave={() => setProfileBadge(true)}>
+                    <Badge
+                      invisible={profileBadge}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                      }}
+                      badgeContent={<EditIcon/>}
+                    >
+                    <Avatar alt="Avatar" src={pet.picturePath} className={classes.avatar}>
+                        {pet.name[0]}
+                    </Avatar>
+                    </Badge>
+                    </IconButton>
+                    </label>
                   </Grid>
-                }
-            </CssBaseline>
-            <Dialog
-                open={openOwner}
-                onClose={handleCloseOwner}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Add another owner"}</DialogTitle>
-                <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    Please enter the username of the new owner
-                </DialogContentText>
-                <TextField
-                    error={["User does not exist", "User is already an owner"].includes(error)}
-                    helperText={["User does not exist", "User is already an owner"].includes(error) ? error : ""}
-                    autoFocus
-                    margin='dense'
-                    label="Add Owner Username"
-                    fullWidth
-                    onChange={handleChangeOwner()}
-                />
-                </DialogContent>
-                <DialogActions>
-                <Button onClick={handleConfirmOwner} color="primary" disabled={addOwner===""}>
-                    Add
-                </Button>
-                <Button onClick={handleCloseOwner} color="primary" autoFocus>
-                    Cancel
-                </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog
-                open={openRemoveOwner}
-                onClose={handleCloseRemoveOwner}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
-                <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to remove yourself as owner?
-                </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                <Button onClick={handleConfirmRemoveOwner} color="primary">
-                    Yes
-                </Button>
-                <Button onClick={handleCloseRemoveOwner} color="primary" autoFocus>
-                    Cancel
-                </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog
-                open={openDeletePet}
-                onClose={handleCloseDeletePet}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
-                <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to remove {pet && pet.name}? This removes your pet completely, including from other owners!
-                </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                <Button onClick={handleConfirmDeletePet} color="primary">
-                    Yes
-                </Button>
-                <Button onClick={handleCloseDeletePet} color="primary" autoFocus>
-                    Cancel
-                </Button>
-                </DialogActions>
-            </Dialog>
-            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity="success">
-                    {openSnackbar}
-                </Alert>
-            </Snackbar>
-        </div>
-    )
+                  <Grid item xs>
+                      <Typography variant="h4" gutterBottom>
+                        {pet.name}
+                      </Typography>
+                      <Typography variant="h5">
+                        {pet.gender}{" "}{pet.breed}
+                      </Typography>
+                      <Typography variant="body1">
+                        Born: {convertDate(pet.dateOfBirth)}
+                      </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="h5">Owners</Typography>
+                    <List>
+                    {pet.owners.map(item => (
+                        <ListItem item style={{cursor: "pointer"}} button>
+                          <ListItemAvatar>
+                            <Avatar alt={"Owner Avatar"} src={item.avatarPath}/>
+                          </ListItemAvatar>
+                          <ListItemText>
+                            {displayName(item)}{item.id===user.id && " (You)"}
+                          </ListItemText>
+                        </ListItem>
+                    ))}
+                    <ListItem button onClick={handleOpenOwner}>
+                      <ListItemIcon><AddIcon/></ListItemIcon>
+                      <ListItemText primary="Add Owner"></ListItemText>
+                    </ListItem>
+                    </List>
+                    <Tooltip title="Cannot remove only owner. You may want delete the pet instead" disableHoverListener={pet.owners.length!==1} disableTouchListener={pet.owners.length!==1}>
+                      <Grid>
+                        <Button className={classes.button} variant="contained" color="primary" onClick={ handleOpenRemoveOwner } disabled={pet.owners.length===1}>Remove self as owner</Button>
+                      </Grid>
+                    </Tooltip>
+                      <Grid>
+                        <Button className={classes.button} variant="contained" color="primary" onClick={ handleOpenDeletePet }>Delete Pet</Button>
+                      </Grid>
+                  </Grid>
+                </Grid>
+              }
+          </CssBaseline>
+          <Dialog
+              open={openOwner}
+              onClose={handleCloseOwner}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">{"Add another owner"}</DialogTitle>
+              <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                  Please enter the username of the new owner
+              </DialogContentText>
+              <TextField
+                  error={["User does not exist", "User is already an owner"].includes(error)}
+                  helperText={["User does not exist", "User is already an owner"].includes(error) ? error : ""}
+                  autoFocus
+                  margin='dense'
+                  label="Add Owner Username"
+                  fullWidth
+                  onChange={handleChangeOwner()}
+              />
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={handleConfirmOwner} color="primary" disabled={addOwner===""}>
+                  Add
+              </Button>
+              <Button onClick={handleCloseOwner} color="primary" autoFocus>
+                  Cancel
+              </Button>
+              </DialogActions>
+          </Dialog>
+          <Dialog
+              open={openRemoveOwner}
+              onClose={handleCloseRemoveOwner}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
+              <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to remove yourself as owner?
+              </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={handleConfirmRemoveOwner} color="primary">
+                  Yes
+              </Button>
+              <Button onClick={handleCloseRemoveOwner} color="primary" autoFocus>
+                  Cancel
+              </Button>
+              </DialogActions>
+          </Dialog>
+          <Dialog
+              open={openDeletePet}
+              onClose={handleCloseDeletePet}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>
+              <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to remove {pet && pet.name}? This removes your pet completely, including from other owners!
+              </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={handleConfirmDeletePet} color="primary">
+                  Yes
+              </Button>
+              <Button onClick={handleCloseDeletePet} color="primary" autoFocus>
+                  Cancel
+              </Button>
+              </DialogActions>
+          </Dialog>
+          <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+              <Alert onClose={handleCloseSnackbar} severity="success">
+                  {openSnackbar}
+              </Alert>
+          </Snackbar>
+      </div>
+  )
 }
 
 export default Pet

@@ -14,10 +14,8 @@ import DialogActions from '@material-ui/core/DialogActions'
 import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow'
 import IconButton from '@material-ui/core/IconButton'
-import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
 import MenuList from '@material-ui/core/MenuList'
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper'
@@ -29,21 +27,13 @@ import SendIcon from '@material-ui/icons/Send';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { displayName, convertTime } from '../../utility.js'
 import { Avatar } from '@material-ui/core';
-import { useQuery, useLazyQuery, useMutation, useSubscription } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import { getChatsQuery, deleteChatQuery, addMessageQuery, getChatByIdQuery, deleteMessageQuery } from '../../queries.js';
 
-const drawerWidth = 300;
-
 const useStyles = makeStyles((theme) => ({
-    cardGrid: {
-        padding: "20px",
-    },
     root: {
         width: "100%",
         height: "70vh",
-    },
-    avatarRed: {
-        backgroundColor: red[500],
     },
     input: {
         paddingTop: "5px",
@@ -51,16 +41,6 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: "10px",
         paddingRight: "10px",
         backgroundColor: red[50]
-    },
-    iconButton: {
-        padding: 10,
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-    },
-    popper: {
-        zIndex: theme.zIndex.drawer + 1,
     },
     messages: {
         height: "62vh",
@@ -96,6 +76,7 @@ const useStyles = makeStyles((theme) => ({
 const Chat = ({user, chatId, client}) => {
     const classes = useStyles();
 
+    // State variables for Chat
     const [open, setOpen] = useState(false)
     const [chat, setChat] = useState(false)
     const scrollRef = useRef(null)
@@ -105,6 +86,7 @@ const Chat = ({user, chatId, client}) => {
     const anchorOptionsRef = React.useRef(null);
     const prevOpen = React.useRef(open);
 
+    // Queries for Chat
     const chatResponse = useQuery(getChatByIdQuery, {variables: {id: chatId}})
     const [addMessage] = useMutation(addMessageQuery, {refetchQueries: {query: getChatsQuery, variables: {id: user.id}}})
     const [deleteMessage] = useMutation(deleteMessageQuery, {refetchQueries: {query: getChatsQuery, variables: {id: user.id}}})

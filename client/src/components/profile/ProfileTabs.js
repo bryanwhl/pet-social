@@ -46,10 +46,7 @@ function TabPanel(props) {
     },
     media: {
       paddingTop: '100%', // 16:9
-    },
-    dialog: {
-      width: "75vmin"
-    },
+    }
   }));
 
 const ProfileTabs = ({ user, profileTab, handleProfileTabChange }) => {

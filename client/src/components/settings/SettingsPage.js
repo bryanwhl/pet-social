@@ -13,7 +13,6 @@ import SecurityIcon from '@material-ui/icons/Security';
 import AccountSettings from './AccountSettings.js';
 import NotificationsSettings from './NotificationsSettings.js';
 import PrivacySettings from './PrivacySettings.js';
-import { red } from '@material-ui/core/colors';
 
 const drawerWidth = 300;
 
@@ -37,9 +36,6 @@ const useStyles = makeStyles((theme) => ({
     content: {
       flexGrow: 1,
       padding: theme.spacing(3),
-    },
-    avatar: {
-      backgroundColor: red[500],
     }
   }));
 

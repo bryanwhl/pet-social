@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import React, { useState, useEffect } from 'react';
-import { useQuery, useLazyQuery, useMutation, useSubscription } from '@apollo/client'
+import { useQuery, useMutation, useSubscription } from '@apollo/client'
 import { getChatsQuery, addChatQuery } from '../../queries.js';
 import { CREATE_CHAT, DELETE_CHAT, SEND_MESSAGE, DELETE_MESSAGE } from '../../subscriptions.js';
 import { displayName, convertTime } from '../../utility.js'
@@ -17,7 +17,6 @@ import Chat from './Chat.js'
 import SearchBar from './SearchBar.js'
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
-import * as timeago from 'timeago.js';
 
 const drawerWidth = 300;
 
@@ -45,8 +44,11 @@ const RightChatBar = ({ drawerState, user, setNumChats, client }) => {
 
     const classes = useStyles();
 
+    // Queries for Right Chat Bar
     const allChats = useQuery(getChatsQuery, {variables: {id: user.id}})
     const [createChat] = useMutation(addChatQuery, {refetchQueries: {query: getChatsQuery, variables: {id: user.id}}})
+    
+    // State variables for Right Chat Bar
     const [chats, setChats] = useState([]);
     const [name, setName] = useState("")
     const [addChat, setAddChat] = useState(false)
