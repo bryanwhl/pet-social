@@ -1,6 +1,6 @@
 # Pet Social
 
-A comprehensive social media platform designed specifically for pet owners to connect, share experiences, and organize meetups with their furry friends.
+A comprehensive social media platform designed specifically for pet owners to connect, share experiences, and organize meetups with fellow pet owners in a community-like setting.
 
 ## 🐾 About
 
