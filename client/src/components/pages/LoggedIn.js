@@ -1,3 +1,9 @@
+/**
+ * LoggedIn component - Main authenticated user interface
+ * Renders the application shell with navigation and protected routes
+ * Handles logout functionality and route protection
+ */
+
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { useHistory } from "react-router-dom";
@@ -12,25 +18,31 @@ import Shop from '../pages/Shop.js'
 import SettingsPage from '../settings/SettingsPage.js'
 import OtherUsersProfilePage from '../profile/OtherUsersProfilePage.js'
 
-
-const LoggedIn = ({setUser, client, user, currentUser, getCurrentUser}) => {
+/**
+ * LoggedIn - Main container for authenticated user interface
+ * @param {Function} setUser - Function to update user state
+ * @param {Object} client - Apollo GraphQL client instance
+ * @param {Object} user - Current authenticated user object
+ * @param {Object} currentUser - Current user query result
+ * @param {Function} getCurrentUser - Function to fetch current user data
+ * @param {Function} logout - Function to handle logout from parent App component
+ */
+const LoggedIn = ({setUser, client, user, currentUser, getCurrentUser, logout}) => {
 
   const history = useHistory();
 
-  const logout = () => {
-    setUser(null);
-    localStorage.clear()
-    sessionStorage.clear()
-    client.clearStore()
-    //client.resetStore() //This causes cache problems
-    //setAppState("Signin") //change route
-    history.push("/login");
+  /**
+   * Handles user logout with navigation - calls parent logout and redirects
+   */
+  const handleLogout = () => {
+    logout(); // Call parent logout function
+    history.push("/login"); // Navigate to login page
   }
 
   return (
     <div>
       <CssBaseline />
-      <TopBar logout={logout} user={user} client={client} getCurrentUser={getCurrentUser} />
+      <TopBar logout={handleLogout} user={user} client={client} getCurrentUser={getCurrentUser} />
       <Switch>
         <Route exact path='/'>
           <Redirect to="/home" />
@@ -45,7 +57,7 @@ const LoggedIn = ({setUser, client, user, currentUser, getCurrentUser}) => {
           {(user !== null) ?<ProfilePage user={user} getCurrentUser={getCurrentUser}/> : <Redirect to="/login" /> }
         </Route>
         <Route exact path='/settings'>
-          {(user !== null) ?<SettingsPage user={user} logout={logout}/> : <Redirect to="/login" /> }
+          {(user !== null) ?<SettingsPage user={user} logout={handleLogout}/> : <Redirect to="/login" /> }
         </Route>
         <Route exact path='/playgroups'>
           {(user !== null) ?<Playgroups user={user}/> : <Redirect to="/login" /> }

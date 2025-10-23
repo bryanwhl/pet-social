@@ -1,6 +1,5 @@
 // React core
 import { useState, useEffect } from 'react';
-import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 // Material-UI theme and styling
@@ -92,9 +91,6 @@ function App({ client }) {
   // Query to get current authenticated user
   const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {fetchPolicy: 'network-only'})
   
-  // Router history for navigation
-  let history = useHistory();
-  
   // Current authenticated user state
   const [user, setUser] = useState(null);
 
@@ -106,13 +102,13 @@ function App({ client }) {
 
   /**
    * Handles user logout - clears all stored data and redirects to login
+   * Note: Logout redirect is handled in LoggedIn component which has Router context
    */
   const logout = () => {
     setUser(null);
     localStorage.clear()
     sessionStorage.clear()
     client.clearStore()
-    history.push("/login");
   }
   
   /**
@@ -140,7 +136,7 @@ function App({ client }) {
       <div className="App">
         <ThemeProvider theme = {customTheme}>
           <Route path='/'>
-            {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} currentUser={currentUser} getCurrentUser={getCurrentUser} /> : <Redirect to="/login" /> }
+            {(user !== null) ? <LoggedIn setUser={setUser} client={client} user={user} currentUser={currentUser} getCurrentUser={getCurrentUser} logout={logout} /> : <Redirect to="/login" /> }
           </Route>
           <Route exact path='/login'>
             {(user === null) ? <LoggedOut getCurrentUser={getCurrentUser}/> : <Redirect to="/" /> }

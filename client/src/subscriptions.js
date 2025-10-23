@@ -1,5 +1,15 @@
-import { gql  } from '@apollo/client'
+/**
+ * GraphQL Subscription Definitions
+ * Contains all real-time subscription queries for Pet Social
+ * Handles notifications, messaging, and social interaction updates
+ */
 
+import { gql } from '@apollo/client'
+
+/**
+ * Subscription for post like notifications
+ * Triggers when a user's post receives a like
+ */
 export const POST_LIKED = gql`
   subscription onPostLiked($id: ID!) {
     postLiked(id: $id) {
@@ -34,7 +44,11 @@ export const POST_LIKED = gql`
   }
 `
 
-export const POST_COMMENT= gql`
+/**
+ * Subscription for post comment notifications
+ * Triggers when a user's post receives a comment
+ */
+export const POST_COMMENT = gql`
   subscription onPostComment($id: ID!) {
     postComment(id: $id) {
       id
@@ -68,7 +82,11 @@ export const POST_COMMENT= gql`
   }
 `
 
-export const COMMENT_LIKED= gql`
+/**
+ * Subscription for comment like notifications
+ * Triggers when a user's comment receives a like
+ */
+export const COMMENT_LIKED = gql`
   subscription onCommentLiked($id: ID!) {
     commentLiked(id: $id) {
       id
@@ -102,7 +120,11 @@ export const COMMENT_LIKED= gql`
   }
 `
 
-export const CREATE_CHAT= gql`
+/**
+ * Subscription for new chat creation
+ * Triggers when a user is added to a new chat
+ */
+export const CREATE_CHAT = gql`
   subscription onCreateChat($id: ID!) {
     createChat(id: $id) {
       id

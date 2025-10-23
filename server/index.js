@@ -1,14 +1,20 @@
-// Express server setup - This file is incomplete and primarily used for testing
-// The main server logic is in schema.js
+/**
+ * Express Server Setup
+ * Basic Express application configuration for Pet Social
+ * Note: This is a minimal setup - main GraphQL server logic is in schema.js
+ */
+
 const express = require('express')
 const cors = require('cors')
 
+/**
+ * Creates and configures Express application instance
+ * Sets up CORS middleware for cross-origin requests
+ */
 const app = express()
 
-// Allow cross-origin requests
+// Enable cross-origin resource sharing for all routes
 app.use(cors())
 
-// Note: This server setup is incomplete
-// The main GraphQL server is configured in schema.js
 module.exports = app
 
