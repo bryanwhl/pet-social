@@ -11,7 +11,6 @@ Username: admin
 Password: admin123
 
 Access the User Guide here: https://bryanwhl.github.io/pet-social/DeveloperGuide.html
-
 Access the Developer Guide here: https://bryanwhl.github.io/pet-social/DeveloperGuide.html
 
 
