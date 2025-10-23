@@ -1,12 +1,23 @@
+/**
+ * Pet Social GraphQL Server
+ * Main server file containing GraphQL schema, resolvers, and Apollo Server configuration
+ * Handles authentication, real-time subscriptions, and all API operations
+ */
+
+// Core server dependencies
 const {createServer} = require('http')
-const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server-express')
 const express = require('express')
+const cors = require('cors')
+const path = require('path')
+const fs = require('fs')
+
+// Database and authentication
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const path = require('path')
-const fs = require('fs')
-const cors = require('cors')
+
+// GraphQL and Apollo Server
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server-express')
 const { withFilter } = require('graphql-subscriptions');
 const {
     GraphQLScalarType,

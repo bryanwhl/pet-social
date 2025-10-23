@@ -1,15 +1,15 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { useHistory } from "react-router-dom";
+import { Switch, Route, Redirect } from 'react-router-dom';
+
+// Internal components
 import PostsContainer from '../posts/PostsContainer.js';
 import TopBar from '../toolbar/TopBar.js'
 import ProfilePage from '../profile/ProfilePage.js'
 import Playgroups from '../pages/Playgroups.js'
 import Shop from '../pages/Shop.js'
 import SettingsPage from '../settings/SettingsPage.js'
-import { useHistory } from "react-router-dom";
-import { useState, useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import OtherUsersProfilePage from '../profile/OtherUsersProfilePage.js'
 
 

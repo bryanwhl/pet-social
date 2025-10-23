@@ -1,13 +1,24 @@
+// React core
 import { useState, useEffect } from 'react';
-import LoggedOut from './components/signin/LoggedOut.js'
-import LoggedIn from './components/pages/LoggedIn.js'
+import { useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+
+// Material-UI theme and styling
 import { red } from '@material-ui/core/colors'
 import { ThemeProvider, createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+
+// Apollo GraphQL
 import { useLazyQuery } from '@apollo/client'
 import { currentUserQuery } from './queries.js'
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import { useHistory } from "react-router-dom";
 
+// Internal components
+import LoggedOut from './components/signin/LoggedOut.js'
+import LoggedIn from './components/pages/LoggedIn.js'
+
+/**
+ * Custom Material-UI theme configuration for Pet Social
+ * Defines color palette, typography, and global CSS overrides
+ */
 let customTheme = createMuiTheme({
   palette: {
     primary: {
@@ -70,32 +81,44 @@ let customTheme = createMuiTheme({
   },
 })
 
+// Make theme responsive to screen sizes
 customTheme = responsiveFontSizes(customTheme)
 
+/**
+ * Main App component - handles authentication and routing
+ * @param {Object} client - Apollo client instance for GraphQL operations
+ */
 function App({ client }) {
-
-  // All user data can be centralized here
-
+  // Query to get current authenticated user
   const [getCurrentUser, currentUser] = useLazyQuery(currentUserQuery, {fetchPolicy: 'network-only'})
-
+  
+  // Router history for navigation
   let history = useHistory();
-
+  
+  // Current authenticated user state
   const [user, setUser] = useState(null);
 
+  // Clear session data when page unloads
   window.onunload = function () {
     sessionStorage.clear();
     client.clearStore();
   }
 
+  /**
+   * Handles user logout - clears all stored data and redirects to login
+   */
   const logout = () => {
     setUser(null);
     localStorage.clear()
     sessionStorage.clear()
     client.clearStore()
-    //client.resetStore() //This causes cache problems
     history.push("/login");
   }
   
+  /**
+   * Effect to handle user authentication state changes
+   * Validates tokens and sets user data or triggers logout on invalid tokens
+   */
   useEffect(() => {
     console.log(currentUser)
     if (currentUser.data) {
